@@ -62,7 +62,7 @@ default_args = {
 
 # [START instantiate_dag]
 # @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['idirect_lima'])
-@dag(default_args=default_args, schedule_interval='*/10 * * * *', start_date=datetime(2021, 7, 23, 9, 0), tags=['idirect_lima'])
+@dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 23, 9, 0), tags=['idirect_lima'])
 def puller_idirect():
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
