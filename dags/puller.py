@@ -372,13 +372,14 @@ def puller_idirect():
 
         if not_exist_mysql_p.empty:
             not_exist_mysql_p=[]
+            data_mysql_not_exist = []
         else:
             not_exist_mysql_p=json.loads(not_exist_mysql_p.to_json(orient="records"))
-        print("exist_mysql_p")
-        print(exist_mysql_p)
-        print("not_exist_mysql_p")
-        print(not_exist_mysql_p)
-        return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p}
+            data_mysql_not_exist = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_p['concat_key_generate']))]
+        
+        print("data_mysql_not_exist")
+        print(data_mysql_not_exist)
+        return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p,'data_mysql_old':data_mysql_not_exist}
     
     @task()
     def comparate_primary_mongo(df_mongo,comparate):
@@ -456,11 +457,12 @@ def puller_idirect():
             not_exist_mysql_s = []
         else:
             not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
-
+            data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate_secondary'].isin(list(not_exist_mysql_s['concat_key_generate_secondary']))]
+        
         # both = comparate[comparate['_merge_']=='both']
     # def comparate_primary_mysql(both,df_mysql,df_plat):
         # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
-        return {'exist_mysql_secondary':exist_mysql_s,'not_exist_mysql_secondary':not_exist_mysql_s}
+        return {'exist_mysql_secondary':exist_mysql_s,'not_exist_mysql_secondary':not_exist_mysql_s,'data_mysql':not_exist_mysql_s}
         # return ['ok']
 
     @task()
