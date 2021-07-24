@@ -458,6 +458,7 @@ def puller_idirect():
         else:
             not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
+            data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
         
         # both = comparate[comparate['_merge_']=='both']
     # def comparate_primary_mysql(both,df_mysql,df_plat):
