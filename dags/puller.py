@@ -455,6 +455,7 @@ def puller_idirect():
 
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
+            data_mysql_not_exist_s = []
         else:
             not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate_secondary'].isin(list(not_exist_mysql_s['concat_key_generate_secondary']))]
@@ -462,7 +463,7 @@ def puller_idirect():
         # both = comparate[comparate['_merge_']=='both']
     # def comparate_primary_mysql(both,df_mysql,df_plat):
         # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
-        return {'exist_mysql_secondary':exist_mysql_s,'not_exist_mysql_secondary':not_exist_mysql_s,'data_mysql':not_exist_mysql_s}
+        return {'exist_mysql_secondary':exist_mysql_s,'not_exist_mysql_secondary':not_exist_mysql_s,'data_mysql_old':data_mysql_not_exist_s}
         # return ['ok']
 
     @task()
