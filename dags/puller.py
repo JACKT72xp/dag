@@ -94,24 +94,6 @@ def puller_idirect():
 
 
     #------------------------------------------------------------------------
-    def saveInS3(key,data):
-        try:
-            FILE_NAME_SAVE_X="files_terminals/"+str(key)+"/PROCESSFILE_NEW.json"
-            ACCESS_KEY_ID ='AKIA5DO6AT27S5ZXZRCH'
-            ACCESS_SECRET_KEY = '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'
-            BUCKET_NAME = 'bifrost-tdp3'
-            session = boto3.Session(
-                aws_access_key_id=ACCESS_KEY_ID,
-                aws_secret_access_key=ACCESS_SECRET_KEY,
-                region_name = 'us-west-2'
-            )
-            s3 = session.resource('s3',region_name = 'us-west-2',config=Config(signature_version='s3v4'))
-            data = s3.Bucket(BUCKET_NAME).put_object(Key=FILE_NAME_SAVE_X, Body=data, ACL='public-read')
-            return "https://bifrost-tdp3.s3.eu-west-3.amazonaws.com/"+FILE_NAME_SAVE_X
-        except:
-            return "error"
-        
-
 
 
         
