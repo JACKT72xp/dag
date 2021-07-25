@@ -79,7 +79,8 @@ def puller_idirect():
 
 
     engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev?charset=utf8", connect_args={'connect_timeout':120})
-    conf = {'bootstrap.servers': "10.233.51.148:9092"}
+    engine_puller = create_engine("mysql://testuser:testpassword@192.168.36.21:6033/puller?charset=utf8", connect_args={'connect_timeout': 120})
+
 
     """
     ### TaskFlow API Tutorial Documentation
@@ -246,14 +247,26 @@ def puller_idirect():
 
 
     @task()
-    def send_queque_kafka(data,case,key,conf):
+    def send_queque(data,case):
         print(data)
+        conf = {'bootstrap.servers': "10.233.51.148:9092"}
         p = Producer(conf)
-        try:
-            p.produce(case,json.dumps(data[key]))
-        except:
-            p.produce(case,data[key])
+        p.produce(case,data['not_exist_mongo'])
         p.flush()
+        return [case]
+    @task()
+    def send_queque_kafka(data,case,key):
+        try:
+            
+            conf = {'bootstrap.servers': "10.233.51.148:9092"}
+            p = Producer(conf)
+            try:
+                p.produce(case,json.dumps(data[key]))
+            except:
+                p.produce(case,data[key])
+            p.flush()
+        except:
+            print("ERROR")
         return [case]
         # return {'data': df_old.to_json(orient='records'), 'status':200}
 
@@ -664,25 +677,25 @@ def puller_idirect():
     old_data = extract_old(key_process,config,response_verify)
     comp = comparate_old_vs_new(platform_data,old_data)
     #OBTENER LOS BOTH EN EL KAFKA
-    send_qq_new_mysql= send_queque_kafka(comp,'insertmysql','only_platform',conf) 
-    send_qq_new_mongo= send_queque_kafka(comp,'insertmongo','only_platform',conf) 
-    send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old',conf) 
-    send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old',conf) 
+    send_qq_new_mysql= send_queque_kafka(comp,'insertmysql','only_platform') 
+    send_qq_new_mongo= send_queque_kafka(comp,'insertmongo','only_platform') 
+    # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
+    # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     mysql_data = extract_mysql(engine,config,response_verify)
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
-    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysql','not_exist_mysql',conf) 
+    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysql','not_exist_mysql') 
     secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
-    send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysql','not_exist_mysql_secondary',conf) 
+    send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysql','not_exist_mysql_secondary') 
 
     key_process_mongo = key_process
     mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
     primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
-    send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongo','not_exist_mongo',conf) 
+    send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongo','not_exist_mongo') 
   
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
-    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary',conf) 
-    send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary',conf) 
+    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary') 
+    send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis(config,platform_data)
     end = finish([{"status":True}])
     [secondary_vs_mysql,secondary_vs_mongo] >> save_in_redis_end >> end
