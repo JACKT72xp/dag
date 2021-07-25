@@ -79,8 +79,8 @@ def puller_idirect():
 
 
     engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev?charset=utf8", connect_args={'connect_timeout':120})
-    engine_puller = create_engine("mysql://testuser:testpassword@192.168.36.21:6033/puller?charset=utf8", connect_args={'connect_timeout': 120})
-
+    conf = {'bootstrap.servers': "10.233.51.148:9092"}
+    p = Producer(conf)
 
     """
     ### TaskFlow API Tutorial Documentation
@@ -247,18 +247,8 @@ def puller_idirect():
 
 
     @task()
-    def send_queque(data,case):
-        print(data)
-        conf = {'bootstrap.servers': "10.233.51.148:9092"}
-        p = Producer(conf)
-        p.produce(case,data['not_exist_mongo'])
-        p.flush()
-        return [case]
-    @task()
     def send_queque_kafka(data,case,key):
         print(data)
-        conf = {'bootstrap.servers': "10.233.51.148:9092"}
-        p = Producer(conf)
         try:
             p.produce(case,json.dumps(data[key]))
         except:
