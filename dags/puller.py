@@ -238,6 +238,7 @@ def puller_idirect():
         return [case]
     @task()
     def send_queque_kafka(data,case,key):
+        print(data)
         try:
             
             conf = {'bootstrap.servers': "10.233.51.148:9092"}
