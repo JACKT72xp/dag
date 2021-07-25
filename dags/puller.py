@@ -384,7 +384,7 @@ def puller_idirect():
             old_send=both.to_json(orient="records")
         print(both_send)
         print("------both")
-
+        data_platform=df1.to_json(orient="records")
         return {'platform_data':data_platform,'comparation':comparation.to_json(orient="records"),'both':both_send,'only_platform':plat_send,'only_old':old_send}
 
 
