@@ -244,12 +244,13 @@ def puller_idirect():
         p = Producer(conf)
         try:
             p.produce(case,json.dumps(data[key]))
+            p.flush()
         except:
-            try:
-                p.produce(case,data[key])
-            except:
-                print("error")
-        p.flush()
+            # try:
+            p.produce(case,data[key])
+            # except:
+                # print("error")
+            p.flush()
         # except:
             # print("ERROR")
         return [case]
