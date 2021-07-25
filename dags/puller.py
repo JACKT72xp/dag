@@ -113,25 +113,7 @@ def puller_idirect():
         
 
 
-    #------------------------------------------------------------------------
-    def save_in_redis(config,data):
-        df = pd.DataFrame(data)
-        df.columns = df.columns.str.strip('platform_') 
-        data = df.to_json(orient="records")
-        key = str(config["platform_id"])+"--"+str(config["platform_name"])
-    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
-    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
-    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
-        try:
-            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
-            redis_cn.set(key,data)
-            return {"status":True,"data":""}
-        except:
-            print("save in s3")
-            response_save_s3 = ""
-            # response_save_s3 = saveInS3(key,data)
-            return {"status":False,"data":response_save_s3}
-        return 
+
         
     def verifyByGroup(groupid,topics):
 
@@ -201,7 +183,26 @@ def puller_idirect():
             print("ERROR IN COLUMNS")
             
             
-
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis(config,data):
+        df = pd.DataFrame(data)
+        df.columns = df.columns.str.strip('platform_') 
+        data = df.to_json(orient="records")
+        key = str(config["platform_id"])+"--"+str(config["platform_name"])
+    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
+    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
+    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
+        try:
+            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn.set(key,data)
+            return {"status":True,"data":""}
+        except:
+            print("save in s3")
+            response_save_s3 = ""
+            # response_save_s3 = saveInS3(key,data)
+            return {"status":False,"data":response_save_s3}
+        return 
 
             
     # [START extract]
@@ -692,7 +693,7 @@ def puller_idirect():
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
     send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary') 
     send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary') 
-    save_in_redis = save_in_redis(config,platform_data)
+    save_in_redis_end = save_in_redis(config,platform_data)
 
 
     # [END main_flow]
