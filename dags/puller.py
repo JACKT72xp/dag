@@ -93,7 +93,46 @@ def puller_idirect():
     # [END instantiate_dag]
 
 
+    #------------------------------------------------------------------------
+    def saveInS3(key,data):
+        try:
+            FILE_NAME_SAVE_X="files_terminals/"+str(key)+"/PROCESSFILE_NEW.json"
+            ACCESS_KEY_ID ='AKIA5DO6AT27S5ZXZRCH'
+            ACCESS_SECRET_KEY = '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'
+            BUCKET_NAME = 'bifrost-tdp3'
+            session = boto3.Session(
+                aws_access_key_id=ACCESS_KEY_ID,
+                aws_secret_access_key=ACCESS_SECRET_KEY,
+                region_name = 'us-west-2'
+            )
+            s3 = session.resource('s3',region_name = 'us-west-2',config=Config(signature_version='s3v4'))
+            data = s3.Bucket(BUCKET_NAME).put_object(Key=FILE_NAME_SAVE_X, Body=data, ACL='public-read')
+            return "https://bifrost-tdp3.s3.eu-west-3.amazonaws.com/"+FILE_NAME_SAVE_X
+        except:
+            return "error"
+        
 
+
+    #------------------------------------------------------------------------
+    def save_in_redis(config,data):
+        df = pd.DataFrame(data)
+        df.columns = df.columns.str.strip('platform_') 
+        data = df.to_json(orient="records")
+        key = str(config["platform_id"])+"--"+str(config["platform_name"])
+    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
+    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
+    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
+        try:
+            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn.set(key,data)
+            return {"status":True,"data":""}
+        except:
+            print("save in s3")
+            response_save_s3 = ""
+            # response_save_s3 = saveInS3(key,data)
+            return {"status":False,"data":response_save_s3}
+        return 
+        
     def verifyByGroup(groupid,topics):
 
         consumer = confluent_kafka.Consumer({'bootstrap.servers': "10.233.51.148:9092",'group.id': groupid})
@@ -554,6 +593,17 @@ def puller_idirect():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
     # [START verify]
     @task()
     def verify(rs):
@@ -642,6 +692,9 @@ def puller_idirect():
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
     send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary') 
     send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary') 
+    save_in_redis = save_in_redis(config,platform_data)
+
+
     # [END main_flow]
 
 
