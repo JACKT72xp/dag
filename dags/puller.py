@@ -239,17 +239,19 @@ def puller_idirect():
     @task()
     def send_queque_kafka(data,case,key):
         print(data)
+        # try:
+        conf = {'bootstrap.servers': "10.233.51.148:9092"}
+        p = Producer(conf)
         try:
-            
-            conf = {'bootstrap.servers': "10.233.51.148:9092"}
-            p = Producer(conf)
-            try:
-                p.produce(case,json.dumps(data[key]))
-            except:
-                p.produce(case,data[key])
-            p.flush()
+            p.produce(case,json.dumps(data[key]))
         except:
-            print("ERROR")
+            try:
+                p.produce(case,data[key])
+            except:
+                print("error")
+        p.flush()
+        # except:
+            # print("ERROR")
         return [case]
         # return {'data': df_old.to_json(orient='records'), 'status':200}
 
