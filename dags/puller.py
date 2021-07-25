@@ -694,7 +694,8 @@ def puller_idirect():
     send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary') 
     send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis(config,platform_data)
-    [secondary_vs_mysql,secondary_vs_mongo] >> save_in_redis_end >> finish
+    end = finish([{"status":True}])
+    [secondary_vs_mysql,secondary_vs_mongo] >> save_in_redis_end >> end
 
 
     # [END main_flow]
