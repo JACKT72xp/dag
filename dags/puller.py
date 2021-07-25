@@ -189,7 +189,7 @@ def puller_idirect():
         df = pd.DataFrame(data)
         df.columns = df.columns.str.strip('platform_') 
         data = df.to_json(orient="records")
-        key = str(config["platform_id"])+"--"+str(config["platform_name"])
+        key = str(config["platform_id"])+"-"+str(config["platform_name"])
     #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
     # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
     # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
