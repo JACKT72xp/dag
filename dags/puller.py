@@ -622,27 +622,31 @@ def puller_idirect():
         "mongo_limit_time": 55,
         "mongo_collection": "idirect_test_lima",
         "primary_join_cols": {
-          "mysql": "siteId",
-          "mongo": "siteId",
-          "platform": "Name",
-          "old": "Name"
+          "mysql": "id_nms",
+          "mongo": "ID",
+          "platform": "ID",
+          "old": "ID"
         },
         "secondary_join_cols": {
           "mysql": [
             "mysql_siteId",
-            "mysql_id_nms"
+            "mysql_esn",
+            "mysql_did"
           ],
           "mongo": [
             "mongo_Name",
-            "mongo_ID"
+            "mongo_SN",
+            "mongo_DID"
           ],
           "platform": [
             "platform_Name",
-            "platform_ID"
+            "platform_SN",
+            "platform_DID"
           ],
           "old": [
             "old_Name",
-            "old_ID"
+            "old_SN",
+            "old_DID"
           ]
         },
         "platform_name": "idirect_lima"
