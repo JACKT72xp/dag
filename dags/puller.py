@@ -79,8 +79,55 @@ def puller_idirect():
 
 
     engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev?charset=utf8", connect_args={'connect_timeout':120})
-    engine_puller = create_engine("mysql://testuser:testpassword@192.168.36.21:6033/puller?charset=utf8", connect_args={'connect_timeout': 120})
-
+    # engine_puller = create_engine("mysql://testuser:testpassword@192.168.36.21:6033/puller?charset=utf8", connect_args={'connect_timeout': 120})
+    config = [
+      {
+        "route_trunk": "data",
+        "url": "http://192.168.36.50:81/api/v1/evo/config/obj/remote",
+        "user": "systemapi",
+        "password": "tiws2019",
+        "timeout": 120,
+        "verify": "False",
+        "platform_id": 2,
+        "mysql_table": "bifrost_terminal_test",
+        "mongo_normalization": "puller",
+        "mongo_limit_time": 55,
+        "mongo_collection": "idirect_test",
+        "primary_join_cols": {
+          "mysql": "id_nms",
+          "mongo": "ID",
+          "platform": "ID",
+          "old": "ID"
+        },
+        "secondary_join_cols": {
+          "mysql": [
+            "mysql_siteId",
+            "mysql_esn",
+            "mysql_did"
+          ],
+          "mongo": [
+            "mongo_Name",
+            "mongo_SN",
+            "mongo_DID"
+          ],
+          "platform": [
+            "platform_Name",
+            "platform_SN",
+            "platform_DID"
+          ],
+          "old": [
+            "old_Name",
+            "old_SN",
+            "old_DID"
+          ]
+        },
+        "platform_name": "idirect_lima"
+      }
+    ]
+    config = config[0]
+    db_ = conection["bifrost"]
+    coltn_mdb = db_["idirect_test"]
+    data_mdb = coltn_mdb.find({'platform':2})
 
     """
     ### TaskFlow API Tutorial Documentation
@@ -614,54 +661,7 @@ def puller_idirect():
     if response_verify is None:
         finish(response_verify)
         return 'ok'
-    config = [
-      {
-        "route_trunk": "data",
-        "url": "http://192.168.36.50:81/api/v1/evo/config/obj/remote",
-        "user": "systemapi",
-        "password": "tiws2019",
-        "timeout": 120,
-        "verify": "False",
-        "platform_id": 2,
-        "mysql_table": "bifrost_terminal_test",
-        "mongo_normalization": "puller",
-        "mongo_limit_time": 55,
-        "mongo_collection": "idirect_test",
-        "primary_join_cols": {
-          "mysql": "id_nms",
-          "mongo": "ID",
-          "platform": "ID",
-          "old": "ID"
-        },
-        "secondary_join_cols": {
-          "mysql": [
-            "mysql_siteId",
-            "mysql_esn",
-            "mysql_did"
-          ],
-          "mongo": [
-            "mongo_Name",
-            "mongo_SN",
-            "mongo_DID"
-          ],
-          "platform": [
-            "platform_Name",
-            "platform_SN",
-            "platform_DID"
-          ],
-          "old": [
-            "old_Name",
-            "old_SN",
-            "old_DID"
-          ]
-        },
-        "platform_name": "idirect_lima"
-      }
-    ]
-    config = config[0]
-    db_ = conection["bifrost"]
-    coltn_mdb = db_["idirect_test"]
-    data_mdb = coltn_mdb.find({'platform':2})
+
 
 
     key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
