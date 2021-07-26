@@ -108,8 +108,8 @@ def puller_hughes():
             "mongo_terminalStatus"
           ],
           "platform": [
-            "mongo_esn",
-            "mongo_terminalStatus"
+            "platform_esn",
+            "platform_terminalStatus"
           ],
           "old": [
             "mongo_esn",
