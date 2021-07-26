@@ -467,7 +467,15 @@ def puller_idirect_argentina():
 
         both = comparate
         # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-        both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+
+
+        try:
+            both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
+
+
+
 
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
