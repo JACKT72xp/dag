@@ -136,9 +136,14 @@ def puller_idirect_argentina():
                     lag = "%d" % (hi - lo)
                 else:
                     lag = "%d" % (hi - partition.offset)
-                sum_lag += int(lag)
-                sum_msg += int(offset)
-                
+                try:
+                    sum_lag += int(lag)
+                except:
+                    sum_lag += 0
+                try:
+                    sum_msg += int(offset)
+                except:
+                    sum_msg += 0
                 print("%-50s  %9s  %9s" % (
                     "{} [{}]".format(partition.topic, partition.partition), offset, lag))
 
