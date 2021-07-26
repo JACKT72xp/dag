@@ -597,8 +597,8 @@ def puller_idirect_argentina():
     # [START verify]
     @task()
     def verify(rs):
-        v_mysql = verifyByGroup('mysql', ['insertmysql','updatemysql'])
-        v_mongo = verifyByGroup('mongo', ['insertmongo','updatemongotimep','updatemongo'])
+        v_mysql = verifyByGroup('mysql', ['insertmysqlarg','updatemysqlarg'])
+        v_mongo = verifyByGroup('mongo', ['insertmongoarg','updatemongotimeparg','updatemongoarg'])
         v_total = v_mysql + v_mongo
         if v_total > 0:
             return None
