@@ -631,77 +631,7 @@ def puller_idirect_argentina():
         finish(response_verify)
         return 'ok'
     config = [
-            {
-        "concat_columns_api": [
-            {
-            "name_column": "SERVICEPLANID",
-            "cols": [
-                {
-                "data": "DownMIR",
-                "type": "key"
-                },
-                {
-                "data": "/",
-                "type": "string"
-                },
-                {
-                "data": "UpMIR",
-                "type": "key"
-                },
-                {
-                "data": "_",
-                "type": "string"
-                },
-                {
-                "data": {
-                    "columns": [
-                    {
-                        "key": "DownCIR",
-                        "mask": "a"
-                    },
-                    {
-                        "key": "DownMIR",
-                        "mask": "b"
-                    }
-                    ],
-                    "operation": "'(a / b)*100'"
-                },
-                "type": "calculate"
-                },
-                {
-                "data": "%",
-                "type": "string"
-                }
-            ]
-            },
-            {
-            "name_column": "platformId",
-            "cols": [
-                {
-                "data": "38",
-                "type": "string"
-                }
-            ]
-            },
-            {
-            "name_column": "status_mysql",
-            "cols": [
-                {
-                "data": "1",
-                "type": "string"
-                }
-            ]
-            }
-        ],
-        "columns_relational_mysql": [
-            {
-            "name_column_generate": "SERVICEPLANIDGET",
-            "name_column_key": "SERVICEPLANID",
-            "query": "select * from mnos_serviceplan where crmId = 'SERVICEPLANID' and platformId=38 and status=1",
-            "name_column_mysql_get": "id",
-            "default_value": "1171"
-            }
-        ],
+      {
         "route_trunk": "data",
         "url": "http://192.168.36.50:82/api/v1/evo/config/obj/remote",
         "user": "systemapi",
@@ -713,75 +643,36 @@ def puller_idirect_argentina():
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
         "mongo_collection": "idirect_test",
-        "columns_save_mongo": {
-            "status_col": "Active",
-            "site_id_col": "Name"
-        },
-        "columns_save_mysql": {
-            "cols": {
-            "ID": "id_nms",
-            "Lat": "latitud",
-            "Name": "siteId",
-            "Lon": "longitud",
-            "platformId": "platformId",
-            "status_mysql": "status",
-            "SN": "esn",
-            "SERVICEPLANIDGET": "servicesPlanId",
-            "DID": "did"
-            },
-            "table": "bifrost_terminal_test",
-            "status_col": "Active",
-            "site_id_col": "Name"
-        },
-        "columns_update_mysql": {
-            "cols": {
-            "id_nms": "ID",
-            "latitud": "Lat",
-            "longitud": "Lon",
-            "esn": "SN",
-            "servicesPlanId": "SERVICEPLANIDGET",
-            "did": "DID"
-            },
-            "mysql_id_where": "siteId",
-            "platform_id_where": "Name",
-            "table": "bifrost_terminal_test"
-        },
-        "concat_platform": {
-            "join_keys": [
-            "platform_ID"
-            ],
-            "url": "http://192.168.36.50:82/api/v1/evo/config/obj/remote/platform_ID",
-            "user": "systemapi",
-            "password": "tiws2019",
-            "method": "GET",
-            "route_data": "data"
-        },
         "primary_join_cols": {
-            "mysql": "siteId",
-            "mongo": "siteId",
-            "platform": "Name",
-            "old": "Name"
+          "mysql": "id_nms",
+          "mongo": "ID",
+          "platform": "ID",
+          "old": "ID"
         },
         "secondary_join_cols": {
-            "mysql": [
+          "mysql": [
             "mysql_siteId",
-            "mysql_id_nms"
-            ],
-            "mongo": [
+            "mysql_esn",
+            "mysql_did"
+          ],
+          "mongo": [
             "mongo_Name",
-            "mongo_ID"
-            ],
-            "platform": [
+            "mongo_SN",
+            "mongo_DID"
+          ],
+          "platform": [
             "platform_Name",
-            "platform_ID"
-            ],
-            "old": [
+            "platform_SN",
+            "platform_DID"
+          ],
+          "old": [
             "old_Name",
-            "old_ID"
-            ]
+            "old_SN",
+            "old_DID"
+          ]
         },
         "platform_name": "idirect_argentina"
-        }
+      }
     ]
     config = config[0]
     db_ = conection["bifrost"]
