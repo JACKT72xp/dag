@@ -49,8 +49,8 @@ from confluent_kafka import Producer
 # You can override them on a per-task basis during operator initialization
 default_args = {
     'owner': 'airflow',
-    'depends_on_past': True,
-    # 'retry_delay': timedelta(seconds=15),
+    'depends_on_past': False,
+    'retry_delay': timedelta(seconds=15),
     # 'start_date': yesterday_at_elevenpm,
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
@@ -679,10 +679,10 @@ def puller_hughes():
     platform_data = extract_platform(config,response_verify)
     old_data = extract_old(key_process,config,response_verify)
     comp = comparate_old_vs_new(platform_data,old_data)
-    mysql_data = extract_mysql(engine,config,comp)
+    mysql_data = extract_mysql(engine,config,response_verify)
     key_process_mongo = key_process
-    mongo_data = extract_mongo(data_mdb,key_process_mongo,config,comp)
-    # [platform_data,old_data] >> comp
+    mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
+    [platform_data,old_data] >> comp
     #OBTENER LOS BOTH EN EL KAFKA
     # send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhughes','only_platform') 
     # send_qq_new_mongo= send_queque_kafka(comp,'insertmongohughes','only_platform') 
