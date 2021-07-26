@@ -62,8 +62,8 @@ default_args = {
 
 # [START instantiate_dag]
 # @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['idirect_lima'])
-@dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 23, 9, 0), tags=['idirect'])
-def puller_idirect():
+@dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 26, 9, 0), tags=['idirect'])
+def puller_idirect_hub5():
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
     # import confluent_kafka
@@ -136,9 +136,14 @@ def puller_idirect():
                     lag = "%d" % (hi - lo)
                 else:
                     lag = "%d" % (hi - partition.offset)
-                sum_lag += int(lag)
-                sum_msg += int(offset)
-                
+                try:
+                    sum_lag += int(lag)
+                except:
+                    sum_lag += 0
+                try:
+                    sum_msg += int(offset)
+                except:
+                    sum_msg += 0
                 print("%-50s  %9s  %9s" % (
                     "{} [{}]".format(partition.topic, partition.partition), offset, lag))
 
@@ -467,7 +472,15 @@ def puller_idirect():
 
         both = comparate
         # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-        both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+
+
+        try:
+            both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
+
+
+
 
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
@@ -512,7 +525,10 @@ def puller_idirect():
         # comparate = pd.DataFrame(json.loads(comparate))
         both = comparate
         # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-        both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+        try:
+            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
@@ -597,8 +613,8 @@ def puller_idirect():
     # [START verify]
     @task()
     def verify(rs):
-        v_mysql = verifyByGroup('mysql', ['insertmysql','updatemysql'])
-        v_mongo = verifyByGroup('mongo', ['insertmongo','updatemongotimep','updatemongo'])
+        v_mysql = verifyByGroup('mysql', ['insertmysqlarg','updatemysqlarg'])
+        v_mongo = verifyByGroup('mongo', ['insertmongoarg','updatemongotimeparg','updatemongoarg'])
         v_total = v_mysql + v_mongo
         if v_total > 0:
             return None
@@ -613,53 +629,162 @@ def puller_idirect():
         finish(response_verify)
         return 'ok'
     config = [
-      {
+        {
+        "concat_columns_api": [
+            {
+            "name_column": "SERVICEPLANID",
+            "cols": [
+                {
+                "data": "DownMIR",
+                "type": "key"
+                },
+                {
+                "data": "/",
+                "type": "string"
+                },
+                {
+                "data": "UpMIR",
+                "type": "key"
+                },
+                {
+                "data": "_",
+                "type": "string"
+                },
+                {
+                "data": {
+                    "columns": [
+                    {
+                        "key": "DownCIR",
+                        "mask": "a"
+                    },
+                    {
+                        "key": "DownMIR",
+                        "mask": "b"
+                    }
+                    ],
+                    "operation": "'(a / b)*100'"
+                },
+                "type": "calculate"
+                },
+                {
+                "data": "%",
+                "type": "string"
+                }
+            ]
+            },
+            {
+            "name_column": "platformId",
+            "cols": [
+                {
+                "data": "108",
+                "type": "string"
+                }
+            ]
+            },
+            {
+            "name_column": "status_mysql",
+            "cols": [
+                {
+                "data": "1",
+                "type": "string"
+                }
+            ]
+            }
+        ],
+        "columns_relational_mysql": [
+            {
+            "name_column_generate": "SERVICEPLANIDGET",
+            "name_column_key": "SERVICEPLANID",
+            "query": "select * from mnos_serviceplan where crmId = 'SERVICEPLANID' and platformId=108 and status=1",
+            "name_column_mysql_get": "id",
+            "default_value": "1171"
+            }
+        ],
         "route_trunk": "data",
-        "url": "http://192.168.36.50:81/api/v1/evo/config/obj/remote",
+        "url": "http://192.168.36.50:84/api/v1/evo/config/obj/remote",
         "user": "systemapi",
         "password": "tiws2019",
         "timeout": 120,
         "verify": "False",
-        "platform_id": 2,
+        "platform_id": 108,
         "mysql_table": "bifrost_terminal_test",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "idirect_test_lima",
+        "mongo_collection": "idirect_test",
+        "columns_save_mongo": {
+            "status_col": "Active",
+            "site_id_col": "Name"
+        },
+        "columns_save_mysql": {
+            "cols": {
+            "ID": "id_nms",
+            "Lat": "latitud",
+            "Name": "siteId",
+            "Lon": "longitud",
+            "platformId": "platformId",
+            "status_mysql": "status",
+            "SN": "esn",
+            "SERVICEPLANIDGET": "servicesPlanId",
+            "DID": "did"
+            },
+            "table": "bifrost_terminal_test",
+            "status_col": "Active",
+            "site_id_col": "Name"
+        },
+        "columns_update_mysql": {
+            "cols": {
+            "id_nms": "ID",
+            "latitud": "Lat",
+            "longitud": "Lon",
+            "esn": "SN",
+            "servicesPlanId": "SERVICEPLANIDGET",
+            "did": "DID"
+            },
+            "mysql_id_where": "siteId",
+            "platform_id_where": "Name",
+            "table": "bifrost_terminal_test"
+        },
+        "concat_platform": {
+            "join_keys": [
+            "platform_ID"
+            ],
+            "url": "http://192.168.36.50:84/api/v1/evo/config/obj/remote/platform_ID",
+            "user": "systemapi",
+            "password": "tiws2019",
+            "method": "GET",
+            "route_data": "data"
+        },
         "primary_join_cols": {
-          "mysql": "id_nms",
-          "mongo": "ID",
-          "platform": "ID",
-          "old": "ID"
+            "mysql": "siteId",
+            "mongo": "siteId",
+            "platform": "Name",
+            "old": "Name"
         },
         "secondary_join_cols": {
-          "mysql": [
+            "mysql": [
             "mysql_siteId",
-            "mysql_esn",
-            "mysql_did"
-          ],
-          "mongo": [
+            "mysql_id_nms"
+            ],
+            "mongo": [
             "mongo_Name",
-            "mongo_SN",
-            "mongo_DID"
-          ],
-          "platform": [
+            "mongo_ID"
+            ],
+            "platform": [
             "platform_Name",
-            "platform_SN",
-            "platform_DID"
-          ],
-          "old": [
+            "platform_ID"
+            ],
+            "old": [
             "old_Name",
-            "old_SN",
-            "old_DID"
-          ]
+            "old_ID"
+            ]
         },
-        "platform_name": "idirect_lima"
-      }
+        "platform_name": "idirect_hub5"
+        }
     ]
     config = config[0]
     db_ = conection["bifrost"]
-    coltn_mdb = db_["idirect_test_lima"]
-    data_mdb = coltn_mdb.find({'platform':2})
+    coltn_mdb = db_[config["mongo_collection"]]
+    data_mdb = coltn_mdb.find({'platform':108})
 
 
     key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
@@ -667,25 +792,25 @@ def puller_idirect():
     old_data = extract_old(key_process,config,response_verify)
     comp = comparate_old_vs_new(platform_data,old_data)
     #OBTENER LOS BOTH EN EL KAFKA
-    send_qq_new_mysql= send_queque_kafka(comp,'insertmysql','only_platform') 
-    send_qq_new_mongo= send_queque_kafka(comp,'insertmongo','only_platform') 
+    send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhub','only_platform') 
+    send_qq_new_mongo= send_queque_kafka(comp,'insertmongoarghub','only_platform') 
     # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     mysql_data = extract_mysql(engine,config,response_verify)
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
-    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysql','not_exist_mysql') 
+    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysqlhub','not_exist_mysql') 
     secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
-    send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysql','not_exist_mysql_secondary') 
+    send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhub','not_exist_mysql_secondary') 
 
     key_process_mongo = key_process
     mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
     primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
-    send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongo','not_exist_mongo') 
+    send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohub','not_exist_mongo') 
   
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
-    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongo','not_exist_mongo_secondary') 
-    send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimep','exist_mongo_secondary') 
+    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohub','not_exist_mongo_secondary') 
+    send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephub','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis(config,platform_data)
     end = finish([{"status":True}])
     [secondary_vs_mysql,secondary_vs_mongo] >> save_in_redis_end >> end
@@ -695,7 +820,7 @@ def puller_idirect():
 
 
 # [START dag_invocation]
-puller_idirect = puller_idirect()
+puller_idirect_hub5 = puller_idirect_hub5()
 # [END dag_invocation]
 
 # [END tutorial]
