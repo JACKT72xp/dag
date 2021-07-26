@@ -676,7 +676,7 @@ def puller_hughes():
     @task()
     def verify(rs):
         v_mysql = verifyByGroup('mysql', ['insertmysqlhughes','updatemysqlhughes'])
-        v_mongo = verifyByGroup('mongo', ['insertmongohughes','updatemongotimephughes','updatemongohub'])
+        v_mongo = verifyByGroup('mongo', ['insertmongohughes','updatemongotimephughes','updatemongohughes'])
         v_total = v_mysql + v_mongo
         if v_total > 0:
             return None
