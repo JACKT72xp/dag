@@ -615,8 +615,8 @@ def puller_idirect_hub5():
     # [START verify]
     @task()
     def verify(rs):
-        v_mysql = verifyByGroup('mysql', ['insertmysqlarg','updatemysqlarg'])
-        v_mongo = verifyByGroup('mongo', ['insertmongoarg','updatemongotimeparg','updatemongoarg'])
+        v_mysql = verifyByGroup('mysql', ['insertmysqlhub','updatemysqlhub'])
+        v_mongo = verifyByGroup('mongo', ['insertmongohub','updatemongotimephub','updatemongohub'])
         v_total = v_mysql + v_mongo
         if v_total > 0:
             return None
