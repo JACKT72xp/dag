@@ -81,7 +81,7 @@ def puller_hughes():
     engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev?charset=utf8", connect_args={'connect_timeout':120})
     config = [
       {
-        "route_trunk": "data",
+        "route_trunk": "",
         "url": "http://192.168.36.50/NMSAPI/vsats/status",
         "user": "",
         "password": "",
