@@ -699,12 +699,12 @@ def puller_idirect_argentina():
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     mysql_data = extract_mysql(engine,config,response_verify)
+    key_process_mongo = key_process
     mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
     send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysqlarg','not_exist_mysql') 
     secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
     send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlarg','not_exist_mysql_secondary') 
-    key_process_mongo = key_process
 
     primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
     send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongoarg','not_exist_mongo') 
