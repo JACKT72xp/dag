@@ -329,7 +329,7 @@ def puller_idirect_hub5():
         query = "SELECT  * FROM "+str(config['mysql_table'])+" where status = 1 and  platformId = "+str(config['platform_id'])
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
-            return []
+            return '[{}]'
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix('mysql_')
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
         df_mysql_total = generateConcatKey(df_mysql_total,['mysql_'+config['primary_join_cols']['mysql']])
