@@ -116,7 +116,7 @@ def puller_hughes():
             "mongo_terminalStatus"
           ]
         },
-        "platform_name": "idirect_hughes"
+        "platform_name": "hughes"
       }
     ]
     config = config[0]
