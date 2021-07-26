@@ -315,7 +315,7 @@ def puller_hughes():
                 response = requests.get(config['url'], verify=config['verify'],timeout=config['timeout'])
             response = response.text
             response = json.loads(response)
-            print("here",response)
+            # print("here",response)
             try:
                 for x in config['route_trunk'].split("-"):
                     try:
@@ -335,10 +335,17 @@ def puller_hughes():
                 response = response.to_json(orient='records')
                 response = json.loads(response)
             except:
-                print("ERROR IN route_trunk")
+                # print("ERROR IN route_trunk")
             # response = pd.DataFrame(response) 
             # response = response[response.columns].add_prefix('platform_')
                 response = response
+                response =  pd.DataFrame(response) 
+                response = response[response.columns].add_prefix('platform_')
+                # response = generateConcatKey(response,[config['primary_join_cols']['platform']])
+                response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
+                response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
+                response = response.to_json(orient='records')
+                response = json.loads(response)
 
         except requests.exceptions.RequestException as e:
             response = {}
