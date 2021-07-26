@@ -314,10 +314,14 @@ def puller_hughes():
             response = json.loads(response)
             try:
                 for x in config['route_trunk'].split("-"):
-                    if x.isnumeric():
-                        response=response[int(x)]
-                    else:
-                        response=response[x]
+                    try:
+                            
+                        if x.isnumeric():
+                            response=response[int(x)]
+                        else:
+                            response=response[x]
+                    except:
+                            response=response
 
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
