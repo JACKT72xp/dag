@@ -626,7 +626,7 @@ def puller_idirect():
         "mysql_table": "bifrost_terminal_test",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "idirect_test_lima",
+        "mongo_collection": "idirect_test",
         "primary_join_cols": {
           "mysql": "id_nms",
           "mongo": "ID",
@@ -660,7 +660,7 @@ def puller_idirect():
     ]
     config = config[0]
     db_ = conection["bifrost"]
-    coltn_mdb = db_["idirect_test_lima"]
+    coltn_mdb = db_["idirect_test"]
     data_mdb = coltn_mdb.find({'platform':2})
 
 
