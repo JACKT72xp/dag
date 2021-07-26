@@ -684,22 +684,22 @@ def puller_hughes():
     mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
     [platform_data,old_data] >> comp
     #OBTENER LOS BOTH EN EL KAFKA
-    # send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhughes','only_platform') 
-    # send_qq_new_mongo= send_queque_kafka(comp,'insertmongohughes','only_platform') 
+    send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhughes','only_platform') 
+    send_qq_new_mongo= send_queque_kafka(comp,'insertmongohughes','only_platform') 
     # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
-    # send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
+    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
     secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
-    # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
+    send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
     primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
-    # send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohughes','not_exist_mongo') 
+    send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohughes','not_exist_mongo') 
   
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
-    # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
-    # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
+    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
+    send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis(config,platform_data)
     end = finish([{"status":True}])
     [secondary_vs_mysql,secondary_vs_mongo] >> save_in_redis_end >> end
