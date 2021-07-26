@@ -50,19 +50,19 @@ from confluent_kafka import Producer
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'retry_delay': timedelta(seconds=10),
+    'retry_delay': timedelta(seconds=15),
     # 'start_date': yesterday_at_elevenpm,
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
-    'retries': 3
+    'retries': 4
 }
 # [END default_args]
 # start_date=days_ago(2)
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['idirect'])
-# @dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 26, 16, 0), tags=['idirect'])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['idirect'])
+@dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 26, 16, 0), tags=['idirect'])
 def puller_idirect_hub5():
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
