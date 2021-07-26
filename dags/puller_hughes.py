@@ -315,7 +315,7 @@ def puller_hughes():
                 response = requests.get(config['url'], verify=config['verify'],timeout=config['timeout'])
             response = response.text
             response = json.loads(response)
-            print("here")
+            print("here",response)
             try:
                 for x in config['route_trunk'].split("-"):
                     try:
@@ -338,7 +338,7 @@ def puller_hughes():
                 print("ERROR IN route_trunk")
             # response = pd.DataFrame(response) 
             # response = response[response.columns].add_prefix('platform_')
-                response = {}
+                response = response
 
         except requests.exceptions.RequestException as e:
             response = {}
