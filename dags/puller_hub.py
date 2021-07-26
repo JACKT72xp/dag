@@ -795,7 +795,7 @@ def puller_idirect_hub5():
     comp = comparate_old_vs_new(platform_data,old_data)
     #OBTENER LOS BOTH EN EL KAFKA
     send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhub','only_platform') 
-    send_qq_new_mongo= send_queque_kafka(comp,'insertmongoarghub','only_platform') 
+    send_qq_new_mongo= send_queque_kafka(comp,'insertmongohub','only_platform') 
     # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
