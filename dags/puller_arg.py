@@ -784,7 +784,7 @@ def puller_idirect_argentina():
     config = config[0]
     db_ = conection["bifrost"]
     coltn_mdb = db_[config["mongo_collection"]]
-    data_mdb = coltn_mdb.find({'platform':2})
+    data_mdb = coltn_mdb.find({'platform':38})
 
 
     key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
@@ -809,7 +809,7 @@ def puller_idirect_argentina():
     send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongoarg','not_exist_mongo') 
   
     secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
-    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongoag','not_exist_mongo_secondary') 
+    send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongoarg','not_exist_mongo_secondary') 
     send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimeparg','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis(config,platform_data)
     end = finish([{"status":True}])
