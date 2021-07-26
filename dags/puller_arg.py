@@ -512,7 +512,10 @@ def puller_idirect_argentina():
         # comparate = pd.DataFrame(json.loads(comparate))
         both = comparate
         # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-        both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+        try:
+            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
