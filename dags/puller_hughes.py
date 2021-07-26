@@ -309,9 +309,13 @@ def puller_hughes():
     @task()
     def extract_platform(config,rs):
         try:
-            response = requests.get(config['url'], auth=HTTPBasicAuth(config['user'],config['password']), verify=config['verify'],timeout=config['timeout'])
+            if config['user']!="":
+                response = requests.get(config['url'], auth=HTTPBasicAuth(config['user'],config['password']), verify=config['verify'],timeout=config['timeout'])
+            else:
+                response = requests.get(config['url'], verify=config['verify'],timeout=config['timeout'])
             response = response.text
             response = json.loads(response)
+            print("here")
             try:
                 for x in config['route_trunk'].split("-"):
                     try:
