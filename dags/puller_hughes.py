@@ -697,13 +697,13 @@ def puller_hughes():
 
 
     key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
-    platform_data = extract_platform(config,response_verify)
     old_data = extract_old(key_process,config,response_verify)
+    platform_data = extract_platform(config,response_verify)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config,response_verify)
     key_process_mongo = key_process
     mongo_data = extract_mongo(data_mdb,key_process_mongo,config,response_verify)
-    [platform_data,old_data] >> comp
+    # [platform_data,old_data] >> comp
     #OBTENER LOS BOTH EN EL KAFKA
     send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhughes','only_platform') 
     send_qq_new_mongo= send_queque_kafka(comp,'insertmongohughes','only_platform') 
