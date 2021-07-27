@@ -247,6 +247,8 @@ def puller_hughes():
         df_old = pd.DataFrame(response)
         df_old = df_old[df_old.columns].add_prefix('old_')
         # df_old = generateConcatKey(df_old,[config['primary_join_cols']['old']])
+        if df_old.empty:
+            return []
         df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
         df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
         if df_old.empty:
