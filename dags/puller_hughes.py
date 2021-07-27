@@ -238,9 +238,11 @@ def puller_hughes():
     # [START extract]
     @task()
     def extract_old(key,config,rs):
-        redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
-        response = redis_cn.get(key)
+
         try:
+            
+            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            response = redis_cn.get(key)
             response = json.loads(response)
         except:
             return []
