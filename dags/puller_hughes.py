@@ -253,7 +253,7 @@ def puller_hughes():
             return []
         df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
         df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
-        if df_old.empty:
+        if df_old is None:
             return []
         return [df_old.to_json(orient='records')]
         # return {'data': df_old.to_json(orient='records'), 'status':200}
