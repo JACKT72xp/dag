@@ -234,6 +234,37 @@ def puller_hughes():
             return {"status":False,"data":response_save_s3}
         return 
 
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_with_kafka(config,data,case,keyname):
+        # df = pd.DataFrame(data)
+        # df.columns = df.columns.str.strip('platform_') 
+        # data = df.to_json(orient="records")
+        try:
+            data = json.dumps(data[keyname])
+        except:
+            data = data[keyname]
+        key = str(config["platform_id"])+"-"+str(config["platform_name"]+"-"+case)
+    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
+    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
+    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
+        try:
+            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn.set(key,data)
+
+            conf = {'bootstrap.servers': "10.233.51.148:9092"}
+            p = Producer(conf)
+            p.produce(case,key)
+            p.flush()
+            
+            return {"status":True,"data":""}
+        except:
+            print("save in s3")
+            response_save_s3 = ""
+            # response_save_s3 = saveInS3(key,data)
+            return {"status":False,"data":response_save_s3}
+        return 
+
             
     # [START extract]
     @task()
@@ -294,6 +325,7 @@ def puller_hughes():
     def send_queque_kafka(data,case,key):
         # print(data)
         # try:
+
         conf = {'bootstrap.servers': "10.233.51.148:9092"}
         p = Producer(conf)
         try:
@@ -713,7 +745,7 @@ def puller_hughes():
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
-    send_qq_insert_vsmysql= send_queque_kafka(primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
+    send_qq_insert_vsmysql= save_in_redis_with_kafka(config,primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
     secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
     send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
