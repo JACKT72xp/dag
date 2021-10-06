@@ -142,7 +142,7 @@ def puller_hughes():
         
     def verifyByGroup(groupid,topics):
 
-        consumer = confluent_kafka.Consumer({'bootstrap.servers': "10.233.51.148:9092",'group.id': groupid})
+        consumer = confluent_kafka.Consumer({'bootstrap.servers': "10.152.183.197:9092",'group.id': groupid})
 
 
         print("%-50s  %9s  %9s" % ("Topic [Partition]", "Committed", "Lag"))
@@ -224,7 +224,7 @@ def puller_hughes():
     # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
     # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         try:
-            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
             redis_cn.set(key,data)
             return {"status":True,"data":""}
         except:
@@ -249,10 +249,10 @@ def puller_hughes():
     # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
     # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         try:
-            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
             redis_cn.set(key,data)
 
-            conf = {'bootstrap.servers': "10.233.51.148:9092"}
+            conf = {'bootstrap.servers': "10.152.183.197:9092"}
             p = Producer(conf)
             p.produce(case,key)
             p.flush()
@@ -272,7 +272,7 @@ def puller_hughes():
 
         try:
             
-            redis_cn = redis.Redis(host= '10.233.1.101',    port= '6379',    password="tmCN3FwkP7")
+            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
             response = redis_cn.get(key)
             response = json.loads(response)
         except:
@@ -316,7 +316,7 @@ def puller_hughes():
     @task()
     def send_queque(data,case):
         print(data)
-        conf = {'bootstrap.servers': "10.233.51.148:9092"}
+        conf = {'bootstrap.servers': "10.152.183.197:9092"}
         p = Producer(conf)
         p.produce(case,data['not_exist_mongo'])
         p.flush()
@@ -326,7 +326,7 @@ def puller_hughes():
         # print(data)
         # try:
 
-        conf = {'bootstrap.servers': "10.233.51.148:9092"}
+        conf = {'bootstrap.servers': "10.152.183.197:9092"}
         p = Producer(conf)
         try:
             p.produce(case,json.dumps(data[key]))
