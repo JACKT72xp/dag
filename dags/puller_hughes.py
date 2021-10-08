@@ -218,6 +218,8 @@ def puller_hughes():
     def save_in_redis_data_old(config,data,key_process):
         df = pd.DataFrame(data)
         df.columns = df.columns.str.strip('platform_') 
+        del df['concat_key_generate']
+        del df['concat_key_generate_secondary']
         data = df.to_json(orient="records")
         # key = str(config["platform_id"])+"-"+str(config["platform_name"])
     #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
