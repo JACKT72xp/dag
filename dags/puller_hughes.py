@@ -539,7 +539,7 @@ def puller_hughes():
         
 
     @task()
-    def comparate_secondary_mysql(df_mysql,comparate):
+    def comparate_secondary_mysql(df_mysql,comparate,old):
         glob_comparate = comparate
         try:
             comparate = pd.DataFrame(comparate['exist_mysql'])
@@ -586,7 +586,7 @@ def puller_hughes():
         # both = comparate[comparate['_merge_']=='both']
     # def comparate_primary_mysql(both,df_mysql,df_plat):
         # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
-        return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql']}
+        return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
     # @task()
@@ -712,7 +712,7 @@ def puller_hughes():
     
     primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
     # send_qq_insert_vsmysql= save_in_redis_with_kafka(config,primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
-    secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql)
+    secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql,comp)
     # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
