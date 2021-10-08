@@ -774,29 +774,20 @@ def puller_hughes():
     save_in_redis_result_equals = save_in_redis_data_api(config,secondary_vs_mysql_equals,key_process+'-equals')
     send_key_redis_to_api_equals = send_key_to_api(key_process+'-equals')
     
-
-
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql(mysql_data,primary_vs_mysql_only_platform,comp)
     save_in_redis_result_only_platform = save_in_redis_data_api(config,secondary_vs_mysql_only_platform,key_process+'-onlyplatform')
     send_key_redis_to_api_only_platform = send_key_to_api(key_process+'-onlyplatform')
-    
-
     # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
-
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
     # send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohughes','not_exist_mongo') 
-  
     # secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
     # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
     # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
-
     end = finish([{"status":True}])
-    secondary_vs_mysql_equals
-    save_in_redis_result_equals >> send_key_redis_to_api_equals 
-    save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform 
-    save_in_redis_end >> end
+    
+    [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,secondary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform] >> save_in_redis_end >> end
 
 
     # [END main_flow]
