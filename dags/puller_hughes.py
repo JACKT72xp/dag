@@ -724,7 +724,7 @@ def puller_hughes():
     save_in_redis_end = save_in_redis_data_api(config,secondary_vs_mysql,key_process+'_api')
     send_key_redis_to_api = send_key_to_api(key_process)
     end = finish([{"status":True}])
-    rs >> secondary_vs_mysql >> save_in_redis_end >> send_key_redis_to_api >> end
+    secondary_vs_mysql >> save_in_redis_end >> send_key_redis_to_api >> end
 
 
     # [END main_flow]
