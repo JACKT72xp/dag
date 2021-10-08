@@ -458,12 +458,12 @@ def puller_hughes():
         if plat.empty:
             plat_send="empty"
         else:
-            plat_send=both.to_json(orient="records")
+            plat_send=plat.to_json(orient="records")
             
         if old.empty:
             old_send="empty"
         else:
-            old_send=both.to_json(orient="records")
+            old_send=old.to_json(orient="records")
         print(both_send)
         print("------both")
         data_platform=df1.to_json(orient="records")
