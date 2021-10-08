@@ -254,19 +254,19 @@ def puller_hughes():
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         response = redis_cn.get('1-hughes')
         response = json.loads(response)
-        print(response,'responseee')
-        print("here0")
         # except:
         #     return []
         df_old = pd.DataFrame(response)
-        print(df_old,'df_olddf_olddf_old')
+        print(df_old.columns,'df_olddf_olddf_old')
         df_old = df_old[df_old.columns].add_prefix('old_')
         # df_old = generateConcatKey(df_old,[config['primary_join_cols']['old']])
         if df_old is None:
             print("here1")
             return []
         df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
+        print(df_old,'111111')
         df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
+        print(df_old,'111222222111')
         if df_old is None:
             print("here2")
             return []
