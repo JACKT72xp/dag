@@ -127,8 +127,6 @@ def puller_hughes():
 
     def generateConcatKeySecondary(df,cols):
         try:
-            print(cols,'collll')
-            print(df.columns,'columnscolumnscolumnscolumns')
             df_stnd_key = df[cols].astype(str) 
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
             df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
@@ -237,7 +235,6 @@ def puller_hughes():
                 response = requests.get(config['url'], verify=config['verify'],timeout=config['timeout'])
             response = response.text
             response = json.loads(response)
-            print("here",response)
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
