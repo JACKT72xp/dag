@@ -520,6 +520,9 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate'])
 
         platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+        if comparate['only_platform']=='empty':
+            return {'exist_mysql':[],'not_exist_mysql':[]}
+
         comparate = pd.DataFrame(json.loads(comparate['only_platform']))
         only_platform = comparate
         only_platform['exist_mysql'] = np.where(only_platform['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
@@ -860,8 +863,7 @@ def puller_hughes():
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
 
     end = finish([{"status":True}])
-    rs >> [old_data , platform_data]
-    [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform  ] >> save_in_redis_end >> end
+    rs >> [old_data , platform_data] >> comp >> mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform  ] >> save_in_redis_end >> end
 
     # [END main_flow]
 
