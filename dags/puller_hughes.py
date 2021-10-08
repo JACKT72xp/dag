@@ -195,13 +195,15 @@ def puller_hughes():
     #     return sum_lag
 
     def generateConcatKeySecondary(df,cols):
-        try:
-            df_stnd_key = df[cols].astype(str) 
-            df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
-            df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
-            return df
-        except:
-            print("ERROR IN COLUMNS")
+        # try:
+        print(cols,'collll')
+        print(df.columns,'columnscolumnscolumnscolumns')
+        df_stnd_key = df[cols].astype(str) 
+        df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
+        df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
+        return df
+        # except:
+            # print("ERROR IN COLUMNS")
             
     def generateConcatKey(df,cols):
         try:
@@ -210,7 +212,7 @@ def puller_hughes():
             df['concat_key_generate'] = df_stnd_key['concat_key_generate']
             return df
         except:
-            print("ERROR IN COLUMNS")
+            print("ERROR IN COLUMNS PRIMARY")
             
             
     @task()
