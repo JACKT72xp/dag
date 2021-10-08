@@ -250,10 +250,11 @@ def puller_hughes():
     def extract_old(key,config):
 
         # try:
-            
+        print("here")
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         response = redis_cn.get(key)
         response = json.loads(response)
+        print("here0")
         # except:
         #     return []
         df_old = pd.DataFrame(response)
@@ -267,6 +268,7 @@ def puller_hughes():
         if df_old is None:
             print("here2")
             return []
+        print("heree 33333")
         return [df_old.to_json(orient='records')]
         # return {'data': df_old.to_json(orient='records'), 'status':200}
     # @task()
