@@ -69,8 +69,8 @@ def puller_hughes():
     # import confluent_kafka
     # import kafka
     # from kafka.errors import KafkaError
-    uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
-    conection = MongoClient(uri)
+    # uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+    # conection = MongoClient(uri)
     # db_ = []
 
     # config = open("config.json","r")
@@ -82,16 +82,16 @@ def puller_hughes():
     config = [
       {
         "route_trunk": "",
-        "url": "http://192.168.36.50/NMSAPI/vsats/status",
+        "url": "http://192.168.36.50:80/NMSAPI/vsats/status",
         "user": "",
         "password": "",
         "timeout": 120,
         "verify": "False",
         "platform_id": 1,
-        "mysql_table": "bifrost_terminal_test",
+        "mysql_table": "bifrost_terminal",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "hughes_test",
+        "mongo_collection": "hughes",
         "primary_join_cols": {
           "mysql": "siteId",
           "mongo": "deviceID",
@@ -724,7 +724,7 @@ def puller_hughes():
     save_in_redis_end = save_in_redis_data_api(config,secondary_vs_mysql,key_process+'_api')
     send_key_redis_to_api = send_key_to_api(key_process)
     end = finish([{"status":True}])
-    secondary_vs_mysql >> save_in_redis_end >> send_key_redis_to_api >> end
+    # secondary_vs_mysql >> save_in_redis_end >> send_key_redis_to_api >> end
 
 
     # [END main_flow]
