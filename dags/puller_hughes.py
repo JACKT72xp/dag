@@ -125,75 +125,6 @@ def puller_hughes():
     # data_mdb = coltn_mdb.find({'platform':config['platform_id']})
 
 
-    """
-    ### TaskFlow API Tutorial Documentation
-    This is a simple ETL data pipeline example which demonstrates the use of
-    the TaskFlow API using three simple tasks for Extract, Transform, and Load.
-    Documentation that goes along with the Airflow TaskFlow API tutorial is
-    located
-    [here](https://airflow.apache.org/docs/apache-airflow/stable/tutorial_taskflow_api.html)
-    """
-    # [END instantiate_dag]
-
-
-    #------------------------------------------------------------------------
-
-
-        
-    # def verifyByGroup(groupid,topics):
-
-    #     consumer = confluent_kafka.Consumer({'bootstrap.servers': "10.152.183.197:9092",'group.id': groupid})
-
-
-    #     print("%-50s  %9s  %9s" % ("Topic [Partition]", "Committed", "Lag"))
-    #     print("=" * 72)
-    #     sum_lag = 0
-    #     sum_msg = 0
-    #     for topic in topics:
-    #         # Get the topic's partitions
-    #         metadata = consumer.list_topics(topic, timeout=10)
-    #         if metadata.topics[topic].error is not None:
-    #             raise confluent_kafka.KafkaException(metadata.topics[topic].error)
-
-    #         # Construct TopicPartition list of partitions to query
-    #         partitions = [confluent_kafka.TopicPartition(topic, p) for p in metadata.topics[topic].partitions]
-
-    #         # Query committed offsets for this group and the given partitions
-    #         committed = consumer.committed(partitions, timeout=10)
-
-    #         for partition in committed:
-    #             # Get the partitions low and high watermark offsets.
-    #             (lo, hi) = consumer.get_watermark_offsets(partition, timeout=10, cached=False)
-
-    #             if partition.offset == confluent_kafka.OFFSET_INVALID:
-    #                 offset = "-"
-    #             else:
-    #                 offset = "%d" % (partition.offset)
-
-    #             if hi < 0:
-    #                 lag = "no hwmark"  # Unlikely
-    #             elif partition.offset < 0:
-    #                 # No committed offset, show total message count as lag.
-    #                 # The actual message count may be lower due to compaction
-    #                 # and record deletions.
-    #                 lag = "%d" % (hi - lo)
-    #             else:
-    #                 lag = "%d" % (hi - partition.offset)
-    #             try:
-    #                 sum_lag += int(lag)
-    #             except:
-    #                 sum_lag += 0
-    #             try:
-    #                 sum_msg += int(offset)
-    #             except:
-    #                 sum_msg += 0
-    #             print("%-50s  %9s  %9s" % (
-    #                 "{} [{}]".format(partition.topic, partition.partition), offset, lag))
-
-
-    #     consumer.close()
-    #     return sum_lag
-
     def generateConcatKeySecondary(df,cols):
         try:
             print(cols,'collll')
@@ -223,10 +154,6 @@ def puller_hughes():
         del df['concat_key_generate']
         del df['concat_key_generate_secondary']
         data = df.to_json(orient="records")
-        # key = str(config["platform_id"])+"-"+str(config["platform_name"])
-    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
-    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
-    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         redis_cn.set(key_process,data)
         return {"status":True,"data":""}
@@ -234,16 +161,10 @@ def puller_hughes():
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_equals_api(config,data,keyname):
-        # df = pd.DataFrame(data)
-        # df.columns = df.columns.str.strip('platform_') 
-        # data = df.to_json(orient="records")
         try:
             data = json.dumps(data)
         except:
             data = data
-    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
-    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
-    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
@@ -251,64 +172,38 @@ def puller_hughes():
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_only_platform_api(config,data,keyname):
-        # df = pd.DataFrame(data)
-        # df.columns = df.columns.str.strip('platform_') 
-        # data = df.to_json(orient="records")
         try:
             data = json.dumps(data)
         except:
             data = data
-    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
-    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
-    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
 
     @task()
-    #------------------------------------------------------------------------
     def save_in_redis_data_only_old_api(config,data,keyname):
-        # df = pd.DataFrame(data)
-        # df.columns = df.columns.str.strip('platform_') 
-        # data = df.to_json(orient="records")
         try:
             data = json.dumps(data)
         except:
             data = data
-    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
-    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
-    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
        
-    # [START extract]
     @task()
     def extract_old(key,config):
-
-        # try:
-        print("here")
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         response = redis_cn.get('1-hughes')
         response = json.loads(response)
-        # except:
-        #     return []
         df_old = pd.DataFrame(response)
         df_old = df_old[df_old.columns].add_prefix('old_')
-        # df_old = generateConcatKey(df_old,[config['primary_join_cols']['old']])
         if df_old is None:
-            print("here1")
             return []
         df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
-        print(df_old,'111111')
         df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
-        print(df_old,'111222222111')
         if df_old is None:
-            print("here2")
             return []
-        print("heree 33333")
         return [df_old.to_json(orient='records')]
-        # return {'data': df_old.to_json(orient='records'), 'status':200}
     # @task()
     # def extract_mongo(data_mongo,key,config,rs):
             
@@ -333,38 +228,6 @@ def puller_hughes():
     #     # return {'data': df_old.to_json(orient='records'), 'status':200}
 
 
-
-    # @task()
-    # def send_queque(data,case):
-    #     print(data)
-    #     conf = {'bootstrap.servers': "10.152.183.197:9092"}
-    #     p = Producer(conf)
-    #     p.produce(case,data['not_exist_mongo'])
-    #     p.flush()
-    #     return [case]
-    # @task()
-    # def send_queque_kafka(data,case,key):
-    #     # print(data)
-    #     # try:
-
-    #     conf = {'bootstrap.servers': "10.152.183.197:9092"}
-    #     p = Producer(conf)
-    #     try:
-    #         p.produce(case,json.dumps(data[key]))
-    #         p.flush()
-    #     except:
-    #         # try:
-    #         p.produce(case,data[key])
-    #         # except:
-    #             # print("error")
-    #         p.flush()
-    #     # except:
-    #         # print("ERROR")
-    #     return [case]
-    #     # return {'data': df_old.to_json(orient='records'), 'status':200}
-
-
-
     @task()
     def extract_platform(config):
         try:
@@ -378,7 +241,6 @@ def puller_hughes():
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
-                # response = generateConcatKey(response,[config['primary_join_cols']['platform']])
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
                 response = response.to_json(orient='records')
@@ -397,51 +259,18 @@ def puller_hughes():
 
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
-                # response = generateConcatKey(response,[config['primary_join_cols']['platform']])
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
                 response = response.to_json(orient='records')
                 response = json.loads(response)
             except:
                 print("ERROR IN route_trunk")
-            # response = pd.DataFrame(response) 
-            # response = response[response.columns].add_prefix('platform_')
                 response = {}
 
         except requests.exceptions.RequestException as e:
             response = {}
             print("ERROR IN GET DATA PLATFORM")
-        # return response.to_json(orient='records')
         return response
-
-
-
-
-    #     coltn_mdb = db_[config['mongo_collection']]
-        
-    #     if config['mongo_limit_time']:
-    #         now_day = datetime.now() 
-    #         day_generate = now_day 
-    #         day_generate = day_generate  - timedelta(minutes=50) 
-    # #         day_generate = day_generate  - timedelta(minutes=config['mongo_limit_time']) 
-    #         data_mongo = coltn_mdb.find({'platform':config['platform_id']})
-    # #         data_mongo = coltn_mdb.find({'timeP':{'$gte':day_generate.strftime("%Y-%m-%d %H:%M:%S")},'platform':config['platform_id']})
-    #     else:
-    #         data_mongo = coltn_mdb.find({'platform':config['platform_id']})
-    #     list_cur = list(data_mongo)
-    #     if len(list_cur)==0:
-    #         return pd.DataFrame()
-    #     json_data = dumps(list_cur, indent = 2)
-    #     df_datamongo = pd.DataFrame(loads(json_data))
-    #     df_datamongo_origin = pd.DataFrame(loads(json_data))
-    #     df_datamongo = df_datamongo[config['mongo_normalization']].apply(pd.Series)
-    #     df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
-    #     del df_datamongo[config['mongo_normalization']]
-    #     df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
-      # return {'data': df_datamongo, 'status':200}
-
-
-
 
     @task()
     def extract_mysql(engine,config):
@@ -456,30 +285,20 @@ def puller_hughes():
         df_mysql_total = df_mysql_total.to_json(orient='records')
         return df_mysql_total
 
-
-
-
-
     @task()
     def comparate_old_vs_new(data_platform,data_old):
         df1 = pd.DataFrame(data_platform)
         if len(data_old)==0:
-            print("here")
             data_platform=df1.to_json(orient="records")
             return {'platform_data':data_platform,'comparation':[],'both':data_platform,'only_platform':[],'only_old':[]}
         else:
             df2 = pd.DataFrame(json.loads(data_old[0]))
-
-            
-        # df1 = pd.DataFrame(df1['concat_key_generate'])
-        # df2 = pd.DataFrame(df2['concat_key_generate'])
         comparation = df1.merge(
             df2,
             on="concat_key_generate",
             indicator="_merge_",
             how='outer'
         )
-        print("------both")
         both = comparation[comparation['_merge_']=='both']
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
@@ -497,11 +316,8 @@ def puller_hughes():
             old_send=[]
         else:
             old_send=old.to_json(orient="records")
-        print(both_send)
-        print("------both")
         data_platform=df1.to_json(orient="records")
         return {'platform_data':data_platform,'comparation':comparation.to_json(orient="records"),'both':both_send,'only_platform':plat_send,'only_old':old_send}
-
 
     @task()
     def comparate_primary_mysql_equals(df_mysql,comparate):
@@ -649,24 +465,14 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
-        # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-
-
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mysql':[],'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
 
-
-
-
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
         not_exist_mysql_s_com = both[both['exist_mysql_secondary']==0]
-        print("exist_")
-        print(exist_mysql_s)
-        print("notexist_")
-        print(not_exist_mysql_s)
         if exist_mysql_s.empty:
             exist_mysql_s = []
         else:
@@ -676,15 +482,10 @@ def puller_hughes():
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
         else:
-            # not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
-        
-        # both = comparate[comparate['_merge_']=='both']
-        # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
-        # return ['ok']
 
 
 
@@ -703,24 +504,14 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
-        # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-
-
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
 
-
-
-
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
         not_exist_mysql_s_com = both[both['exist_mysql_secondary']==0]
-        print("exist_")
-        print(exist_mysql_s)
-        print("notexist_")
-        print(not_exist_mysql_s)
         if exist_mysql_s.empty:
             exist_mysql_s = []
         else:
@@ -730,13 +521,9 @@ def puller_hughes():
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
         else:
-            # not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
-        
-        # both = comparate[comparate['_merge_']=='both']
-        # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
@@ -799,51 +586,16 @@ def puller_hughes():
         # both = df_plat_vs_old['both']
         # return {'both':both.to_json(orient='records'),'left':only_new.to_json(orient='records'),'right':only_old.to_json(orient='records')}
 
-
-    # [END extract]
-
-    # [START start]
     @task()
     def start():
-        """
-        #### Load task
-        A simple Load task which takes in the result of the Transform task and
-        instead of saving it to end user review, just prints it out.
-        """
-        print("START")
         return ['ok']
-    # [END start ]
-
-    # [END]
-
-
-    # [START finish]
     @task()
     def send_key_to_api(key_process):
-        """
-        #### Load task
-        A simple Load task which takes in the result of the Transform task and
-        instead of saving it to end user review, just prints it out.
-        """
-        print(key_process,'KEY SEND')
         return ['ok']
-    # [END finish]
-
-
-
-
-
-    # [START finish]
     @task()
     def finish(response_verify):
-        """
-        #### Load task
-        A simple Load task which takes in the result of the Transform task and
-        instead of saving it to end user review, just prints it out.
-        """
-        print("FINISH")
         return ['ok']
-    # [END finish]
+
 
     # [START main_flow]
     rs = start()
@@ -853,13 +605,6 @@ def puller_hughes():
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
     # mongo_data = extract_mongo(data_mdb,key_process_mongo,config)
-    # [platform_data,old_data] >> comp
-    #OBTENER LOS BOTH EN EL KAFKA
-    # send_qq_new_mysql= send_queque_kafka(comp,'insertmysqlhughes','only_platform') 
-    # send_qq_new_mongo= send_queque_kafka(comp,'insertmongohughes','only_platform') 
-    # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
-    # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
-    
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_process+'-equals')
@@ -879,14 +624,9 @@ def puller_hughes():
 
 
 
-    # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
-    # send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohughes','not_exist_mongo') 
-  
     # secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
-    # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
-    # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
 
     end = finish([{"status":True}])
@@ -898,5 +638,3 @@ def puller_hughes():
 # [START dag_invocation]
 puller_hughes = puller_hughes()
 # [END dag_invocation]
-
-# [END tutorial]
