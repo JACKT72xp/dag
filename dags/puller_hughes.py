@@ -324,7 +324,7 @@ def puller_hughes():
 
 
     @task()
-    def extract_platform(config,rs):
+    def extract_platform(config):
         try:
             if config['user']!="":
                 response = requests.get(config['url'], auth=HTTPBasicAuth(config['user'],config['password']), verify=config['verify'],timeout=config['timeout'])
@@ -402,7 +402,7 @@ def puller_hughes():
 
 
     @task()
-    def extract_mysql(engine,config,rs):
+    def extract_mysql(engine,config):
         query = "SELECT  * FROM "+str(config['mysql_table'])+" where status = 1 and  platformId = "+str(config['platform_id'])
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
