@@ -540,6 +540,7 @@ def puller_hughes():
 
     @task()
     def comparate_secondary_mysql(df_mysql,comparate):
+        glob_comparate = comparate
         try:
             comparate = pd.DataFrame(comparate['exist_mysql'])
         except:
@@ -585,7 +586,7 @@ def puller_hughes():
         # both = comparate[comparate['_merge_']=='both']
     # def comparate_primary_mysql(both,df_mysql,df_plat):
         # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
-        return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':comparate['not_exist_mysql']}
+        return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql']}
         # return ['ok']
 
     # @task()
