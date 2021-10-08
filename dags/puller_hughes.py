@@ -264,6 +264,23 @@ def puller_hughes():
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
+
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_data_only_old_api(config,data,keyname):
+        # df = pd.DataFrame(data)
+        # df.columns = df.columns.str.strip('platform_') 
+        # data = df.to_json(orient="records")
+        try:
+            data = json.dumps(data)
+        except:
+            data = data
+    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
+    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
+    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn.set(keyname,data)
+        return {"status":True,"data":""}
        
     # [START extract]
     @task()
@@ -551,6 +568,10 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate'])
 
         platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+
+        if comparate['only_old']==[]:
+            return {'update_mysql':[],'insert_mysql':[],'delete_mysql':[]}
+
         comparate = pd.DataFrame(json.loads(comparate['only_old']))
         only_old = comparate
         only_old['exist_mysql'] = np.where(only_old['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
@@ -569,7 +590,7 @@ def puller_hughes():
         else:
             not_exist_mysql_p=json.loads(not_exist_mysql_p.to_json(orient="records"))
         
-        return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p}
+        return {'delete_mysql':exist_mysql_p}
     
 
 
@@ -852,6 +873,12 @@ def puller_hughes():
     send_key_redis_to_api_only_platform = send_key_to_api(key_process+'-onlyplatform')
     
 
+    primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
+    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_process+'-onlyold')
+    send_key_redis_to_api_only_old = send_key_to_api(key_process+'-onlyold')
+
+
+
     # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
@@ -863,7 +890,7 @@ def puller_hughes():
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
 
     end = finish([{"status":True}])
-    rs >> [platform_data,old_data] >> comp >> mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform  ] >> save_in_redis_end >> end
+    rs >> [platform_data,old_data] >> comp >> mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> send_key_redis_to_api_only_old ] >> save_in_redis_end >> end
 
     # [END main_flow]
 
