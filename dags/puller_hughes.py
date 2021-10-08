@@ -634,7 +634,7 @@ def puller_hughes():
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
-            return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
+            return {'update_mysql':[],'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
 
 
 
