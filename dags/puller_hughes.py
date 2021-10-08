@@ -722,10 +722,10 @@ def puller_hughes():
     # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
     # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
-    save_in_redis_end = save_in_redis_data_api(config,secondary_vs_mysql,key_process+'_api')
+    save_in_redis_result = save_in_redis_data_api(config,secondary_vs_mysql,key_process+'_api')
     send_key_redis_to_api = send_key_to_api(key_process)
     end = finish([{"status":True}])
-    secondary_vs_mysql >> save_in_redis_end >> send_key_redis_to_api >> end
+    secondary_vs_mysql >> save_in_redis_end >> save_in_redis_result >> send_key_redis_to_api >> end
 
 
     # [END main_flow]
