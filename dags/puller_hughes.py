@@ -252,7 +252,8 @@ def puller_hughes():
         # try:
         print("here")
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        response = redis_cn.get(key)
+        response = redis_cn.get('1-hughes')
+        print(response,'responseee')
         response = json.loads(response)
         print("here0")
         # except:
