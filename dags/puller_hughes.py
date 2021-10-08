@@ -471,7 +471,7 @@ def puller_hughes():
 
 
     @task()
-    def comparate_primary_mysql(df_mysql,comparate):
+    def comparate_primary_mysql_equals(df_mysql,comparate):
         df_mysql = pd.DataFrame(json.loads(df_mysql))
         if df_mysql.empty:
             df_mysql = pd.DataFrame(columns=['concat_key_generate'])
@@ -479,12 +479,10 @@ def puller_hughes():
         platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
         comparate = pd.DataFrame(json.loads(comparate['both']))
         both = comparate
-    # def comparate_primary_mysql(both,df_mysql,df_plat):
         both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
         exist_mysql_p = both[both['exist_mysql']==1]
         not_exist_mysql_p = both[both['exist_mysql']==0]
         exist_mysql_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mysql_p['concat_key_generate']))]
-        # not_exist_mysql_p = platform_data[platform_data['concat_key_generate'].isin(list(not_exist_mysql_p['concat_key_generate']))]
 
         if exist_mysql_p.empty:
             exist_mysql_p=[]
@@ -494,13 +492,68 @@ def puller_hughes():
 
         if not_exist_mysql_p.empty:
             not_exist_mysql_p=[]
-            # data_mysql_not_exist = []
         else:
             not_exist_mysql_p=json.loads(not_exist_mysql_p.to_json(orient="records"))
-            # data_mysql_not_exist = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_p['concat_key_generate']))]
+        
+        return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p}
+
+    @task()
+    def comparate_primary_mysql_only_platform(df_mysql,comparate):
+        df_mysql = pd.DataFrame(json.loads(df_mysql))
+        if df_mysql.empty:
+            df_mysql = pd.DataFrame(columns=['concat_key_generate'])
+
+        platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+        comparate = pd.DataFrame(json.loads(comparate['only_platform']))
+        only_platform = comparate
+        only_platform['exist_mysql'] = np.where(only_platform['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
+        exist_mysql_p = only_platform[only_platform['exist_mysql']==1]
+        not_exist_mysql_p = only_platform[only_platform['exist_mysql']==0]
+        exist_mysql_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mysql_p['concat_key_generate']))]
+
+        if exist_mysql_p.empty:
+            exist_mysql_p=[]
+        else:
+            exist_mysql_p=json.loads(exist_mysql_p.to_json(orient="records"))
+
+
+        if not_exist_mysql_p.empty:
+            not_exist_mysql_p=[]
+        else:
+            not_exist_mysql_p=json.loads(not_exist_mysql_p.to_json(orient="records"))
+        
+        return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p}
+
+
+    @task()
+    def comparate_primary_mysql_only_data_old(df_mysql,comparate):
+        df_mysql = pd.DataFrame(json.loads(df_mysql))
+        if df_mysql.empty:
+            df_mysql = pd.DataFrame(columns=['concat_key_generate'])
+
+        platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+        comparate = pd.DataFrame(json.loads(comparate['only_old']))
+        only_old = comparate
+        only_old['exist_mysql'] = np.where(only_old['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
+        exist_mysql_p = only_old[only_old['exist_mysql']==1]
+        not_exist_mysql_p = only_old[only_old['exist_mysql']==0]
+        exist_mysql_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mysql_p['concat_key_generate']))]
+
+        if exist_mysql_p.empty:
+            exist_mysql_p=[]
+        else:
+            exist_mysql_p=json.loads(exist_mysql_p.to_json(orient="records"))
+
+
+        if not_exist_mysql_p.empty:
+            not_exist_mysql_p=[]
+        else:
+            not_exist_mysql_p=json.loads(not_exist_mysql_p.to_json(orient="records"))
         
         return {'exist_mysql':exist_mysql_p,'not_exist_mysql':not_exist_mysql_p}
     
+
+
     # @task()
     # def comparate_primary_mongo(df_mongo,comparate):
     #     df_mongo = pd.DataFrame(df_mongo)
@@ -514,7 +567,6 @@ def puller_hughes():
 
     #     if df_mongo.empty:
     #         df_mongo = pd.DataFrame(columns=['concat_key_generate'])
-    # # def comparate_primary_mysql(both,df_mysql,df_plat):
     #     both['exist_mongo'] = np.where(both['concat_key_generate'].isin(list(df_mongo['concat_key_generate'])) , 1, 0)
     #     exist_mongo_p = both[both['exist_mongo']==1]
     #     not_exist_mongo_p = both[both['exist_mongo']==0]
@@ -593,7 +645,6 @@ def puller_hughes():
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
         
         # both = comparate[comparate['_merge_']=='both']
-    # def comparate_primary_mysql(both,df_mysql,df_plat):
         # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
@@ -639,7 +690,6 @@ def puller_hughes():
     #     print("notexist_")
     #     print(not_exist_mongo_s)
     #     # both = comparate[comparate['_merge_']=='both']
-    # # def comparate_primary_mysql(both,df_mysql,df_plat):
     #     # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
     #     return {'exist_mongo_secondary':exist_mongo_s,'not_exist_mongo_secondary':not_exist_mongo_s}
     #     # return ['ok']
@@ -719,9 +769,19 @@ def puller_hughes():
     # send_qq_delete_mysql= send_queque_kafka(comp,'deletemysql','only_old') 
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
-    primary_vs_mysql = comparate_primary_mysql(mysql_data,comp)
-    # send_qq_insert_vsmysql= save_in_redis_with_kafka(config,primary_vs_mysql,'insertmysqlhughes','not_exist_mysql') 
-    secondary_vs_mysql = comparate_secondary_mysql(mysql_data,primary_vs_mysql,comp)
+    primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
+    secondary_vs_mysql_equals = comparate_secondary_mysql(mysql_data,primary_vs_mysql_equals,comp)
+    save_in_redis_result_equals = save_in_redis_data_api(config,secondary_vs_mysql_equals,key_process+'-equals')
+    send_key_redis_to_api_equals = send_key_to_api(key_process+'-equals')
+    
+
+
+    primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
+    secondary_vs_mysql_only_platform = comparate_secondary_mysql(mysql_data,primary_vs_mysql_only_platform,comp)
+    save_in_redis_result_only_platform = save_in_redis_data_api(config,secondary_vs_mysql_only_platform,key_process+'-onlyplatform')
+    send_key_redis_to_api_only_platform = send_key_to_api(key_process+'-onlyplatform')
+    
+
     # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
 
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
@@ -731,10 +791,12 @@ def puller_hughes():
     # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
     # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
-    save_in_redis_result = save_in_redis_data_api(config,secondary_vs_mysql,key_process+'_api')
-    send_key_redis_to_api = send_key_to_api(key_process)
+
     end = finish([{"status":True}])
-    secondary_vs_mysql >> save_in_redis_end >> save_in_redis_result >> send_key_redis_to_api >> end
+    secondary_vs_mysql_equals
+    save_in_redis_result_equals >> send_key_redis_to_api_equals 
+    save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform 
+    save_in_redis_end >> end
 
 
     # [END main_flow]
