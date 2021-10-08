@@ -249,21 +249,23 @@ def puller_hughes():
     @task()
     def extract_old(key,config):
 
-        try:
+        # try:
             
-            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-            response = redis_cn.get(key)
-            response = json.loads(response)
-        except:
-            return []
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        response = redis_cn.get(key)
+        response = json.loads(response)
+        # except:
+        #     return []
         df_old = pd.DataFrame(response)
         df_old = df_old[df_old.columns].add_prefix('old_')
         # df_old = generateConcatKey(df_old,[config['primary_join_cols']['old']])
         if df_old is None:
+            print("here1")
             return []
         df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
         df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
         if df_old is None:
+            print("here2")
             return []
         return [df_old.to_json(orient='records')]
         # return {'data': df_old.to_json(orient='records'), 'status':200}
