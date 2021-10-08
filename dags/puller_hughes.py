@@ -233,7 +233,7 @@ def puller_hughes():
 
     @task()
     #------------------------------------------------------------------------
-    def save_in_redis_data_api(config,data,keyname):
+    def save_in_redis_data_equals_api(config,data,keyname):
         # df = pd.DataFrame(data)
         # df.columns = df.columns.str.strip('platform_') 
         # data = df.to_json(orient="records")
@@ -248,7 +248,23 @@ def puller_hughes():
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
 
-            
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_data_only_platform_api(config,data,keyname):
+        # df = pd.DataFrame(data)
+        # df.columns = df.columns.str.strip('platform_') 
+        # data = df.to_json(orient="records")
+        try:
+            data = json.dumps(data)
+        except:
+            data = data
+    #ACA SE TIENE QUE HACER UNA FUNCIÓN QUE VALIDE LA CONEXIÓN CON REDIS, ACTUALMENTE
+    # TIENE UN TRYCATCH QUE CAPTURA TODO TIPO DE ERROR CON EL REDIS, PERO DEBERÍA
+    # VER UNA ESPECIFICAMENTE PARA VALIDAR CONEXIÓN
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn.set(keyname,data)
+        return {"status":True,"data":""}
+       
     # [START extract]
     @task()
     def extract_old(key,config):
@@ -594,13 +610,64 @@ def puller_hughes():
     #     return {'exist_mongo':exist_mongo_p,'not_exist_mongo':not_exist_mongo_p}
 
 
+        
+
+    @task()
+    def comparate_secondary_mysql_only_platform(df_mysql,comparate,old):
+        glob_comparate = comparate
+        try:
+            comparate = pd.DataFrame(comparate['exist_mysql'])
+        except:
+            comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
+        df_mysql = pd.DataFrame(json.loads(df_mysql))
+        
+        if df_mysql.empty:
+            df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
+
+        both = comparate
+        # exist_mysql_p = comparate[comparate['exist_mysql']==1]
+
+
+        try:
+            both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
+
+
+
+
+        exist_mysql_s = both[both['exist_mysql_secondary']==1]
+        not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
+        not_exist_mysql_s_com = both[both['exist_mysql_secondary']==0]
+        print("exist_")
+        print(exist_mysql_s)
+        print("notexist_")
+        print(not_exist_mysql_s)
+        if exist_mysql_s.empty:
+            exist_mysql_s = []
+        else:
+            exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
+
+        if not_exist_mysql_s.empty:
+            not_exist_mysql_s = []
+            data_mysql_not_exist_s = []
+        else:
+            # not_exist_mysql_s = json.loads(not_exist_mysql_s.to_json(orient="records"))
+            data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
+            data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
+            data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
+        
+        # both = comparate[comparate['_merge_']=='both']
+        # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
+        return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
+        # return ['ok']
 
 
 
         
 
     @task()
-    def comparate_secondary_mysql(df_mysql,comparate,old):
+    def comparate_secondary_mysql_equals(df_mysql,comparate,old):
         glob_comparate = comparate
         try:
             comparate = pd.DataFrame(comparate['exist_mysql'])
@@ -770,24 +837,32 @@ def puller_hughes():
     # send_qq_delete_mongo= send_queque_kafka(comp,'deletemongo','only_old') 
     
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
-    secondary_vs_mysql_equals = comparate_secondary_mysql(mysql_data,primary_vs_mysql_equals,comp)
-    save_in_redis_result_equals = save_in_redis_data_api(config,secondary_vs_mysql_equals,key_process+'-equals')
+    secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
+    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_process+'-equals')
     send_key_redis_to_api_equals = send_key_to_api(key_process+'-equals')
     
+
+
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
-    secondary_vs_mysql_only_platform = comparate_secondary_mysql(mysql_data,primary_vs_mysql_only_platform,comp)
-    save_in_redis_result_only_platform = save_in_redis_data_api(config,secondary_vs_mysql_only_platform,key_process+'-onlyplatform')
+    secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
+    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_process+'-onlyplatform')
     send_key_redis_to_api_only_platform = send_key_to_api(key_process+'-onlyplatform')
+    
+
     # send_qq= send_queque_kafka(secondary_vs_mysql,'updatemysqlhughes','not_exist_mysql_secondary') 
+
     # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
     # send_qq_insert_vsmongo= send_queque_kafka(primary_vs_mongo,'insertmongohughes','not_exist_mongo') 
+  
     # secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
     # send_qq_mongo= send_queque_kafka(secondary_vs_mongo,'updatemongohughes','not_exist_mongo_secondary') 
     # send_qq_mongo_timep= send_queque_kafka(secondary_vs_mongo,'updatemongotimephughes','exist_mongo_secondary') 
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
+
     end = finish([{"status":True}])
-    
-    [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,secondary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform] >> save_in_redis_end >> end
+    primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals 
+    secondary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform 
+    save_in_redis_end >> end
 
 
     # [END main_flow]
