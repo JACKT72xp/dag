@@ -205,7 +205,7 @@ def puller_hughes():
         return [df_old.to_json(orient='records')]
 
     @task()
-    def extract_mongo(data_mongo,config,rs):
+    def extract_mongo(data_mongo,config):
             
         list_cur = list(data_mongo)
         if len(list_cur)==0:
