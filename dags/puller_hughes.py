@@ -727,8 +727,7 @@ def puller_hughes():
 
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
-    secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_equals,comp)
-
+    secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
 
