@@ -123,7 +123,7 @@ def puller_hughes():
     config = config[0]
     db_ = conection["bifrost"]
     coltn_mdb = db_[config["mongo_collection"]]
-    data_mdb = coltn_mdb.find({'platform':config['platform_id']})
+    data_mdb = coltn_mdb.find({})
 
 
     def generateConcatKeySecondary(df,cols):
