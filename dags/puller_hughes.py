@@ -92,7 +92,7 @@ def puller_hughes():
         "mysql_table": "bifrost_terminal",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "hughes",
+        "mongo_collection": "htest",
         "primary_join_cols": {
           "mysql": "siteId",
           "mongo": "deviceID",
@@ -121,6 +121,9 @@ def puller_hughes():
       }
     ]
     config = config[0]
+    db_ = conection["bifrost"]
+    coltn_mdb = db_[config["mongo_collection"]]
+    data_mdb = coltn_mdb.find({'platform':config['platform_id']})
 
 
     def generateConcatKeySecondary(df,cols):
@@ -202,10 +205,8 @@ def puller_hughes():
         return [df_old.to_json(orient='records')]
 
     @task()
-    def extract_mongo(config):
-        db_ = conection["bifrost"]
-        coltn_mdb = db_[config["mongo_collection"]]
-        data_mdb = coltn_mdb.find({})
+    def extract_mongo(data_mongo,config):
+            
         list_cur = list(data_mongo)
         if len(list_cur)==0:
             return []
@@ -604,7 +605,7 @@ def puller_hughes():
     platform_data = extract_platform(config)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
-    mongo_data = extract_mongo(config)
+    mongo_data = extract_mongo(data_mdb,config)
 
     ##COMPARATE MYSQL
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
