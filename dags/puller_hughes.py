@@ -179,6 +179,8 @@ def puller_hughes():
         redis_cn.set(keyname,data)
         return {"status":True,"data":""}
 
+
+
     @task()
     def save_in_redis_data_only_old_api(config,data,keyname):
         try:
@@ -203,6 +205,45 @@ def puller_hughes():
         if df_old is None:
             return []
         return [df_old.to_json(orient='records')]
+
+
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_data_only_platform_mongo_api(config,data,keyname):
+        try:
+            data = json.dumps(data)
+        except:
+            data = data
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn.set(keyname,data)
+        return {"status":True,"data":""}
+
+
+
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_data_only_old_mongo_api(config,data,keyname):
+        try:
+            data = json.dumps(data)
+        except:
+            data = data
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn.set(keyname,data)
+        return {"status":True,"data":""}
+
+
+
+    @task()
+    #------------------------------------------------------------------------
+    def save_in_redis_data_equals_mongo_api(config,data,keyname):
+        try:
+            data = json.dumps(data)
+        except:
+            data = data
+        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn.set(keyname,data)
+        return {"status":True,"data":""}
+
 
     @task()
     def extract_mongo(data_mongo,config):
@@ -700,36 +741,50 @@ def puller_hughes():
     mongo_data = extract_mongo(data_mdb,config)
 
     ##COMPARATE MYSQL
+    time_send = datetime.now()
+    formatted_date = time_send.strftime('%Y-%m-%d-%H-%M-%S')
+
+    key_redis_mysql = key_process+'-mysql-'+formatted_date
+    key_redis_mongo = key_process+'-mongo-'+formatted_date
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
-    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_process+'-equals')
-    send_key_redis_to_api_equals = send_key_to_api(key_process+'-equals')
+    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
+    send_key_redis_to_api_equals = send_key_to_api(key_redis_mysql)
     
 
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
-    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_process+'-onlyplatform')
-    send_key_redis_to_api_only_platform = send_key_to_api(key_process+'-onlyplatform')
+    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
+    send_key_redis_to_api_only_platform = send_key_to_api(key_redis_mysql)
     
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
-    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_process+'-onlyold')
-    send_key_redis_to_api_only_old = send_key_to_api(key_process+'-onlyold')
+    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
+    send_key_redis_to_api_only_old = send_key_to_api(key_redis_mysql)
+
+
+
 
 
 
     ##COMPARATE MONGODB
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
-
+    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo)
+    send_key_redis_to_api_equals_mongo = send_key_to_api(key_redis_mongo)
 
 
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,save_in_redis_result_mongo_only_platform,key_redis_mongo)
+    send_key_redis_to_api_only_platform_mongo = send_key_to_api(key_redis_mongo)
+
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,save_in_redis_result_mongo_only_platform,key_redis_mongo)
+    send_key_redis_to_api_only_old_mongo = send_key_to_api(key_redis_mongo)
 
 
 
@@ -737,10 +792,7 @@ def puller_hughes():
 
     end = finish([{"status":True}])
     rs >> [platform_data,old_data] >> comp >> mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> send_key_redis_to_api_only_old ] >> save_in_redis_end >> end
-    rs >> [platform_data,old_data] >> comp >> mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> primary_vs_mongo_only_data_old]
-    # rs >> [platform_data,old_data] >> comp  >> [mongo_data,mysql_data] >>[primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> send_key_redis_to_api_only_old ] >> save_in_redis_end >> end
-    # mongo_data >> primary_vs_mongo_equals >> secondary_vs_mongo_equals
-
+    rs >> [platform_data,old_data] >> comp >> mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> send_key_redis_to_api_equals_mongo >> primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> send_key_redis_to_api_only_platform_mongo  >> primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> send_key_redis_to_api_only_old_mongo]  >> save_in_redis_end >> end
     # [END main_flow]
 
 
