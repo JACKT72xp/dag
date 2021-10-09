@@ -540,7 +540,12 @@ def puller_hughes():
     def comparate_primary_mongo_only_old(df_mongo,comparate):
         df_mongo = pd.DataFrame(df_mongo)
         platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+
+        if comparate['only_old']==[]:
+            return {'update_mongo':[],'insert_mongo':[],'delete_mongo':[]}
+
         only_old = pd.DataFrame(json.loads(comparate['only_old']))
+
 
         try:
             comparate = pd.DataFrame(json.loads(comparate['only_old']))
