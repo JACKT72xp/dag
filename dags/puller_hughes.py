@@ -735,6 +735,7 @@ def puller_hughes():
         return ['ok']
     @task()
     def send_key_to_api(key_process):
+        print(send_key_to_api,'send_key_to_apisend_key_to_apisend_key_to_apisend_key_to_apisend_key_to_api')
         return ['ok']
     @task()
     def finish(response_verify):
