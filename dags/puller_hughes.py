@@ -89,7 +89,7 @@ def puller_hughes():
         "timeout": 120,
         "verify": "False",
         "platform_id": 1,
-        "mysql_table": "bifrost_terminal",
+        "mysql_table": "bifrost_terminal_full",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
         "mongo_collection": "htest",
