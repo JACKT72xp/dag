@@ -205,7 +205,7 @@ def puller_hughes():
         return [df_old.to_json(orient='records')]
 
     @task()
-    def extract_mongo(data_mongo,key,config,rs):
+    def extract_mongo(data_mongo,config,rs):
             
         list_cur = list(data_mongo)
         if len(list_cur)==0:
@@ -605,7 +605,7 @@ def puller_hughes():
     platform_data = extract_platform(config)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
-    mongo_data = extract_mongo(data_mdb,key_process_mongo,config)
+    mongo_data = extract_mongo(data_mdb,config)
 
     ##COMPARATE MYSQL
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
