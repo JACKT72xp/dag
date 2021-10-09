@@ -494,6 +494,11 @@ def puller_hughes():
     def comparate_primary_mongo_only_platform(df_mongo,comparate):
         df_mongo = pd.DataFrame(df_mongo)
         platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+        
+        if comparate['only_platform']=='empty':
+            return {'exist_mongo':[],'not_exist_mongo':[]}
+
+
         only_platform = pd.DataFrame(json.loads(comparate['only_platform']))
         try:
             comparate = pd.DataFrame(json.loads(comparate['only_platform']))
