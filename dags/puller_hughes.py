@@ -778,12 +778,12 @@ def puller_hughes():
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,save_in_redis_result_mongo_only_platform,key_redis_mongo)
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
     send_key_redis_to_api_only_platform_mongo = send_key_to_api(key_redis_mongo)
 
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,save_in_redis_result_mongo_only_platform,key_redis_mongo)
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
     send_key_redis_to_api_only_old_mongo = send_key_to_api(key_redis_mongo)
 
 
