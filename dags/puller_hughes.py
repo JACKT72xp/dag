@@ -759,20 +759,20 @@ def puller_hughes():
     key_redis_mongo = key_process+'-mongo-'+formatted_date
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
-    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
-    send_key_redis_to_api_equals = send_key_to_api(key_redis_mysql)
+    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql+'-equals')
+    send_key_redis_to_api_equals = send_key_to_api(key_redis_mysql+'-equals')
     
 
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
-    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
-    send_key_redis_to_api_only_platform = send_key_to_api(key_redis_mysql)
+    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql+'-platform')
+    send_key_redis_to_api_only_platform = send_key_to_api(key_redis_mysql+'-platform')
     
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
-    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
-    send_key_redis_to_api_only_old = send_key_to_api(key_redis_mysql)
+    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql+'-old')
+    send_key_redis_to_api_only_old = send_key_to_api(key_redis_mysql+'-old')
 
 
 
@@ -782,20 +782,20 @@ def puller_hughes():
     ##COMPARATE MONGODB
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
-    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo)
-    send_key_redis_to_api_equals_mongo = send_key_to_api(key_redis_mongo)
+    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
+    send_key_redis_to_api_equals_mongo = send_key_to_api(key_redis_mongo+'-equals')
 
 
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
-    send_key_redis_to_api_only_platform_mongo = send_key_to_api(key_redis_mongo)
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo+'-platform')
+    send_key_redis_to_api_only_platform_mongo = send_key_to_api(key_redis_mongo+'-platform')
 
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
-    send_key_redis_to_api_only_old_mongo = send_key_to_api(key_redis_mongo)
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo+'-old')
+    send_key_redis_to_api_only_old_mongo = send_key_to_api(key_redis_mongo+'-old')
 
 
 
