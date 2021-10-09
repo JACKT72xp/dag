@@ -69,8 +69,9 @@ def puller_hughes():
     # import confluent_kafka
     # import kafka
     # from kafka.errors import KafkaError
-    # uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
-    # conection = MongoClient(uri)
+    uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+
+    conection = MongoClient(uri)
     # db_ = []
 
     # config = open("config.json","r")
@@ -120,9 +121,9 @@ def puller_hughes():
       }
     ]
     config = config[0]
-    # db_ = conection["bifrost"]
-    # coltn_mdb = db_[config["mongo_collection"]]
-    # data_mdb = coltn_mdb.find({'platform':config['platform_id']})
+    db_ = conection["bifrost"]
+    coltn_mdb = db_[config["mongo_collection"]]
+    data_mdb = coltn_mdb.find({'platform':config['platform_id']})
 
 
     def generateConcatKeySecondary(df,cols):
@@ -202,28 +203,29 @@ def puller_hughes():
         if df_old is None:
             return []
         return [df_old.to_json(orient='records')]
-    # @task()
-    # def extract_mongo(data_mongo,key,config,rs):
-            
-    #     list_cur = list(data_mongo)
-    #     if len(list_cur)==0:
-    #         return []
 
-    #     json_data = dumps(list_cur, indent = 2)
-    #     df_datamongo = pd.DataFrame(loads(json_data))
-    #     df_datamongo_origin = pd.DataFrame(loads(json_data))
-    #     # df_datamongo_origin = pd.DataFrame(json_data)
-    #     # print(df_datamongo)
-    #     # df_datamongo_origin = pd.DataFrame(json.loads(list_cur))
-    #     df_datamongo = df_datamongo[config['mongo_normalization']].apply(pd.Series)
-    #     df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
-    #     del df_datamongo[config['mongo_normalization']]
-    #     del df_datamongo['_id']
-    #     df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
-    #     df_datamongo = generateConcatKey(df_datamongo,['mongo_'+config['primary_join_cols']['mongo']])
-    #     df_datamongo = generateConcatKeySecondary(df_datamongo,config['secondary_join_cols']['mongo'])
-    #     return json.loads(df_datamongo.to_json(orient='records'))
-    #     # return {'data': df_old.to_json(orient='records'), 'status':200}
+    @task()
+    def extract_mongo(data_mongo,key,config,rs):
+            
+        list_cur = list(data_mongo)
+        if len(list_cur)==0:
+            return []
+
+        json_data = dumps(list_cur, indent = 2)
+        df_datamongo = pd.DataFrame(loads(json_data))
+        df_datamongo_origin = pd.DataFrame(loads(json_data))
+        # df_datamongo_origin = pd.DataFrame(json_data)
+        # print(df_datamongo)
+        # df_datamongo_origin = pd.DataFrame(json.loads(list_cur))
+        df_datamongo = df_datamongo[config['mongo_normalization']].apply(pd.Series)
+        df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
+        del df_datamongo[config['mongo_normalization']]
+        del df_datamongo['_id']
+        df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
+        df_datamongo = generateConcatKey(df_datamongo,['mongo_'+config['primary_join_cols']['mongo']])
+        df_datamongo = generateConcatKeySecondary(df_datamongo,config['secondary_join_cols']['mongo'])
+        return json.loads(df_datamongo.to_json(orient='records'))
+        # return {'data': df_old.to_json(orient='records'), 'status':200}
 
 
     @task()
@@ -407,44 +409,44 @@ def puller_hughes():
     
 
 
-    # @task()
-    # def comparate_primary_mongo(df_mongo,comparate):
-    #     df_mongo = pd.DataFrame(df_mongo)
-    #     platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
-    #     both = pd.DataFrame(json.loads(comparate['both']))
-    #     try:
-    #         comparate = pd.DataFrame(json.loads(comparate['both']))
-    #     except:
-    #         comparate = pd.DataFrame(columns=['concat_key_generate'])
-    #     both = comparate
+    @task()
+    def comparate_primary_mongo_equals(df_mongo,comparate):
+        df_mongo = pd.DataFrame(df_mongo)
+        platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
+        both = pd.DataFrame(json.loads(comparate['both']))
+        try:
+            comparate = pd.DataFrame(json.loads(comparate['both']))
+        except:
+            comparate = pd.DataFrame(columns=['concat_key_generate'])
+        both = comparate
 
-    #     if df_mongo.empty:
-    #         df_mongo = pd.DataFrame(columns=['concat_key_generate'])
-    #     both['exist_mongo'] = np.where(both['concat_key_generate'].isin(list(df_mongo['concat_key_generate'])) , 1, 0)
-    #     exist_mongo_p = both[both['exist_mongo']==1]
-    #     not_exist_mongo_p = both[both['exist_mongo']==0]
-    #     exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mongo_p['concat_key_generate']))]
-    #     not_exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(not_exist_mongo_p['concat_key_generate']))]
+        if df_mongo.empty:
+            df_mongo = pd.DataFrame(columns=['concat_key_generate'])
+        both['exist_mongo'] = np.where(both['concat_key_generate'].isin(list(df_mongo['concat_key_generate'])) , 1, 0)
+        exist_mongo_p = both[both['exist_mongo']==1]
+        not_exist_mongo_p = both[both['exist_mongo']==0]
+        exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mongo_p['concat_key_generate']))]
+        not_exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(not_exist_mongo_p['concat_key_generate']))]
 
-    #     if exist_mongo_p.empty:
-    #         exist_mongo_p=[]
-    #     else:
-    #         exist_mongo_p=json.loads(exist_mongo_p.to_json(orient="records"))
+        if exist_mongo_p.empty:
+            exist_mongo_p=[]
+        else:
+            exist_mongo_p=json.loads(exist_mongo_p.to_json(orient="records"))
 
     
-    #     if not_exist_mongo_p.empty:
-    #         not_exist_mongo_p=[]
-    #     else:
-    #         not_exist_mongo_p=json.loads(not_exist_mongo_p.to_json(orient="records"))
-    #         # not_exist_mongo_p=not_exist_mongo_p.to_json(orient="records")
+        if not_exist_mongo_p.empty:
+            not_exist_mongo_p=[]
+        else:
+            not_exist_mongo_p=json.loads(not_exist_mongo_p.to_json(orient="records"))
+            # not_exist_mongo_p=not_exist_mongo_p.to_json(orient="records")
 
-    #     print("exist_mongo_p")
-    #     print(exist_mongo_p)
-    #     print("not_exist_mongo_p")
-    #     print(not_exist_mongo_p)
+        print("exist_mongo_p")
+        print(exist_mongo_p)
+        print("not_exist_mongo_p")
+        print(not_exist_mongo_p)
 
-    #     # return exist_mongo_p.to_json(orient="records")
-    #     return {'exist_mongo':exist_mongo_p,'not_exist_mongo':not_exist_mongo_p}
+        # return exist_mongo_p.to_json(orient="records")
+        return {'exist_mongo':exist_mongo_p,'not_exist_mongo':not_exist_mongo_p}
 
 
         
@@ -524,50 +526,52 @@ def puller_hughes():
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
-    # @task()
-    # def comparate_secondary_mongo(df_mongo,comparate):
-    #     df_mongo = pd.DataFrame(df_mongo)
-    #     print("comparatecomparatecomparatecomparatecomparate")
-    #     print(comparate)
+    @task()
+    def comparate_secondary_mongo_equals(df_mongo,comparate,old):
+        glob_comparate = comparate
+        df_mongo = pd.DataFrame(df_mongo)
+        print("comparatecomparatecomparatecomparatecomparate")
+        print(comparate)
         
-    #     if df_mongo.empty:
-    #         df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary'])
+        if df_mongo.empty:
+            df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
-    #     try:
-    #         comparate = pd.DataFrame(comparate['exist_mongo'])
-    #     except:
-    #         comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
-    #     # comparate = pd.DataFrame(json.loads(comparate))
-    #     both = comparate
-    #     # exist_mysql_p = comparate[comparate['exist_mysql']==1]
-    #     try:
-    #         both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
-    #     except:
-    #         return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
+        try:
+            comparate = pd.DataFrame(comparate['exist_mongo'])
+        except:
+            comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
+        # comparate = pd.DataFrame(json.loads(comparate))
+        both = comparate
+        # exist_mysql_p = comparate[comparate['exist_mysql']==1]
+        try:
+            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+        except:
+            return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
 
-    #     exist_mongo_s = both[both['exist_mongo_secondary']==1]
-    #     not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
+        exist_mongo_s = both[both['exist_mongo_secondary']==1]
+        not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
 
-    #     if exist_mongo_s.empty:
-    #         exist_mongo_s = []
-    #     else:
-    #         exist_mongo_s = json.loads(exist_mongo_s.to_json(orient="records"))
+        if exist_mongo_s.empty:
+            exist_mongo_s = []
+        else:
+            exist_mongo_s = json.loads(exist_mongo_s.to_json(orient="records"))
 
-    #     if not_exist_mongo_s.empty:
-    #         not_exist_mongo_s = []
-    #     else:
-    #         not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
+        if not_exist_mongo_s.empty:
+            not_exist_mongo_s = []
+        else:
+            not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
 
 
 
-    #     print("exist_")
-    #     print(exist_mongo_s)
-    #     print("notexist_")
-    #     print(not_exist_mongo_s)
-    #     # both = comparate[comparate['_merge_']=='both']
-    #     # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
-    #     return {'exist_mongo_secondary':exist_mongo_s,'not_exist_mongo_secondary':not_exist_mongo_s}
-    #     # return ['ok']
+        print("exist_")
+        print(exist_mongo_s)
+        print("notexist_")
+        print(not_exist_mongo_s)
+        # both = comparate[comparate['_merge_']=='both']
+        # both['exist_mysql'] = np.where(both['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
+        return {'update_mongo':not_exist_mongo_s,'insert_mongo':glob_comparate['not_exist_mongo'],'delete_mongo':old['only_old']}
+        # return {'exist_mongo_secondary':exist_mongo_s,'not_exist_mongo_secondary':not_exist_mongo_s}
+        # return ['ok']
 
 
 
@@ -601,7 +605,9 @@ def puller_hughes():
     platform_data = extract_platform(config)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
-    # mongo_data = extract_mongo(data_mdb,key_process_mongo,config)
+    mongo_data = extract_mongo(data_mdb,key_process_mongo,config)
+
+    ##COMPARATE MYSQL
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_process+'-equals')
@@ -621,13 +627,18 @@ def puller_hughes():
 
 
 
+    ##COMPARATE MONGODB
+    primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
+    secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
 
-    # primary_vs_mongo = comparate_primary_mongo(mongo_data,comp)
-    # secondary_vs_mongo = comparate_secondary_mongo(mongo_data,primary_vs_mongo)
+
+
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
 
     end = finish([{"status":True}])
-    rs >> [platform_data,old_data] >> comp >> mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> send_key_redis_to_api_only_old ] >> save_in_redis_end >> end
+    rs >> [platform_data,old_data] >> comp
+    mongo_data >> primary_vs_mongo_equals >> secondary_vs_mongo_equals
+    mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> send_key_redis_to_api_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> send_key_redis_to_api_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> send_key_redis_to_api_only_old ] >> save_in_redis_end >> end
 
     # [END main_flow]
 
