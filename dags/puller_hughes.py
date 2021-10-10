@@ -278,7 +278,7 @@ def puller_hughes():
         db_ = conection["bifrost"]
         coltn_mdb = db_['puller_history']
         time_send = datetime.now()
-        formatted_date = time_send.strftime('%Y-%m-%d-%H-%M-%S')
+        formatted_date = time_send.strftime('%Y-%m-%d %H:%M:%S')
         data_mdb = coltn_mdb.replace_one({'platform':'hughes'},{'platform':'hughes','date':formatted_date},upsert=True)
         return ['OK']
 
