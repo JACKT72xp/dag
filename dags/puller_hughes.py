@@ -269,6 +269,20 @@ def puller_hughes():
         # return {'data': df_old.to_json(orient='records'), 'status':200}
 
 
+
+
+    @task()
+    def save_in_history_mongo(data_mongo,config):
+        uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+        conection = MongoClient(uri)
+        db_ = conection["bifrost"]
+        coltn_mdb = db_['puller_history']
+        time_send = datetime.now()
+        formatted_date = time_send.strftime('%Y-%m-%d-%H-%M-%S')
+        data_mdb = coltn_mdb.replace_one({'platform':'hughes'},{'platform':'hughes','date':formatted_date},upsert=True)
+        return ['OK']
+
+
     @task()
     def extract_platform(config):
         try:
