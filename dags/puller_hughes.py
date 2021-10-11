@@ -696,9 +696,11 @@ def puller_hughes():
         try:
             comparate_not_exist = pd.DataFrame(glob_comparate['not_exist_mongo'])
             comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_', '') 
-            del comparate_not_exist['concat_key_generate']
+            # del comparate_not_exist['concat_key_generate']
+            print(comparate_not_exist,'comparate_not_existcomparate_not_existcomparate_not_existcomparate_not_exist')
 
             comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
+            print(comparate_not_exist,'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             # del comparate_not_exist['concat_key_generate_secondary']
         except:
             comparate_not_exist = []
@@ -726,10 +728,10 @@ def puller_hughes():
             del not_exist_mongo_s['concat_key_generate_secondary']
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
 
-        try:
-            comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
-        except:
-            comparate_not_exist = []
+        # try:
+            # comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
+        # except:
+            # comparate_not_exist = []
         return {'update_mongo':not_exist_mongo_s,'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
 
 
