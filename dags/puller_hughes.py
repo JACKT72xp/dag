@@ -799,7 +799,7 @@ def puller_hughes():
         }
         response = requests.request("POST", url, headers=headers, data=payload)
         print(response.text)
-        return [key_process
+        return [key_process]
     @task()
     def finish(response_verify):
         return ['ok']
