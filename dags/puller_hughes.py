@@ -518,9 +518,10 @@ def puller_hughes():
             return {'exist_mongo':[],'not_exist_mongo':[]}
 
 
-        only_platform = pd.DataFrame(json.loads(comparate['only_platform']))
+        # only_platform = pd.DataFrame(json.loads(comparate['only_platform']))
         try:
             comparate = pd.DataFrame(json.loads(comparate['only_platform']))
+            print(comparate,'comparatecomparatecomparatecomparate')
         except:
             comparate = pd.DataFrame(columns=['concat_key_generate'])
         only_platform = comparate
