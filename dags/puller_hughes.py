@@ -417,9 +417,9 @@ def puller_hughes():
         try:
             comparate = pd.DataFrame(json.loads(comparate['only_platform']))
         except:
-            try:
-                comparate = pd.DataFrame(comparate['only_platform'])
-            except:
+            # try:
+                # comparate = pd.DataFrame(comparate['only_platform'])
+            # except:
                 comparate = pd.DataFrame(columns=['concat_key_generate'])
         only_platform = comparate
         only_platform['exist_mysql'] = np.where(only_platform['concat_key_generate'].isin(list(df_mysql['concat_key_generate'])) , 1, 0)
