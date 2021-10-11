@@ -477,6 +477,8 @@ def puller_hughes():
 
         if df_mongo.empty:
             df_mongo = pd.DataFrame(columns=['concat_key_generate'])
+
+
         both['exist_mongo'] = np.where(both['concat_key_generate'].isin(list(df_mongo['concat_key_generate'])) , 1, 0)
         exist_mongo_p = both[both['exist_mongo']==1]
         not_exist_mongo_p = both[both['exist_mongo']==0]
@@ -677,6 +679,20 @@ def puller_hughes():
             comparate = pd.DataFrame(comparate['exist_mongo'])
         except:
             comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
+
+
+    
+        try:
+            comparate_not_exist = pd.DataFrame(glob_comparate['not_exist_mongo'])
+            comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_', '') 
+            del comparate_not_exist['concat_key_generate']
+            # del comparate_not_exist['concat_key_generate_secondary']
+
+
+        except:
+            comparate_not_exist = pd.DataFrame(columns=['concat_key_generate_secondary'])
+
+
         both = comparate
         try:
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
@@ -694,9 +710,16 @@ def puller_hughes():
         if not_exist_mongo_s.empty:
             not_exist_mongo_s = []
         else:
+            not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
+            del not_exist_mongo_s['concat_key_generate']
+            del not_exist_mongo_s['concat_key_generate_secondary']
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
 
-        return {'update_mongo':not_exist_mongo_s,'insert_mongo':glob_comparate['not_exist_mongo'],'delete_mongo':old['only_old']}
+        try:
+            comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
+        except:
+            comparate_not_exist = []
+        return {'update_mongo':not_exist_mongo_s,'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
 
 
     @task()
