@@ -738,7 +738,7 @@ def puller_hughes():
         try:
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
-            return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
+            return {'update_mongo':[],'insert_mongo':glob_comparate['not_exist_mongo'],'delete_mongo':old['only_old']}
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
