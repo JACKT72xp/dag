@@ -409,9 +409,10 @@ def puller_hughes():
         if df_mysql.empty:
             df_mysql = pd.DataFrame(columns=['concat_key_generate'])
 
-        platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
         if comparate['only_platform']=='empty':
             return {'exist_mysql':[],'not_exist_mysql':[]}
+
+        platform_data = pd.DataFrame(json.loads(comparate['platform_data']))
 
         comparate = pd.DataFrame(json.loads(comparate['only_platform']))
         only_platform = comparate
@@ -701,7 +702,7 @@ def puller_hughes():
         try:
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
-            return {'exist_mongo_secondary':[],'not_exist_mongo_secondary':[]}
+            return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
