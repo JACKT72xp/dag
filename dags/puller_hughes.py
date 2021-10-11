@@ -92,7 +92,7 @@ def puller_hughes():
         "mysql_table": "bifrost_terminal_full",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "htest",
+        "mongo_collection": "htestjherran",
         "primary_join_cols": {
           "mysql": "siteId",
           "mongo": "deviceID",
