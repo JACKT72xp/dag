@@ -772,7 +772,21 @@ def puller_hughes():
         return ['ok']
     @task()
     def send_key_to_api(key_process):
-        print(send_key_to_api,'send_key_to_apisend_key_to_apisend_key_to_apisend_key_to_apisend_key_to_api')
+
+
+
+        
+        url = "https://kong.bifrost.pe/function/api-puller-mongo"
+
+        payload = json.dumps({
+        "key": key_process
+        })
+        headers = {
+        'Authorization': 'Bearer ZDRzNlhBNkdDM3dKTVNudWdOVUpVcjJNUlhVVndCTVM2ODE1cmYwSTVKY3FMZXo5RElYNTVkYW9sc3Na60ac27c31fa29',
+        'Content-Type': 'application/json'
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        print(response.text)
         return ['ok']
     @task()
     def finish(response_verify):
