@@ -691,11 +691,11 @@ def puller_hughes():
             comparate_not_exist = pd.DataFrame(glob_comparate['not_exist_mongo'])
             comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_', '') 
             del comparate_not_exist['concat_key_generate']
+
+            comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
             # del comparate_not_exist['concat_key_generate_secondary']
-
-
         except:
-            comparate_not_exist = pd.DataFrame(columns=['concat_key_generate_secondary'])
+            comparate_not_exist = []
 
 
         both = comparate
