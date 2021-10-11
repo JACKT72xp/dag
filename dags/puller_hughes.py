@@ -154,7 +154,7 @@ def puller_hughes():
         del df['concat_key_generate_secondary']
         data = df.to_json(orient="records")
         redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(key_process,data)
+        redis_cn.set('1-hughes',data)
         return {"status":True,"data":""}
 
     @task()
@@ -193,18 +193,21 @@ def puller_hughes():
        
     @task()
     def extract_old(key,config):
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        response = redis_cn.get('1-hughes')
-        response = json.loads(response)
-        df_old = pd.DataFrame(response)
-        df_old = df_old[df_old.columns].add_prefix('old_')
-        if df_old is None:
+        try:
+            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+            response = redis_cn.get('1-hughes')
+            response = json.loads(response)
+            df_old = pd.DataFrame(response)
+            df_old = df_old[df_old.columns].add_prefix('old_')
+            if df_old is None:
+                return []
+            df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
+            df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
+            if df_old is None:
+                return []
+            return [df_old.to_json(orient='records')]
+        except:
             return []
-        df_old = generateConcatKey(df_old,['old_'+config['primary_join_cols']['old']])
-        df_old = generateConcatKeySecondary(df_old,config['secondary_join_cols']['old'])
-        if df_old is None:
-            return []
-        return [df_old.to_json(orient='records')]
 
 
     @task()
