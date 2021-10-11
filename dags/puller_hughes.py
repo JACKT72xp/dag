@@ -816,7 +816,7 @@ def puller_hughes():
 
     ##COMPARATE MYSQL
     time_send = datetime.now()
-    formatted_date = time_send.strftime('%Y-%m-%d-%H-%M-%S')
+    formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
 
     key_redis_mysql = key_process+'-mysql-'+formatted_date
     key_redis_mongo = key_process+'-mongo-'+formatted_date
