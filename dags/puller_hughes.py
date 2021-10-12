@@ -248,7 +248,7 @@ def puller_hughes():
     @task()
     def extract_mongo(config):
         coltn_mdb = db_[config["mongo_collection"]]
-        data_mdb = coltn_mdb.find({'platform':config['platform_id']})
+        data_mdb = coltn_mdb.find({})
         list_cur = list(data_mdb)
         if len(list_cur)==0:
             return []
