@@ -785,23 +785,41 @@ def puller_hughes():
         return ['ok']
     @task()
     def send_key_to_api_mysql_puller(key_process):
-        return ['ok']
+        try:
+            url = "https://kong.bifrost.pe/function/api-puller-mysql"
 
+            payload = json.dumps({
+            "key": key_process
+            })
+            headers = {
+            'Authorization': 'Bearer ZDRzNlhBNkdDM3dKTVNudWdOVUpVcjJNUlhVVndCTVM2ODE1cmYwSTVKY3FMZXo5RElYNTVkYW9sc3Na60ac27c31fa29',
+            'Content-Type': 'application/json'
+            }
+            response = requests.request("POST", url, headers=headers, data=payload)
+            print(response.text)
+            return [key_process]
+        except Exception as e:
+            return [e]
+            
     @task()
     def send_key_to_api_mongo_puller(key_process):
-        
-        url = "https://kong.bifrost.pe/function/api-puller-mongo"
+        try:
+            
+            url = "https://kong.bifrost.pe/function/api-puller-mongo"
 
-        payload = json.dumps({
-        "key": key_process
-        })
-        headers = {
-        'Authorization': 'Bearer ZDRzNlhBNkdDM3dKTVNudWdOVUpVcjJNUlhVVndCTVM2ODE1cmYwSTVKY3FMZXo5RElYNTVkYW9sc3Na60ac27c31fa29',
-        'Content-Type': 'application/json'
-        }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        print(response.text)
-        return [key_process]
+            payload = json.dumps({
+            "key": key_process
+            })
+            headers = {
+            'Authorization': 'Bearer ZDRzNlhBNkdDM3dKTVNudWdOVUpVcjJNUlhVVndCTVM2ODE1cmYwSTVKY3FMZXo5RElYNTVkYW9sc3Na60ac27c31fa29',
+            'Content-Type': 'application/json'
+            }
+            response = requests.request("POST", url, headers=headers, data=payload)
+            print(response.text)
+            return [key_process]
+        except Exception as e:
+            return [e]
+
     @task()
     def finish(response_verify):
         return ['ok']
