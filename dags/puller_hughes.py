@@ -122,6 +122,9 @@ def puller_hughes():
     ]
     config = config[0]
     db_ = conection["bifrost"]
+    coltn_mdb = db_[config["mongo_collection"]]
+    data_mdb = coltn_mdb.find({})
+
 
     def generateConcatKeySecondary(df,cols):
         try:
@@ -246,10 +249,9 @@ def puller_hughes():
 
 
     @task()
-    def extract_mongo(config):
-        coltn_mdb = db_[config["mongo_collection"]]
-        data_mdb = coltn_mdb.find({})
-        list_cur = list(data_mdb)
+    def extract_mongo(data_mongo,config):
+            
+        list_cur = list(data_mongo)
         if len(list_cur)==0:
             return []
 
@@ -812,7 +814,7 @@ def puller_hughes():
     platform_data = extract_platform(config)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
-    mongo_data = extract_mongo(config)
+    mongo_data = extract_mongo(data_mdb,config)
 
     ##COMPARATE MYSQL
     time_send = datetime.now()
