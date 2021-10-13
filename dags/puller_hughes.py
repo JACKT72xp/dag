@@ -63,8 +63,8 @@ default_args = {
 # start_date=days_ago(2)
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
-# @dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 26, 16, 0), tags=['hughes'])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
+@dag(default_args=default_args, schedule_interval='*/10 * * * *', start_date=datetime(2021, 10, 14, 12, 0), tags=['hughes'])
 def puller_hughes():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
