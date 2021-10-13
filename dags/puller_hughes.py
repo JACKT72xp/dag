@@ -35,7 +35,7 @@ from sqlalchemy import create_engine,text
 import numpy as np
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 
-conection = MongoClient(uri)
+conection = MongoClient(uri,connect=False)
 db_ = conection["bifrost"]
 
 coltn_mdb = db_['hughes_test']
