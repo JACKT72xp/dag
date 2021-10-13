@@ -33,6 +33,13 @@ from functools import reduce
 from datetime import datetime,timedelta
 from sqlalchemy import create_engine,text
 import numpy as np
+uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+
+conection = MongoClient(uri)
+db_ = conection["bifrost"]
+
+
+
 # import confluent_kafka
 # from confluent_kafka import Producer
 # subprocess.check_call([sys.executable, "-m", "pip", "install", "bson"])
@@ -64,14 +71,14 @@ default_args = {
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
 # @dag(default_args=default_args, schedule_interval='*/30 * * * *', start_date=datetime(2021, 7, 26, 16, 0), tags=['hughes'])
 def puller_hughes():
+    
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
     # import confluent_kafka
     # import kafka
     # from kafka.errors import KafkaError
-    uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 
-    conection = MongoClient(uri)
+
     # db_ = []
 
     # config = open("config.json","r")
@@ -121,10 +128,8 @@ def puller_hughes():
       }
     ]
     config = config[0]
-    db_ = conection["bifrost"]
     coltn_mdb = db_[config["mongo_collection"]]
     data_mdb = coltn_mdb.find({})
-
 
     def generateConcatKeySecondary(df,cols):
         try:
