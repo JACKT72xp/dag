@@ -129,7 +129,6 @@ def puller_hughes():
       }
     ]
     config = config[0]
-    data_mdb = coltn_mdb.find({})
 
     def generateConcatKeySecondary(df,cols):
         try:
@@ -254,9 +253,9 @@ def puller_hughes():
 
 
     @task()
-    def extract_mongo(data_mongo,config):
-            
-        list_cur = list(data_mongo)
+    def extract_mongo(config):
+        data_mdb = coltn_mdb.find({})
+        list_cur = list(data_mdb)
         if len(list_cur)==0:
             return []
 
@@ -287,7 +286,7 @@ def puller_hughes():
         coltn_mdb = db_['puller_history']
         time_send = datetime.now()
         formatted_date = time_send.strftime('%Y-%m-%d %H:%M:%S')
-        data_mdb = coltn_mdb.replace_one({'platform':'hughes'},{'platform':'hughes','date':formatted_date},upsert=True)
+        coltn_mdb.replace_one({'platform':'hughes'},{'platform':'hughes','date':formatted_date},upsert=True)
         return ['OK']
 
 
@@ -837,7 +836,7 @@ def puller_hughes():
     platform_data = extract_platform(config)
     comp = comparate_old_vs_new(platform_data,old_data)
     mysql_data = extract_mysql(engine,config)
-    mongo_data = extract_mongo(data_mdb,config)
+    mongo_data = extract_mongo(config)
 
     ##COMPARATE MYSQL
     time_send = datetime.now()
