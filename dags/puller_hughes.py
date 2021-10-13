@@ -27,18 +27,12 @@ from pandas.io.json import json_normalize
 # subprocess.check_call([sys.executable, "-m", "pip3", "install", "confluent_kafka"])
 # subprocess.check_call([sys.executable, "-m", "pip", "install", "kafka"])
 # import pymongo
-from pymongo import MongoClient
 from bson.json_util import dumps,loads
 from functools import reduce
 from datetime import datetime,timedelta
 from sqlalchemy import create_engine,text
 import numpy as np
-uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 
-conection = MongoClient(uri,connect=False)
-db_ = conection["bifrost"]
-
-coltn_mdb = db_['hughes_test']
 
 
 # import confluent_kafka
@@ -254,6 +248,12 @@ def puller_hughes():
 
     @task()
     def extract_mongo(config):
+
+        from pymongo import MongoClient
+        uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+        conection = MongoClient(uri,connect=False)
+        db_ = conection["bifrost"]
+        coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find({})
         list_cur = list(data_mdb)
         if len(list_cur)==0:
@@ -283,6 +283,11 @@ def puller_hughes():
         # uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
         # conection = MongoClient(uri)
         # db_ = conection["bifrost"]
+
+        from pymongo import MongoClient
+        uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+        conection = MongoClient(uri,connect=False)
+        db_ = conection["bifrost"]
         coltn_mdb = db_['puller_history']
         time_send = datetime.now()
         formatted_date = time_send.strftime('%Y-%m-%d %H:%M:%S')
