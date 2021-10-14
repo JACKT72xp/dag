@@ -260,8 +260,8 @@ def puller_hughes():
             return []
 
         # json_data = dumps(list_cur, indent = 2)
-        df_datamongo = pd.DataFrame(coltn_mdb)
-        df_datamongo_origin = pd.DataFrame(coltn_mdb)
+        df_datamongo = pd.DataFrame(data_mdb)
+        df_datamongo_origin = pd.DataFrame(data_mdb)
         # json_data = dumps(list_cur, indent = 2)
         # df_datamongo = pd.DataFrame(loads(json_data))
         # df_datamongo_origin = pd.DataFrame(
