@@ -152,6 +152,7 @@ def puller_hughes():
             
     @task()
     def valid_exist_puller_runing():
+        key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
         df = pd.read_sql_query(query, engine)
         data = json.loads(df.to_json(orient="records"))
@@ -879,6 +880,7 @@ def puller_hughes():
     valid_puller_runing = valid_exist_puller_runing()
     if valid_puller_runing is None:
         end = finish([{"status":True}])
+        exit
         return 'ok'
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
