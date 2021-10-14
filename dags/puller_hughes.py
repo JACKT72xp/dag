@@ -152,7 +152,7 @@ def puller_hughes():
             print("ERROR IN COLUMNS PRIMARY")
             
     @task()
-    def valid_exist_puller_runing():
+    def valid_exist_puller_runing(self):
         key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
         df = pd.read_sql_query(query, engine)
@@ -160,6 +160,7 @@ def puller_hughes():
         if len(data)==0:
             key_redis = True
         else:
+            self.state='failed'
             key_redis = False
 
         return key_redis
@@ -880,7 +881,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    print(valid_puller_runing)
+    print(valid_puller_runing,'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
     if valid_puller_runing is None:
         end = finish([{"status":True}])
         print(valid_puller_runing.items)
