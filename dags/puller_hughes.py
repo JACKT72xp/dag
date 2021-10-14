@@ -209,7 +209,7 @@ def puller_hughes():
         return {"status":True,"data":""}
        
     @task()
-    def extract_old(key,config):
+    def extract_old(key,config,valid_puller_runing):
         try:
             redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
             response = redis_cn.get('1-hughes')
@@ -266,7 +266,7 @@ def puller_hughes():
 
 
     @task()
-    def extract_mongo(config):
+    def extract_mongo(config,valid_puller_runing):
 
         from pymongo import MongoClient
         uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
@@ -318,7 +318,7 @@ def puller_hughes():
 
 
     @task()
-    def extract_platform(config):
+    def extract_platform(config,valid_puller_runing):
         try:
             if config['user']!="":
                 response = requests.get(config['url'], auth=HTTPBasicAuth(config['user'],config['password']), verify=config['verify'],timeout=config['timeout'])
@@ -361,7 +361,7 @@ def puller_hughes():
         return response
 
     @task()
-    def extract_mysql(engine,config):
+    def extract_mysql(engine,config,valid_puller_runing):
         query = "SELECT  * FROM "+str(config['mysql_table'])+" where status = 1 and  platformId = "+str(config['platform_id'])
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
@@ -876,11 +876,11 @@ def puller_hughes():
         return 'ok'
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
-        old_data = extract_old(key_process,config)
-        platform_data = extract_platform(config)
+        old_data = extract_old(key_process,config,valid_puller_runing)
+        platform_data = extract_platform(config,valid_puller_runing)
         comp = comparate_old_vs_new(platform_data,old_data)
-        mysql_data = extract_mysql(engine,config)
-        mongo_data = extract_mongo(config)
+        mysql_data = extract_mysql(engine,config,valid_puller_runing)
+        mongo_data = extract_mongo(config,valid_puller_runing)
 
         ##COMPARATE MYSQL
         time_send = datetime.now()
