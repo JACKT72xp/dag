@@ -880,8 +880,9 @@ def puller_hughes():
 
 
     # [START main_flow]
-    valid_puller_runing = valid_exist_puller_runing()
 
+    valid_puller_runing = valid_exist_puller_runing()
+    end = finish()
     checkTask = BranchPythonOperator(
     task_id='valid_puller_runing',
     python_callable=valid_exist_puller_runing, #Registered method
