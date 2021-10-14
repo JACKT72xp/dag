@@ -152,8 +152,8 @@ def puller_hughes():
             return df
         except:
             print("ERROR IN COLUMNS PRIMARY")
-    @task()
-    def valid_exist_puller_runing(**kwargs):
+    # @task()
+    def valid_exist_puller_runing():
         key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
         df = pd.read_sql_query(query, engine)
@@ -880,15 +880,15 @@ def puller_hughes():
 
     # [START main_flow]
     rs = start()
-    valid_puller_runing = valid_exist_puller_runing()
+    # valid_puller_runing = valid_exist_puller_runing()
 
     checkTask = BranchPythonOperator(
     task_id='valid_puller_runing',
-    python_callable=valid_puller_runing, #Registered method
+    python_callable=valid_exist_puller_runing, #Registered method
     provide_context=True,
     # dag=dag
     )
-
+    valid_puller_runing =None
     # print(valid_puller_runing,'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
     # if valid_puller_runing is None:
         # end = finish([{"status":True}])
