@@ -161,7 +161,7 @@ def puller_hughes():
             key_redis = 1
         else:
             key_redis = 0
-        return key_redis
+        return [key_redis]
 
 
     @task()
@@ -879,7 +879,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing ==0:
+    if valid_puller_runing[0] ==0:
         # end = finish([{"status":True}])
         rs.set_upstream('finish')
     else:
