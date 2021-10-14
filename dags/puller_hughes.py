@@ -152,7 +152,7 @@ def puller_hughes():
             return df
         except:
             print("ERROR IN COLUMNS PRIMARY")
-    @task()
+    # @task()
     def valid_exist_puller_runing(**kwargs):
         key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
