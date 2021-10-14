@@ -150,7 +150,18 @@ def puller_hughes():
         except:
             print("ERROR IN COLUMNS PRIMARY")
             
-            
+    @task()
+    def valid_exist_puller_runing():
+        query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
+        df = pd.read_sql_query(query, engine)
+        data = json.loads(df.to_json(orient="records"))
+        if len(data)==0:
+            key_redis = True
+        else:
+            key_redis = False
+        return key_redis
+
+
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_old(config,data,key_process):
@@ -858,69 +869,74 @@ def puller_hughes():
 
     # [START main_flow]
     rs = start()
-    key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
-    old_data = extract_old(key_process,config)
-    platform_data = extract_platform(config)
-    comp = comparate_old_vs_new(platform_data,old_data)
-    mysql_data = extract_mysql(engine,config)
-    mongo_data = extract_mongo(config)
+    valid_puller_runing = valid_exist_puller_runing()
+    if valid_puller_runing:
+        end = finish([{"status":True}])
+        rs >> valid_puller_runing >> end
+    else:
+        key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
+        old_data = extract_old(key_process,config)
+        platform_data = extract_platform(config)
+        comp = comparate_old_vs_new(platform_data,old_data)
+        mysql_data = extract_mysql(engine,config)
+        mongo_data = extract_mongo(config)
 
-    ##COMPARATE MYSQL
-    time_send = datetime.now()
-    formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
+        ##COMPARATE MYSQL
+        time_send = datetime.now()
+        formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
 
-    key_redis_mysql = key_process+'-mysql-'+formatted_date
-    key_redis_mongo = key_process+'-mongo-'+formatted_date
-    primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
-    secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
-    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql+'-equals')
-    
-    
-    save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
-    
-
-
-    primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
-    secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
-    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql+'-platform')
-    save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
-    
-
-    primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
-    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql+'-old')
-    save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
+        key_redis_mysql = key_process+'-mysql-'+formatted_date
+        key_redis_mongo = key_process+'-mongo-'+formatted_date
+        primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
+        secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
+        save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql+'-equals')
+        
+        
+        save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
+        
 
 
+        primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
+        secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
+        save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql+'-platform')
+        save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
+        
 
-
-
-
-    ##COMPARATE MONGODB
-    primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
-    secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
-    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-equals','mongo')
+        primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
+        save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql+'-old')
+        save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
 
 
 
-    primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
-    secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo+'-platform')
-    save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
-
-
-    primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo+'-old')
-    save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-old','mongo')
 
 
 
-    save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
-    save_in_history_mongo_puller = save_in_history_mongo(config)
-    end = finish([{"status":True}])
+        ##COMPARATE MONGODB
+        primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
+        secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
+        save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
+        save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-equals','mongo')
 
-    rs >> [platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> save_key_in_history_puller_cron_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
-    rs >> [platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
+
+
+        primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
+        secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
+        save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo+'-platform')
+        save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
+
+
+        primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
+        save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo+'-old')
+        save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-old','mongo')
+
+
+
+        save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
+        save_in_history_mongo_puller = save_in_history_mongo(config)
+        end = finish([{"status":True}])
+
+        rs >> valid_puller_runing >> [platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> save_key_in_history_puller_cron_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
+        rs >>  valid_puller_runing >> [platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
     # [END main_flow]
 
 
