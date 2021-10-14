@@ -870,9 +870,9 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing:
+    if valid_puller_runing==False:
         end = finish([{"status":True}])
-        rs >> valid_puller_runing >> end
+        # rs >> valid_puller_runing >> end
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
         old_data = extract_old(key_process,config)
