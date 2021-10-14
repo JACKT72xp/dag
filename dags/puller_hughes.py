@@ -259,9 +259,14 @@ def puller_hughes():
         if len(list_cur)==0:
             return []
 
-        json_data = dumps(list_cur, indent = 2)
-        df_datamongo = pd.DataFrame(loads(json_data))
-        df_datamongo_origin = pd.DataFrame(loads(json_data))
+        # json_data = dumps(list_cur, indent = 2)
+        df_datamongo = pd.DataFrame(coltn_mdb)
+        df_datamongo_origin = pd.DataFrame(coltn_mdb)
+        # json_data = dumps(list_cur, indent = 2)
+        # df_datamongo = pd.DataFrame(loads(json_data))
+        # df_datamongo_origin = pd.DataFrame(
+
+
         # df_datamongo_origin = pd.DataFrame(json_data)
         # print(df_datamongo)
         # df_datamongo_origin = pd.DataFrame(json.loads(list_cur))
