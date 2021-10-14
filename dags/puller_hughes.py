@@ -161,7 +161,7 @@ def puller_hughes():
         if len(data)==0:
             key_redis = 'end'
         else:
-            key_redis = '[platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> save_key_in_history_puller_cron_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end'
+            key_redis = ['platform_data','old_data']
 
         return key_redis
 
