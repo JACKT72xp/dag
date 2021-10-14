@@ -151,17 +151,16 @@ def puller_hughes():
         except:
             print("ERROR IN COLUMNS PRIMARY")
             
-    # @task()
     def valid_exist_puller_runing():
-        key_redis = "0"
+        key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
         df = pd.read_sql_query(query, engine)
         data = json.loads(df.to_json(orient="records"))
         if len(data)==0:
-            key_redis = "1"
+            key_redis = 1
         else:
-            key_redis = "0"
-        return [key_redis]
+            key_redis = None
+        return key_redis
 
 
     @task()
@@ -879,10 +878,10 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing[0] =='0':
-        end = finish([{"status":True}])
+    if valid_puller_runing ==None:
         # end = finish([{"status":True}])
-        rs.set_upstream(end)
+        rs >> valid_puller_runing >> end
+        # rs.set_upstream(end)
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
         old_data = extract_old(key_process,config,valid_puller_runing)
