@@ -254,7 +254,7 @@ def puller_hughes():
         conection = MongoClient(uri,connect=False)
         db_ = conection["bifrost"]
         coltn_mdb = db_['hughes_test']
-        data_mdb = coltn_mdb.find({})
+        data_mdb = coltn_mdb.find({},{"siteId":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
         # list_cur = list(data_mdb)
         if data_mdb.count(True)==0:
             return []
