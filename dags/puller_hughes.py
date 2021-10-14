@@ -63,8 +63,8 @@ default_args = {
 # start_date=days_ago(2)
 
 # [START instantiate_dag]
-# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
-@dag(default_args=default_args, schedule_interval='*/10 * * * *', start_date=datetime(2021, 10, 14, 12, 0), tags=['hughes'])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
+# @dag(default_args=default_args, schedule_interval='*/10 * * * *', start_date=datetime(2021, 10, 14, 12, 0), tags=['hughes'])
 def puller_hughes():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
@@ -790,8 +790,16 @@ def puller_hughes():
         # return {'both':both.to_json(orient='records'),'left':only_new.to_json(orient='records'),'right':only_old.to_json(orient='records')}
 
     @task()
-    def start():
-        return ['ok']
+    def save_key_in_history_puller_cron(key):
+        query_update = f"INSERT INTO puller_cron_platform (key_redis,status_cron,platform_id) values('{key}',1,1)"
+        print(query_update)
+        connection_engi = engine.connect()
+        resp = connection_engi.execute(query_update)
+        if resp.rowcount >0:
+            resp = 'INSERT OK'
+        else:
+            resp = 'ERROR'
+        return resp
     @task()
     def send_key_to_api_mysql_puller(key_process):
         try:
@@ -832,6 +840,9 @@ def puller_hughes():
     @task()
     def finish(response_verify):
         return ['ok']
+    @task()
+    def start():
+        return ['ok']
 
 
     # [START main_flow]
@@ -852,19 +863,21 @@ def puller_hughes():
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql+'-equals')
-    send_key_redis_to_api_equals = send_key_to_api_mysql_puller(key_redis_mysql+'-equals')
+    
+    
+    send_key_redis_to_api_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals')
     
 
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
     save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql+'-platform')
-    send_key_redis_to_api_only_platform = send_key_to_api_mysql_puller(key_redis_mysql+'-platform')
+    send_key_redis_to_api_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform')
     
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
     save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql+'-old')
-    send_key_redis_to_api_only_old = send_key_to_api_mysql_puller(key_redis_mysql+'-old')
+    send_key_redis_to_api_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old')
 
 
 
@@ -875,19 +888,19 @@ def puller_hughes():
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
     save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    send_key_redis_to_api_equals_mongo = send_key_to_api_mongo_puller(key_redis_mongo+'-equals')
+    send_key_redis_to_api_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-equals')
 
 
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
     save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo+'-platform')
-    send_key_redis_to_api_only_platform_mongo = send_key_to_api_mongo_puller(key_redis_mongo+'-platform')
+    send_key_redis_to_api_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform')
 
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
     save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo+'-old')
-    send_key_redis_to_api_only_old_mongo = send_key_to_api_mongo_puller(key_redis_mongo+'-old')
+    send_key_redis_to_api_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-old')
 
 
 
