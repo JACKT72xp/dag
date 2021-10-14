@@ -871,7 +871,7 @@ def puller_hughes():
             return [e]
 
     @task()
-    def finish(response_verify):
+    def finish():
         return ['ok']
     @task()
     def start():
@@ -930,7 +930,7 @@ def puller_hughes():
     save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-old','mongo')
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     save_in_history_mongo_puller = save_in_history_mongo(config)
-    end = finish([{"status":True}])
+    end = finish()
     checkTask
     checkTask >> end
     checkTask >> rs
