@@ -255,8 +255,8 @@ def puller_hughes():
         db_ = conection["bifrost"]
         coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find({})
-        list_cur = list(data_mdb)
-        if len(list_cur)==0:
+        # list_cur = list(data_mdb)
+        if data_mdb.count(True)==0:
             return []
 
         # json_data = dumps(list_cur, indent = 2)
