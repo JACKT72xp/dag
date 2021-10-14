@@ -880,8 +880,9 @@ def puller_hughes():
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
     if valid_puller_runing[0] =='0':
+        end = finish([{"status":True}])
         # end = finish([{"status":True}])
-        rs.set_upstream('finish')
+        rs.set_upstream(end)
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
         old_data = extract_old(key_process,config,valid_puller_runing)
