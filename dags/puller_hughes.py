@@ -32,6 +32,7 @@ from functools import reduce
 from datetime import datetime,timedelta
 from sqlalchemy import create_engine,text
 import numpy as np
+from sqlalchemy.sql.expression import exists
 
 
 
@@ -878,7 +879,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing is None:
+    if valid_puller_runing is None or valid_puller_runing is False:
         end = finish([{"status":True}])
         exit
         return 'ok'
