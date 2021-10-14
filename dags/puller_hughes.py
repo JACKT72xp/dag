@@ -889,7 +889,7 @@ def puller_hughes():
     dag=dag
     )
 
-    print(valid_puller_runing.values(),'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
+    # print(valid_puller_runing,'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
     # if valid_puller_runing is None:
         # end = finish([{"status":True}])
         # print(valid_puller_runing.items)
