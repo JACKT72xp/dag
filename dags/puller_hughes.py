@@ -161,7 +161,7 @@ def puller_hughes():
         if len(data)==0:
             key_redis = 'end'
         else:
-            key_redis = ['platform_data','old_data']
+            key_redis = 'platform_data'
 
         return key_redis
 
