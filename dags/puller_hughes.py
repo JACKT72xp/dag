@@ -151,7 +151,7 @@ def puller_hughes():
         except:
             print("ERROR IN COLUMNS PRIMARY")
             
-    @task()
+    # @task()
     def valid_exist_puller_runing():
         # key_redis = None
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
@@ -879,7 +879,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing.value =='0':
+    if valid_puller_runing[0] =='0':
         # end = finish([{"status":True}])
         rs.set_upstream('finish')
     else:
