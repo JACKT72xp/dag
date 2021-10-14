@@ -937,7 +937,7 @@ def puller_hughes():
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     save_in_history_mongo_puller = save_in_history_mongo(config)
     end = finish()
-    end_process = finish()
+    end_process = finish_process()
     checkTask >> end_process
     checkTask >> rs
     rs >> [platform_data,old_data,mysql_data,mongo_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> save_key_in_history_puller_cron_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
