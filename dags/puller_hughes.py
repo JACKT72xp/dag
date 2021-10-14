@@ -254,22 +254,20 @@ def puller_hughes():
         conection = MongoClient(uri,connect=False)
         db_ = conection["bifrost"]
         coltn_mdb = db_['hughes_test']
-        data_mdb = coltn_mdb.find({},{"siteId":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
-        # list_cur = list(data_mdb)
-        if data_mdb.count(True)==0:
+        data_mdb = coltn_mdb.find({},{"_id":True,"siteId":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
+        list_cur = list(data_mdb)
+        if len(list_cur)==0:
             return []
 
+        json_data = dumps(list_cur, indent = 2)
+        # df_datamongo = pd.DataFrame(data_mdb)
+        # df_datamongo_origin = pd.DataFrame(data_mdb)
         # json_data = dumps(list_cur, indent = 2)
-        df_datamongo = pd.DataFrame(data_mdb)
-        df_datamongo_origin = pd.DataFrame(data_mdb)
-        # json_data = dumps(list_cur, indent = 2)
-        # df_datamongo = pd.DataFrame(loads(json_data))
+        df_datamongo = pd.DataFrame(loads(json_data))
         # df_datamongo_origin = pd.DataFrame(
-
-
         # df_datamongo_origin = pd.DataFrame(json_data)
         # print(df_datamongo)
-        # df_datamongo_origin = pd.DataFrame(json.loads(list_cur))
+        df_datamongo_origin = pd.DataFrame(json.loads(json_data))
         df_datamongo = df_datamongo[config['mongo_normalization']].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         del df_datamongo[config['mongo_normalization']]
