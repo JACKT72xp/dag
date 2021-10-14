@@ -884,7 +884,7 @@ def puller_hughes():
 
     checkTask = BranchPythonOperator(
     task_id='check_task',
-    python_callable=valid_exist_puller_runing, #Registered method
+    python_callable=valid_puller_runing, #Registered method
     provide_context=True,
     dag=dag
     )
