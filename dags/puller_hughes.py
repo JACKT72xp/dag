@@ -156,9 +156,9 @@ def puller_hughes():
         df = pd.read_sql_query(query, engine)
         data = json.loads(df.to_json(orient="records"))
         if len(data)==0:
-            key_redis = True
+            key_redis = None
         else:
-            key_redis = False
+            key_redis = True
         return key_redis
 
 
@@ -870,7 +870,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing==False:
+    if valid_puller_runing is None:
         end = finish([{"status":True}])
         # rs >> valid_puller_runing >> end
     else:
