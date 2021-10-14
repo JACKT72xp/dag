@@ -162,7 +162,7 @@ def puller_hughes():
         if len(data)==0:
             key_redis = 'start'
         else:
-            key_redis = 'finish'
+            key_redis = 'finish_process'
 
         return key_redis
 
