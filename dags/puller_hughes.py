@@ -156,9 +156,9 @@ def puller_hughes():
         df = pd.read_sql_query(query, engine)
         data = json.loads(df.to_json(orient="records"))
         if len(data)==0:
-            key_redis = None
-        else:
             key_redis = True
+        else:
+            key_redis = None
         return key_redis
 
 
