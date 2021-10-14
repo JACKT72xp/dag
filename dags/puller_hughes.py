@@ -886,9 +886,9 @@ def puller_hughes():
     task_id='valid_puller_runing',
     python_callable=valid_exist_puller_runing, #Registered method
     provide_context=True,
-    dag=dag
+    # dag=dag
     )
-    valid_puller_runing =None
+    # valid_puller_runing =None
     # print(valid_puller_runing,'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
     # if valid_puller_runing is None:
         # end = finish([{"status":True}])
