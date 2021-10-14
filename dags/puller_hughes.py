@@ -879,7 +879,7 @@ def puller_hughes():
     # [START main_flow]
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
-    if valid_puller_runing.describe is None:
+    if valid_puller_runing.response is None:
         end = finish([{"status":True}])
     else:
         key_process = str(config["platform_id"])+"-"+str(config["platform_name"])
