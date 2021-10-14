@@ -161,7 +161,7 @@ def puller_hughes():
         if len(data)==0:
             key_redis = 'end'
         else:
-            key_redis = 'rs'
+            key_redis = 'start'
 
         return key_redis
 
