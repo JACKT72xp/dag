@@ -881,7 +881,7 @@ def puller_hughes():
     rs = start()
     valid_puller_runing = valid_exist_puller_runing()
     print(valid_puller_runing)
-    if valid_puller_runing.state is None:
+    if valid_puller_runing is None:
         end = finish([{"status":True}])
         print(valid_puller_runing.items)
     else:
