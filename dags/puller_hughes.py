@@ -153,7 +153,7 @@ def puller_hughes():
             
     # @task()
     def valid_exist_puller_runing():
-        # key_redis = None
+        key_redis = "0"
         query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
         df = pd.read_sql_query(query, engine)
         data = json.loads(df.to_json(orient="records"))
