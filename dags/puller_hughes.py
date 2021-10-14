@@ -886,7 +886,7 @@ def puller_hughes():
     task_id='check_task',
     python_callable=valid_puller_runing, #Registered method
     provide_context=True,
-    dag=dag
+    dag=DAG
     )
 
     # print(valid_puller_runing,'valid_puller_runingvalid_puller_runingvalid_puller_runingvalid_puller_runing')
