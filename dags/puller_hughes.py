@@ -898,6 +898,9 @@ def puller_hughes():
         except:
         # if len(data)==0:
             return []
+        if len(data)==0:
+            return []
+            
         data_insert_send = pd.DataFrame(data)
         data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
         data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
@@ -941,6 +944,10 @@ def puller_hughes():
             return []
         # if len(data)==0:
         #     return []
+
+        if len(data)==0:
+            return []
+        
         connection_engi = engine.connect()
 
         # time_send = time_send_now
