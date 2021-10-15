@@ -433,6 +433,7 @@ def puller_hughes():
 
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
+                response = response.fillna(0)
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
                 response = response.to_json(orient='records')
