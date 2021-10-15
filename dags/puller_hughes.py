@@ -926,7 +926,7 @@ def puller_hughes():
         if len(data)==0:
             return []
         connection_engi = engine.connect()
-        data = pd.DataFrame(data[0:100])
+        data = pd.DataFrame(data[0:3000])
         data['updated_at_send'] = time_send_now
         args = data[['platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         elements = []
