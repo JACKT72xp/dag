@@ -455,7 +455,7 @@ def puller_hughes():
     def extract_mysql(engine,config,valid_puller_runing):
         if valid_puller_runing is None:
             return []
-        query = "SELECT  * FROM "+str(config['mysql_table'])+" where status = 1 and  platformId = "+str(config['platform_id'])
+        query = "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal  FROM "+str(config['mysql_table'])+" where status = 1 and  platformId = "+str(config['platform_id'])
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
             return '[{}]'
