@@ -420,9 +420,9 @@ def puller_hughes():
                 for x in config['route_trunk'].split("-"):
                     try:
                             
-                        if x.isnumeric():
-                            response=response[int(x)]
-                        else:
+                        # if x.isnumeric():
+                            # response=response[int(x)]
+                        # else:
                             response=response[x]
                     except:
                             response=response
