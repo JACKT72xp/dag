@@ -770,6 +770,9 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
+        print(both['concat_key_generate_secondary'],'lo que vienee')
+        print('xxxxxxxxxxxxxxxxx')
+        print(df_mysql['concat_key_generate_secondary'],'lo que vienee')
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
@@ -782,8 +785,8 @@ def puller_hughes():
             exist_mysql_s = []
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-        print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
-        print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        # print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
+        # print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
@@ -791,6 +794,7 @@ def puller_hughes():
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
+            print(len(data_mysql_not_exist_s),'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
@@ -932,7 +936,7 @@ def puller_hughes():
         if len(data)==0:
             return []
         connection_engi = engine.connect()
-        data = pd.DataFrame(data[0:3000])
+        data = pd.DataFrame(data)
         data['updated_at_send'] = time_send_now
         args = data[['platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         elements = []
