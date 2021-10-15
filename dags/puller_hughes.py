@@ -954,9 +954,9 @@ def puller_hughes():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data['updated_at_send'] = time_send_now
-        args = data[['platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
+        args = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         elements = []
-        query_update = text("""             UPDATE bifrost_terminal_full            SET esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
+        query_update = text("""             UPDATE bifrost_terminal_full            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
         return ['ok']
     
