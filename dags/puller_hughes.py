@@ -366,6 +366,11 @@ def puller_hughes():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         del df_datamongo[config['mongo_normalization']]
         del df_datamongo['_id']
+        # try:
+            # del df_datamongo['concat_key_generate']
+            # del df_datamongo['concat_key_generate_secondary']
+        # except:
+            # print("error delete")
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
         df_datamongo = generateConcatKey(df_datamongo,['mongo_'+config['primary_join_cols']['mongo']])
         df_datamongo = generateConcatKeySecondary(df_datamongo,config['secondary_join_cols']['mongo'])
@@ -777,7 +782,8 @@ def puller_hughes():
             exist_mysql_s = []
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-
+        print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
+        print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
