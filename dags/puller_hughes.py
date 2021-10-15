@@ -781,9 +781,7 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
-        print(both['concat_key_generate_secondary'],'lo que vienee')
-        print('xxxxxxxxxxxxxxxxx')
-        print(df_mysql['concat_key_generate_secondary'],'lo que vienee')
+
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
@@ -806,6 +804,10 @@ def puller_hughes():
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
             print(len(data_mysql_not_exist_s),'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
+        
+        print(data_mysql_not_exist_s.columns,'hereeeeeee')
+        print(data_mysql_not_exist_s['concat_key_generate_secondary','platform_deviceID'],'hereeeeeee')
+     
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
