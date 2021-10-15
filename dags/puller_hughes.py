@@ -220,26 +220,66 @@ def puller_hughes():
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_only_platform_api(config,data,keyname):
+        # redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        key_insert = keyname+'-onlyplat-insert'
+        key_update = keyname+'-onlyplat-update'
+        key_delete = keyname+'-onlyplat-delete'
         try:
-            data = json.dumps(data)
+            data_insert = json.dumps(data['insert_mysql'])
+            r.set(key_insert,data_insert)
         except:
-            data = data
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(keyname,data)
-        return {"status":True,"data":""}
+            data_insert = data['insert_mysql']
+            r.set(key_insert,data_insert)
+        
 
+        try:
+            data_update = json.dumps(data['update_mysql'])
+            r.set(key_update,data_update)
+        except:
+            data_update = data['update_mysql']
+            r.set(key_update,data_update)
+
+
+        try:
+            data_delete = json.dumps(data['delete_mysql'])
+            r.set(key_delete,data_delete)
+        except:
+            data_delete = data['delete_mysql']
+            r.set(key_delete,data_delete)
+
+        return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
 
     @task()
     def save_in_redis_data_only_old_api(config,data,keyname):
+        key_insert = keyname+'-onlyold-insert'
+        key_update = keyname+'-onlyold-update'
+        key_delete = keyname+'-onlyold-delete'
         try:
-            data = json.dumps(data)
+            data_insert = json.dumps(data['insert_mysql'])
+            r.set(key_insert,data_insert)
         except:
-            data = data
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(keyname,data)
-        return {"status":True,"data":""}
-       
+            data_insert = data['insert_mysql']
+            r.set(key_insert,data_insert)
+        
+
+        try:
+            data_update = json.dumps(data['update_mysql'])
+            r.set(key_update,data_update)
+        except:
+            data_update = data['update_mysql']
+            r.set(key_update,data_update)
+
+
+        try:
+            data_delete = json.dumps(data['delete_mysql'])
+            r.set(key_delete,data_delete)
+        except:
+            data_delete = data['delete_mysql']
+            r.set(key_delete,data_delete)
+
+        return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
+
     @task()
     def extract_old(key,config,valid_puller_runing):
         if valid_puller_runing is None:
@@ -962,12 +1002,18 @@ def puller_hughes():
     
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
-    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql+'-platform')
-    save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
+    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
+    # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
+    insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform)
+    update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform)
+    delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
     
+
+
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
-    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql+'-old')
-    save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
+    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
+    delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
+    # save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
     
     
     ##COMPARATE MONGODB
@@ -998,7 +1044,7 @@ def puller_hughes():
     rs >> mongo_data
     # rs >> [platform_data,old_data,mysql_data,mongo_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  [insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals] >> primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
     # rs >> [platform_data,old_data,mongo_data,mysql_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
-    rs >> [platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
+    rs >> [platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
     rs >> [platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
 
     # [END main_flow]
