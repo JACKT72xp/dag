@@ -892,7 +892,7 @@ def puller_hughes():
     
     @task()
     def processDataDeleteMysql(engine,keys):
-        key = keys['key_update']
+        key = keys['key_delete']
         try:
             data = getDataRedisByKey(key)
         except:
