@@ -144,6 +144,7 @@ def puller_hughes():
             for col in cols:
                 if(col=='platform_esn'):
                     df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
+                df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0",""))
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
             df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
             print(df,'df_stnd_keydf_stnd_keydf_stnd_keydf_stnd_keydf_stnd_key')
@@ -433,7 +434,7 @@ def puller_hughes():
 
                 response =  pd.DataFrame(response) 
                 response = response[response.columns].add_prefix('platform_')
-                response = response.fillna(0)
+                # response = response.fillna(0)
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
                 response = response.to_json(orient='records')
