@@ -36,7 +36,11 @@ from datetime import datetime,timedelta
 from sqlalchemy import create_engine,text
 import numpy as np
 from sqlalchemy.sql.expression import exists
-
+from pymongo import MongoClient
+uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+conection = MongoClient(uri,connect=False)
+db_ = conection["bifrost"]
+coltn_mdb = db_['hughes_test']
 
 r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
 
@@ -179,7 +183,15 @@ def puller_hughes():
         data =  r.get(key)
         data = json.loads(data)
         return data
-
+    def getDataMysqlBySiteId(siteId):
+        # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
+        query = f"select * from bifrost_terminal_full where siteId ='{siteId}' and status != 0 and platformId = 1"
+        df = pd.read_sql_query(query, engine)
+        try:
+            id_response = json.loads(df.to_json(orient="records"))[0]['id']
+            return {"btId":id_response,"mysqlFlag":1}
+        except:
+            return {"btId":0,"mysqlFlag":0}
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_old(config,data,key_process):
@@ -411,11 +423,11 @@ def puller_hughes():
     def extract_mongo(config,valid_puller_runing):
         if valid_puller_runing is None:
             return []
-        from pymongo import MongoClient
-        uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
-        conection = MongoClient(uri,connect=False)
-        db_ = conection["bifrost"]
-        coltn_mdb = db_['hughes_test']
+        # from pymongo import MongoClient
+        # uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+        # conection = MongoClient(uri,connect=False)
+        # db_ = conection["bifrost"]
+        # coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find({},{"_id":True,"siteId":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
         list_cur = list(data_mdb)
         if len(list_cur)==0:
@@ -454,10 +466,10 @@ def puller_hughes():
         # conection = MongoClient(uri)
         # db_ = conection["bifrost"]
 
-        from pymongo import MongoClient
-        uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
-        conection = MongoClient(uri,connect=False)
-        db_ = conection["bifrost"]
+        # from pymongo import MongoClient
+        # uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
+        # conection = MongoClient(uri,connect=False)
+        # db_ = conection["bifrost"]
         coltn_mdb = db_['puller_history']
         time_send = datetime.now()
         formatted_date = time_send.strftime('%Y-%m-%d %H:%M:%S')
@@ -1021,6 +1033,36 @@ def puller_hughes():
         return ['ok']
     @task()
     def processDataInsertMongo(keys):
+
+
+        key = keys['key_insert']
+        try:
+            data = getDataRedisByKey(key)
+        except:
+        # if len(data)==0:
+            return []
+        if len(data)==0:
+            print("here1")
+            return []
+        time_send = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        formatted_date = str(time_send)
+        elements = []
+        for x in data:
+            data_mysql = getDataMysqlBySiteId(x['deviceID'])
+            element =   {
+                "puller":x,
+                "status": x['terminalStatus'],
+                "timeC": formatted_date,
+                "timeCO": "",
+                "btId":data_mysql['btId'],
+                "mysqlFlag": data_mysql['mysqlFlag'],
+                "comisioningFlag": 1 if x['terminalStatus']  == 'normal' else  0,
+                "platform": 1,
+                "active":1,
+                "siteId": x['deviceID'],
+            }
+            print(".")
+            coltn_mdb.insert(element)
         return [keys]
     @task()
     def processDataUpdateMongo(keys):
