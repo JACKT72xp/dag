@@ -312,39 +312,99 @@ def puller_hughes():
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_only_platform_mongo_api(config,data,keyname):
+        key_insert = keyname+'-onlyplatform-insert'
+        key_update = keyname+'-onlyplatform-update'
+        key_delete = keyname+'-onlyplatform-delete'
         try:
-            data = json.dumps(data)
+            data_insert = json.dumps(data['insert_mongo'])
+            r.set(key_insert,data_insert)
         except:
-            data = data
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(keyname,data)
-        return {"status":True,"data":""}
+            data_insert = data['insert_mongo']
+            r.set(key_insert,data_insert)
+        
+
+        try:
+            data_update = json.dumps(data['update_mongo'])
+            r.set(key_update,data_update)
+        except:
+            data_update = data['update_mongo']
+            r.set(key_update,data_update)
+
+
+        try:
+            data_delete = json.dumps(data['delete_mongo'])
+            r.set(key_delete,data_delete)
+        except:
+            data_delete = data['delete_mongo']
+            r.set(key_delete,data_delete)
+
+        return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
 
 
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_only_old_mongo_api(config,data,keyname):
+        key_insert = keyname+'-onlyold-insert'
+        key_update = keyname+'-onlyold-update'
+        key_delete = keyname+'-onlyold-delete'
         try:
-            data = json.dumps(data)
+            data_insert = json.dumps(data['insert_mongo'])
+            r.set(key_insert,data_insert)
         except:
-            data = data
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(keyname,data)
-        return {"status":True,"data":""}
+            data_insert = data['insert_mongo']
+            r.set(key_insert,data_insert)
+        
 
+        try:
+            data_update = json.dumps(data['update_mongo'])
+            r.set(key_update,data_update)
+        except:
+            data_update = data['update_mongo']
+            r.set(key_update,data_update)
+
+
+        try:
+            data_delete = json.dumps(data['delete_mongo'])
+            r.set(key_delete,data_delete)
+        except:
+            data_delete = data['delete_mongo']
+            r.set(key_delete,data_delete)
+
+        return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
 
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_equals_mongo_api(config,data,keyname):
+        key_insert = keyname+'-equals-insert'
+        key_update = keyname+'-equals-update'
+        key_delete = keyname+'-equals-delete'
         try:
-            data = json.dumps(data)
+            data_insert = json.dumps(data['insert_mongo'])
+            r.set(key_insert,data_insert)
         except:
-            data = data
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
-        redis_cn.set(keyname,data)
-        return {"status":True,"data":""}
+            data_insert = data['insert_mongo']
+            r.set(key_insert,data_insert)
+        
+
+        try:
+            data_update = json.dumps(data['update_mongo'])
+            r.set(key_update,data_update)
+        except:
+            data_update = data['update_mongo']
+            r.set(key_update,data_update)
+
+
+        try:
+            data_delete = json.dumps(data['delete_mongo'])
+            r.set(key_delete,data_delete)
+        except:
+            data_delete = data['delete_mongo']
+            r.set(key_delete,data_delete)
+
+        return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
+
 
 
     @task()
@@ -959,6 +1019,17 @@ def puller_hughes():
         query_update = text("""             UPDATE bifrost_terminal_full            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
         return ['ok']
+    @task()
+    def processDataInsertMongo(keys):
+        return [keys]
+    @task()
+    def processDataUpdateMongo(keys):
+        return [keys]
+    @task()
+    def processDataDeleteMongo(keys):
+        return [keys]
+
+    
     
     @task()
     def processDataDeleteMysql(engine,keys):
@@ -1056,16 +1127,25 @@ def puller_hughes():
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
     save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-equals','mongo')
+    # save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
+    insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
+    update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
+    delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
     
+
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo+'-platform')
-    save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
+    # save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
+    insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
+    update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
+    delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
     
+
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo+'-old')
-    save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-old','mongo')
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
+    # save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
+    delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     save_in_history_mongo_puller = save_in_history_mongo(config)
     
@@ -1079,7 +1159,7 @@ def puller_hughes():
     # rs >> [platform_data,old_data,mysql_data,mongo_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  [insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals] >> primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> save_key_in_history_puller_cron_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> save_key_in_history_puller_cron_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
     # rs >> [platform_data,old_data,mongo_data,mysql_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
     rs >> [platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> save_in_history_mongo_puller >> end
-    rs >> [platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> save_key_in_history_puller_cron_equals_mongo, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> save_key_in_history_puller_cron_only_platform_mongo  , primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> save_key_in_history_puller_cron_only_old_mongo]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
+    rs >> [platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> save_in_history_mongo_puller >> end
 
     # [END main_flow]
 
