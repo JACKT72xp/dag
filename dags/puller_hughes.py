@@ -1060,8 +1060,9 @@ def puller_hughes():
                 "active":1,
                 "siteId": x['deviceID'],
             }
+            elements.append(element)
             print(".")
-            coltn_mdb.insert(element)
+        coltn_mdb.insert_many(element)
         return [keys]
     @task()
     def processDataUpdateMongo(keys):
@@ -1072,9 +1073,11 @@ def puller_hughes():
             return []
         if len(data)==0:
             return []
+        bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
             print(".")
-            coltn_mdb.update({"active":1,"siteId": x['deviceID']},    {'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+        bulk.execute()
         return [keys]
     @task()
     def processDataDeleteMongo(keys):
@@ -1085,9 +1088,11 @@ def puller_hughes():
             return []
         if len(data)==0:
             return []
+        bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
             print(".")
-            coltn_mdb.update({"active":1,"siteId": x['deviceID']}, {'$set':{"active":0}})
+            bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':{"active":0}})
+        bulk.execute()
         return [keys]
     
     
