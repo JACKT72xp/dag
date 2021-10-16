@@ -146,12 +146,12 @@ def puller_hughes():
         try:
             df_stnd_key = df[cols].astype(str) 
             for col in cols:
-                if(col=='platform_esn' or col=='mongo_esn'):
+                if(col=='platform_esn'):
                     df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
-                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0",""))
                     df[col]=df_stnd_key[col]
-                df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
-                df[col]=df_stnd_key[col]
+                if(col=='mongo_esn'):
+                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
+                    df[col]=df_stnd_key[col]
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
             df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
             return df
@@ -918,6 +918,7 @@ def puller_hughes():
             not_exist_mongo_s = []
         else:
             not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
+            print(not_exist_mongo_s[['concat_key_generate_secondary','deviceID']])
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
@@ -1062,7 +1063,8 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
-            bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            bulk.find({"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
         return [keys]
     @task()
