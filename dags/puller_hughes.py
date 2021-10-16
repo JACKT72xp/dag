@@ -152,7 +152,7 @@ def puller_hughes():
                 if(col=='mongo_esn'):
                     df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
                     df[col]=df_stnd_key[col]
-            df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
+                df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
             df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
             return df
@@ -864,13 +864,13 @@ def puller_hughes():
         else:
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
-            # print(data_mysql_not_exist_s,'hereeeeeee')
+            print(data_mysql_not_exist_s,'hereeeeeee')
             # print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
         
         # print(data_mysql_not_exist_s.columns,'hereeeeeee')
         # print(data_mysql_not_exist_s['concat_key_generate_secondary','platform_deviceID'],'hereeeeeee')
-     
+        print(len(data_mysql_not_exist_s),'  -total')
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
 
