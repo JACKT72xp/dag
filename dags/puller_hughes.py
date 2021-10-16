@@ -903,7 +903,7 @@ def puller_hughes():
     
         try:
             comparate_not_exist = pd.DataFrame(glob_comparate['not_exist_mongo'])
-            comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_', '') 
+            comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_','') 
             # del comparate_not_exist['concat_key_generate']
             print(comparate_not_exist,'comparate_not_existcomparate_not_existcomparate_not_existcomparate_not_exist')
 
@@ -916,13 +916,14 @@ def puller_hughes():
 
         both = comparate
         try:
+            print(both['concat_key_generate_secondary'],'boooooooth')
+            print(df_mongo['concat_key_generate_secondary'],'mongoooooooooooo')
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
-
         if exist_mongo_s.empty:
             exist_mongo_s = []
         else:
