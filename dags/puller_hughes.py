@@ -1039,7 +1039,6 @@ def puller_hughes():
         try:
             data = getDataRedisByKey(key)
         except:
-        # if len(data)==0:
             return []
         if len(data)==0:
             print("here1")
@@ -1066,11 +1065,30 @@ def puller_hughes():
         return [keys]
     @task()
     def processDataUpdateMongo(keys):
+        key = keys['key_update']
+        try:
+            data = getDataRedisByKey(key)
+        except:
+            return []
+        if len(data)==0:
+            return []
+        for x in data:
+            print(".")
+            coltn_mdb.update({"active":1,"siteId": x['deviceID']},    {'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         return [keys]
     @task()
     def processDataDeleteMongo(keys):
+        key = keys['key_delete']
+        try:
+            data = getDataRedisByKey(key)
+        except:
+            return []
+        if len(data)==0:
+            return []
+        for x in data:
+            print(".")
+            coltn_mdb.update({"active":1,"siteId": x['deviceID']}, {'$set':{"active":0}})
         return [keys]
-
     
     
     @task()
