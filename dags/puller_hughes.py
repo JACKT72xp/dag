@@ -146,15 +146,14 @@ def puller_hughes():
         try:
             df_stnd_key = df[cols].astype(str) 
             for col in cols:
-                if(col=='platform_esn'):
+                if(col=='platform_esn' or col=='mongo_esn'):
                     df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
+                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0",""))
                     df[col]=df_stnd_key[col]
                 df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
                 df[col]=df_stnd_key[col]
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
             df['concat_key_generate_secondary'] = df_stnd_key['concat_key_generate_secondary']
-            
-            print(df,'df_stnd_keydf_stnd_keydf_stnd_keydf_stnd_keydf_stnd_key')
             return df
         except:
             print("ERROR IN COLUMNS")
@@ -703,11 +702,6 @@ def puller_hughes():
             not_exist_mongo_p=json.loads(not_exist_mongo_p.to_json(orient="records"))
             # not_exist_mongo_p=not_exist_mongo_p.to_json(orient="records")
 
-        print("exist_mongo_p")
-        print(exist_mongo_p)
-        print("not_exist_mongo_p")
-        print(not_exist_mongo_p)
-
         # return exist_mongo_p.to_json(orient="records")
         return {'exist_mongo':exist_mongo_p,'not_exist_mongo':not_exist_mongo_p}
 
@@ -748,11 +742,6 @@ def puller_hughes():
         else:
             not_exist_mongo_p=json.loads(not_exist_mongo_p.to_json(orient="records"))
             # not_exist_mongo_p=not_exist_mongo_p.to_json(orient="records")
-
-        print("exist_mongo_p")
-        print(exist_mongo_p)
-        print("not_exist_mongo_p")
-        print(not_exist_mongo_p)
 
         # return exist_mongo_p.to_json(orient="records")
         return {'exist_mongo':exist_mongo_p,'not_exist_mongo':not_exist_mongo_p}
@@ -874,11 +863,9 @@ def puller_hughes():
         else:
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
-            print(data_mysql_not_exist_s,'hereeeeeee')
-            print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
-        
+            # print(data_mysql_not_exist_s,'hereeeeeee')
+            # print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
-            print(len(data_mysql_not_exist_s),'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
         
         # print(data_mysql_not_exist_s.columns,'hereeeeeee')
         # print(data_mysql_not_exist_s['concat_key_generate_secondary','platform_deviceID'],'hereeeeeee')
@@ -905,10 +892,8 @@ def puller_hughes():
             comparate_not_exist = pd.DataFrame(glob_comparate['not_exist_mongo'])
             comparate_not_exist.columns = comparate_not_exist.columns.str.replace('platform_','') 
             # del comparate_not_exist['concat_key_generate']
-            print(comparate_not_exist,'comparate_not_existcomparate_not_existcomparate_not_existcomparate_not_exist')
 
             comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
-            print(comparate_not_exist,'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             # del comparate_not_exist['concat_key_generate_secondary']
         except:
             comparate_not_exist = []
@@ -936,6 +921,9 @@ def puller_hughes():
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
+        
+        
+        print(len(not_exist_mongo_s),'  -total')
 
         # try:
             # comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
@@ -981,7 +969,6 @@ def puller_hughes():
     @task()
     def save_key_in_history_puller_cron(key,type_puller):
         query_update = f"INSERT INTO puller_cron_platform (key_redis,status_cron,platform_id,type) values('{key}',1,1,'{type_puller}')"
-        print(query_update)
         connection_engi = engine.connect()
         resp = connection_engi.execute(query_update)
         if resp.rowcount >0:
@@ -1062,7 +1049,6 @@ def puller_hughes():
                 "siteId": x['deviceID'],
             }
             elements.append(element)
-            print(".")
         coltn_mdb.insert_many(element)
         return [keys]
     @task()
@@ -1076,7 +1062,6 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
-            print(".")
             bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
         return [keys]
