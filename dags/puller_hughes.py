@@ -150,7 +150,7 @@ def puller_hughes():
                     df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
                     df[col]=df_stnd_key[col]
                 if(col=='mongo_esn'):
-                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0"," "))
+                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
                     df[col]=df_stnd_key[col]
             df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
             df_stnd_key['concat_key_generate_secondary'] = df_stnd_key[cols].agg('-'.join, axis=1)
