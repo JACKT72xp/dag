@@ -179,7 +179,7 @@ def puller_hughes():
             }
             coltn_history_changes.insert(element)
         return ['ok']
-    def dateSaveHistoryUpdate(data_global,data_old):
+    def dateSaveHistoryUpdate(data_global):
         coltn_history_changes = db_['history_changes']
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
