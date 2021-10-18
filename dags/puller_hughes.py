@@ -796,7 +796,7 @@ def puller_hughes():
             not_exist_mongo_p=[]
         else:
             not_exist_mongo_p=json.loads(not_exist_mongo_p.to_json(orient="records"))
-        return {'delete_mongo':exist_mongo_p}
+        return {'delete_mongo':exist_mongo_p,'update_mongo':[],'insert_mongo':[]}
         
         
 
