@@ -1098,7 +1098,7 @@ def puller_hughes():
         if len(data)==0:
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
-        for x in data:
+        for x in json.loads(data):
             print(".")
             bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':{"active":0}})
         bulk.execute()
