@@ -1041,7 +1041,9 @@ def puller_hughes():
             data = getDataRedisByKey(key)
         except:
             return []
-
+        if len(data)==0:
+                print("here1")
+                return []
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace('platform_', '') 
         data = df.to_json(orient="records")
@@ -1054,6 +1056,7 @@ def puller_hughes():
         formatted_date = str(time_send)
         elements = []
         for x in data:
+            print(x,'dataaaaaaaaaaaaxxx')
             data_mysql = getDataMysqlBySiteId(x['deviceID'])
             element =   {
                 "puller":x,
