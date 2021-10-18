@@ -1063,7 +1063,7 @@ def puller_hughes():
         data_insert_send['platformId'] = 1
         data_insert_send['status'] = 1
         data_insert_send.to_sql('bifrost_terminal_full', engine, if_exists='append', index=False)
-        dateSaveHistoryInsert(data.to_json(orient="records"))
+        dateSaveHistoryInsert(data)
         return "ok"
 
     @task()
