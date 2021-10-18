@@ -1046,7 +1046,7 @@ def puller_hughes():
         df.columns = df.columns.str.replace('platform_', '') 
         data = df.to_json(orient="records")
         data = json.loads(data)
-        
+
         if len(data)==0:
             print("here1")
             return []
@@ -1054,10 +1054,10 @@ def puller_hughes():
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            data_mysql = getDataMysqlBySiteId(x['platform_deviceID'])
+            data_mysql = getDataMysqlBySiteId(x['deviceID'])
             element =   {
                 "puller":x,
-                "status": x['platform_terminalStatus'],
+                "status": x['terminalStatus'],
                 "timeC": formatted_date,
                 "timeCO": "",
                 "btId":data_mysql['btId'],
