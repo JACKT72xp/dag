@@ -1071,7 +1071,7 @@ def puller_hughes():
                 "siteId": x['deviceID'],
             }
             elements.append(element)
-        coltn_mdb.insert_many(element)
+        coltn_mdb.insert_many(elements)
         return [keys]
     @task()
     def processDataUpdateMongo(keys):
