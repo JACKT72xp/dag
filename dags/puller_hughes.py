@@ -1114,7 +1114,7 @@ def puller_hughes():
 
         # time_send = time_send_now
         # formatted_date = str(time_send)
-        for x in data:
+        for x in json.loads(data):
             sqlesn = "UPDATE bifrost_terminal_full SET status =0  WHERE siteId = '"+  x['platform_deviceID']  +"' and status!=0"
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['platform_deviceID'],"changes":{'status':0}})
