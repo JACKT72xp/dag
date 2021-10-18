@@ -142,6 +142,59 @@ def puller_hughes():
     ]
     config = config[0]
 
+    def getDataOld(principal_key):
+        data = coltn_mdb.find({"siteId":str(principal_key)})
+        list_cur = list(data)
+        # print(list_cur,principal_key)
+#         json_data =json.loads(dumps(list_cur, indent = 2))
+        return list_cur
+
+
+    def dateSaveHistory(data):
+        coltn_history_changes = db_['history_changes']
+        data_old = getDataOld(data['principal_key'])
+        element = {
+            "data":[],
+            "data_old":data_old,
+            "changes":data['changes'],
+            "type":data['type'],
+            "date_p":time_send_now,
+            "platform_id":1,
+            "principalKey":data['principal_key']
+        }
+        coltn_history_changes.insert_one(element)
+        return ['ok']
+
+    def dateSaveHistoryInsert(data_global):
+        coltn_history_changes = db_['history_changes']
+        for data in data_global:
+            element = {
+                "data":[],
+                "data_old":[],
+                "changes":data,
+                "type":'insert_mysql',
+                "date_p":time_send_now,
+                "platform_id":1,
+                "principalKey":data['platform_deviceID']
+            }
+            coltn_history_changes.insert(element)
+        return ['ok']
+    def dateSaveHistoryUpdate(data_global,data_old):
+        coltn_history_changes = db_['history_changes']
+        # data_old = getDataOld(data_global['principal_key'])
+        for data in data_global:
+            element = {
+                "data":[],
+                "data_old":data,
+                "changes":data,
+                "type":'update_mysql',
+                "date_p":time_send_now,
+                "platform_id":1,
+                "principalKey":data['platform_deviceID']
+            }
+            coltn_history_changes.insert(element)
+        return ['ok']
+
     def generateConcatKeySecondary(df,cols):
         try:
             df_stnd_key = df[cols].astype(str) 
@@ -1009,8 +1062,8 @@ def puller_hughes():
         data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
         data_insert_send['platformId'] = 1
         data_insert_send['status'] = 1
-        # data_insert_send.to_sql('bifrost_terminal_full', engine, if_exists='append', index=False)
-        # dateSaveHistoryInsert(data)
+        data_insert_send.to_sql('bifrost_terminal_full', engine, if_exists='append', index=False)
+        dateSaveHistoryInsert(json.loads(data.to_json(orient="records")))
         return "ok"
 
     @task()
@@ -1027,10 +1080,13 @@ def puller_hughes():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data['updated_at_send'] = time_send_now
+        args_send = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID','mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud']].iloc[0:].to_dict('record') 
         args = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
+        # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record') 
         elements = []
         query_update = text("""             UPDATE bifrost_terminal_full            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
+        dateSaveHistoryUpdate(args_send)
         return ['ok']
     @task()
     def processDataInsertMongo(keys):
@@ -1127,7 +1183,7 @@ def puller_hughes():
             print(x,'datttttttttt')
             sqlesn = "UPDATE bifrost_terminal_full SET status =0  WHERE siteId = '"+  x['old_deviceID']  +"' and status!=0"
             connection_engi.execute(sqlesn)
-            # dateSaveHistory({"type":"delete_mysql","principal_key":x['platform_deviceID'],"changes":{'status':0}})
+            dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ['ok']    
 
     @task()
