@@ -1177,6 +1177,7 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
+            print(x,'xxxxxxxxxxxxxxxxxxx')
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
             bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
