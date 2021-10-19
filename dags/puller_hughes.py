@@ -40,7 +40,7 @@ from pymongo import MongoClient
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri,connect=False)
 db_ = conection["bifrost"]
-coltn_mdb = db_['hughes_test']
+coltn_mdb = db_['hughes']
 
 r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
 
@@ -101,10 +101,10 @@ def puller_hughes():
         "timeout": 120,
         "verify": "False",
         "platform_id": 1,
-        "mysql_table": "bifrost_terminal_full",
+        "mysql_table": "bifrost_terminal",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "hughes_test",
+        "mongo_collection": "hughes",
         "primary_join_cols": {
           "mysql": "siteId",
           "mongo": "deviceID",
@@ -238,7 +238,7 @@ def puller_hughes():
         return data
     def getDataMysqlBySiteId(siteId):
         # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from bifrost_terminal_full where siteId ='{siteId}' and status != 0 and platformId = 1"
+        query = f"select * from bifrost_terminal where siteId ='{siteId}' and status != 0 and platformId = 1"
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]['id']
@@ -1062,7 +1062,7 @@ def puller_hughes():
         data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
         data_insert_send['platformId'] = 1
         data_insert_send['status'] = 1
-        data_insert_send.to_sql('bifrost_terminal_full', engine, if_exists='append', index=False)
+        data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
         dateSaveHistoryInsert(data)
         return "ok"
 
@@ -1084,7 +1084,7 @@ def puller_hughes():
         args = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record') 
         elements = []
-        query_update = text("""             UPDATE bifrost_terminal_full            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
+        query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
         return ['ok']
@@ -1181,7 +1181,7 @@ def puller_hughes():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             print(x,'datttttttttt')
-            sqlesn = "UPDATE bifrost_terminal_full SET status =0  WHERE siteId = '"+  x['old_deviceID']  +"' and status!=0"
+            sqlesn = "UPDATE bifrost_terminal SET status =0  WHERE siteId = '"+  x['old_deviceID']  +"' and status!=0"
             connection_engi.execute(sqlesn)
             dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ['ok']    
