@@ -984,7 +984,8 @@ def puller_hughes():
             comparate = pd.DataFrame(comparate['exist_mongo'])
         except:
             comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
-
+        print(comparate,'comparateeeeee')
+        print(comparate.columns,'comparateeeeee')
 
     
         try:
