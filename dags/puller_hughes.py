@@ -1140,8 +1140,8 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
-            bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            bulk.find({"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
         return [keys]
     @task()
@@ -1156,7 +1156,8 @@ def puller_hughes():
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in json.loads(data):
             print(".")
-            bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
+            bulk.find({"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
+            # bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
         bulk.execute()
         return [keys]
     
