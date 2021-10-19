@@ -168,6 +168,21 @@ def puller_hughes():
         coltn_history_changes.insert_one(element)
         return ['ok']
 
+    def dateSaveHistoryInsertMongo(data_global):
+        coltn_history_changes = db_['history_changes']
+        for data in data_global:
+            element = {
+                "data":[],
+                "data_old":[],
+                "changes":data,
+                "type":'insert_mongo',
+                "date_p":time_send_now,
+                "platform_id":1,
+                "principalKey":data['siteId']
+            }
+            coltn_history_changes.insert(element)
+        return ['ok']
+
     def dateSaveHistoryInsert(data_global):
         coltn_history_changes = db_['history_changes']
         for data in data_global:
@@ -194,6 +209,22 @@ def puller_hughes():
                 "date_p":time_send_now,
                 "platform_id":1,
                 "principalKey":data['platform_deviceID']
+            }
+            coltn_history_changes.insert(element)
+        return ['ok']
+
+    def dateSaveHistoryUpdateMongo(data_global):
+        coltn_history_changes = db_['history_changes']
+        # data_old = getDataOld(data_global['principal_key'])
+        for data in data_global:
+            element = {
+                "data":[],
+                "data_old":data,
+                "changes":data,
+                "type":'update_mongo',
+                "date_p":time_send_now,
+                "platform_id":1,
+                "principalKey":data['deviceID']
             }
             coltn_history_changes.insert(element)
         return ['ok']
@@ -1131,6 +1162,8 @@ def puller_hughes():
             }
             elements.append(element)
         coltn_mdb.insert_many(elements)
+        dateSaveHistoryInsertMongo(elements)
+
         return [keys]
     @task()
     def processDataUpdateMongo(keys):
@@ -1146,6 +1179,7 @@ def puller_hughes():
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
             bulk.find({"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
+        dateSaveHistoryUpdateMongo(data)
         return [keys]
     @task()
     def processDataDeleteMongo(keys):
@@ -1160,6 +1194,8 @@ def puller_hughes():
         for x in json.loads(data):
             print(".")
             bulk.find({"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
+            dateSaveHistory({"type":"delete_mongo","principal_key":x['old_deviceID'],"changes":{'status':0}})
+
             # bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
         bulk.execute()
         return [keys]
