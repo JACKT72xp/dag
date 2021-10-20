@@ -313,25 +313,32 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mysql'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mysql']
             r.set(key_insert,data_insert)
-        
+            r.expire(key_insert,timedelta(days=1))
+
 
         try:
             data_update = json.dumps(data['update_mysql'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mysql']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mysql'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
+
         except:
             data_delete = data['delete_mysql']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
@@ -345,25 +352,31 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mysql'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mysql']
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         
 
         try:
             data_update = json.dumps(data['update_mysql'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mysql']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mysql'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
         except:
             data_delete = data['delete_mysql']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
@@ -376,25 +389,31 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mysql'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mysql']
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         
 
         try:
             data_update = json.dumps(data['update_mysql'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mysql']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mysql'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
         except:
             data_delete = data['delete_mysql']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
@@ -428,25 +447,31 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mongo'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mongo']
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         
 
         try:
             data_update = json.dumps(data['update_mongo'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mongo']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mongo'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
         except:
             data_delete = data['delete_mongo']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
@@ -461,25 +486,31 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mongo'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mongo']
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         
 
         try:
             data_update = json.dumps(data['update_mongo'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mongo']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mongo'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
         except:
             data_delete = data['delete_mongo']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
@@ -493,25 +524,31 @@ def puller_hughes():
         try:
             data_insert = json.dumps(data['insert_mongo'])
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         except:
             data_insert = data['insert_mongo']
             r.set(key_insert,data_insert)
+            r.expire(key_insert,timedelta(days=1))
         
 
         try:
             data_update = json.dumps(data['update_mongo'])
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
         except:
             data_update = data['update_mongo']
             r.set(key_update,data_update)
+            r.expire(key_update,timedelta(days=1))
 
 
         try:
             data_delete = json.dumps(data['delete_mongo'])
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
         except:
             data_delete = data['delete_mongo']
             r.set(key_delete,data_delete)
+            r.expire(key_delete,timedelta(days=1))
 
         return {"status":True,"key_insert":key_insert,"key_update":key_update,"key_delete":key_delete}
 
