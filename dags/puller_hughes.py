@@ -625,10 +625,10 @@ def puller_hughes():
             response = json.loads(response)
             
             if  config['route_trunk'] == "":
-                response =  pd.DataFrame(response) 
-                response[['latitude','longitude']].astype(str)
-                xaa=response[response['deviceID']=='1600032794']
-                print(xaa[['latitude','longitude']],'aaa')
+                response =  pd.DataFrame(response).astype(str)
+                # response[['latitude','longitude']].astype(str)
+                # xaa=response[response['deviceID']=='1600032794']
+                # print(xaa[['latitude','longitude']],'aaa')
                 response = response[response.columns].add_prefix('platform_')
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
@@ -652,8 +652,8 @@ def puller_hughes():
                 # response = response.fillna(0)
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
-                xaa=response[response['platform_deviceID']=='1600032794']
-                print(xaa[['platform_latitude','platform_longitude']],'aaa')
+                # xaa=response[response['platform_deviceID']=='1600032794']
+                # print(xaa[['platform_latitude','platform_longitude']],'aaa')
                 response = response.to_json(orient='records')
                 response = json.loads(response)
             except:
