@@ -219,8 +219,18 @@ def puller_hughes():
         for data in data_global:
             element = {
                 "data":[],
-                "data_old":data,
-                "changes":data,
+                "data_old":{
+                    "latitude":data['mongo_latitude'],
+                    "longitude":data['mongo_longitude'],
+                    "terminalStatus":data['mongo_terminalStatus'],
+                    "esn":data['mongo_esn']
+                },
+                "changes":{
+                    "latitude":data['latitude'],
+                    "longitude":data['longitude'],
+                    "terminalStatus":data['terminalStatus'],
+                    "esn":data['esn']
+                },
                 "type":'update_mongo',
                 "date_p":time_send_now,
                 "platform_id":1,
