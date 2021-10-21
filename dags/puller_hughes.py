@@ -1039,7 +1039,7 @@ def puller_hughes():
 
         both = comparate
         try:
-            print(both['concat_key_generate_secondary'],'boooooooth')
+            print(both.columns,'booxxxoooooth')
             print(df_mongo['concat_key_generate_secondary'],'mongoooooooooooo')
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
