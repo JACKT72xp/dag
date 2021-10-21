@@ -626,7 +626,7 @@ def puller_hughes():
             
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response) 
-                xaa=response[response['deviceID']=='1600032794']
+                xaa=response[response['deviceID']=='1600032794'].astype(str) 
                 print(xaa[['latitude','longitude']],'aaa')
                 response = response[response.columns].add_prefix('platform_')
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
