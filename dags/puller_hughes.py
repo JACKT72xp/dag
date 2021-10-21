@@ -1047,6 +1047,7 @@ def puller_hughes():
 
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
+        not_exist_mongo_s_com = both[both['exist_mongo_secondary']==0]
         if exist_mongo_s.empty:
             exist_mongo_s = []
         else:
@@ -1056,11 +1057,17 @@ def puller_hughes():
             not_exist_mongo_s = []
         else:
             not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
-            print(not_exist_mongo_s[['concat_key_generate_secondary','deviceID']])
+            # print(not_exist_mongo_s[['concat_key_generate_secondary','deviceID']])
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
+
+            data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
+            data_mongo_not_exist_s = pd.merge(not_exist_mongo_s_com, data_mongo_not_exist_s, on="concat_key_generate")
+            data_mongo_not_exist_s = json.loads(data_mongo_not_exist_s.to_json(orient="records"))
+            print(data_mongo_not_exist_s,'hereeeeeeee totaaaaaaaaal')
+            print(data_mongo_not_exist_s.columns,'colimns ok')
         
         print(len(not_exist_mongo_s),'  -total')
 
