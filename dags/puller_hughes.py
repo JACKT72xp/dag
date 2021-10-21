@@ -626,7 +626,7 @@ def puller_hughes():
             
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response) 
-                response = response[['latitude','longitude']].astype(str)
+                response[['latitude','longitude']].astype(str)
                 xaa=response[response['deviceID']=='1600032794']
                 print(xaa[['latitude','longitude']],'aaa')
                 response = response[response.columns].add_prefix('platform_')
