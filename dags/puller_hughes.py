@@ -709,12 +709,6 @@ def puller_hughes():
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
 
-        xxxx = data_plat[data_plat['platform_deviceID']=='1600032794']
-        print(xxxx[['platform_latitude','platform_longitude']])
-
-        
-        xxxxxx = both[both['platform_deviceID']=='1600032794']
-        print(xxxxxx[['platform_latitude','platform_longitude']])
 
         if both.empty:
             both_send="empty"
@@ -730,7 +724,6 @@ def puller_hughes():
             old_send=[]
         else:
             old_send=old.to_json(orient="records")
-        print(data_plat,'xxxx')
         data_platform=data_plat.to_json(orient="records")
         return {'platform_data':data_platform,'comparation':comparation.to_json(orient="records"),'both':both_send,'only_platform':plat_send,'only_old':old_send}
 
@@ -849,7 +842,6 @@ def puller_hughes():
         both['exist_mongo'] = np.where(both['concat_key_generate'].isin(list(df_mongo['concat_key_generate'])) , 1, 0)
         exist_mongo_p = both[both['exist_mongo']==1]
         not_exist_mongo_p = both[both['exist_mongo']==0]
-        print(platform_data['platform_latitude'])
         exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(exist_mongo_p['concat_key_generate']))]
         not_exist_mongo_p = platform_data[platform_data['concat_key_generate'].isin(list(not_exist_mongo_p['concat_key_generate']))]
 
@@ -881,7 +873,6 @@ def puller_hughes():
         # only_platform = pd.DataFrame(json.loads(comparate['only_platform']))
         try:
             comparate = pd.DataFrame(json.loads(comparate['only_platform']))
-            print(comparate,'comparatecomparatecomparatecomparate')
         except:
             comparate = pd.DataFrame(columns=['concat_key_generate'])
         only_platform = comparate
@@ -1026,7 +1017,6 @@ def puller_hughes():
         else:
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
-            print(data_mysql_not_exist_s,'hereeeeeee')
             # print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
         
@@ -1083,8 +1073,6 @@ def puller_hughes():
             not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
-            print(not_exist_mongo_s,'  -totalxxx1')
-            print(len(not_exist_mongo_s),'  -total1')
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
 
@@ -1094,9 +1082,6 @@ def puller_hughes():
             data_mongo_not_exist_s.columns = data_mongo_not_exist_s.columns.str.replace('platform_', '') 
             del data_mongo_not_exist_s['concat_key_generate']
 
-            print(data_mongo_not_exist_s,'hereeeeeeee totaaaaaaaaal')
-            print(data_mongo_not_exist_s.columns,'colimns ok')
-            print(len(data_mongo_not_exist_s),'  -total222')
             data_mongo_not_exist_s = json.loads(data_mongo_not_exist_s.to_json(orient="records"))
 
         # try:
@@ -1206,7 +1191,6 @@ def puller_hughes():
         except:
             return []
         if len(data)==0:
-                print("here1")
                 return []
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace('platform_', '') 
@@ -1214,13 +1198,11 @@ def puller_hughes():
         data = json.loads(data)
 
         if len(data)==0:
-            print("here1")
             return []
         time_send = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            print(x,'dataaaaaaaaaaaaxxx')
             data_mysql = getDataMysqlBySiteId(x['deviceID'])
             element =   {
                 "puller":x,
@@ -1250,7 +1232,6 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
-            print(x,'xxxxxxxxxxxxxxxxxxx')
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
             bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
         bulk.execute()
@@ -1267,7 +1248,6 @@ def puller_hughes():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in json.loads(data):
-            print(".")
             bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
             dateSaveHistory({"type":"delete_mongo","principal_key":x['old_deviceID'],"changes":{'status':0}})
 
@@ -1286,7 +1266,6 @@ def puller_hughes():
             return []
         # if len(data)==0:
         #     return []
-        print(data,'deteletdataaaaaaa')
         if len(data)==0:
             return []
         
@@ -1295,7 +1274,6 @@ def puller_hughes():
         # time_send = time_send_now
         # formatted_date = str(time_send)
         for x in json.loads(data):
-            print(x,'datttttttttt')
             sqlesn = "UPDATE bifrost_terminal SET status =0  WHERE siteId = '"+  x['old_deviceID']  +"' and status!=0"
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
