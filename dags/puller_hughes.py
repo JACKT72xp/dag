@@ -693,6 +693,7 @@ def puller_hughes():
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
         print(both.columns,'columns booth')
+        print(data_plat[data_plat['platform_latitude']=='-71.36863333333332'],'xxxxxxaaaxxxxx')
         print(both[both['platform_latitude']=='-71.36863333333332'],'xxxxxxxxxxx')
         if both.empty:
             both_send="empty"
