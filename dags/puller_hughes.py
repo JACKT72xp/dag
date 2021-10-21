@@ -695,8 +695,8 @@ def puller_hughes():
         print(both.columns,'columns booth')
         print(both[both['platform_deviceID']=='1600032794'],'ass')
         print(data_plat[data_plat['platform_deviceID']=='1600032794'],'aaaa')
-        print(data_plat[data_plat['platform_longitude']=='-71.36863333333332'],'xxxxxxaaaxxxxx')
-        print(both[both['platform_longitude']=='-71.36863333333332'],'xxxxxxxxxxx')
+        print(data_plat[data_plat['platform_longitude']=='--71.3686333333'],'xxxxxxaaaxxxxx')
+        print(both[both['platform_longitude']=='-71.3686333333'],'xxxxxxxxxxx')
         if both.empty:
             both_send="empty"
         else:
