@@ -1060,16 +1060,16 @@ def puller_hughes():
             # print(not_exist_mongo_s[['concat_key_generate_secondary','deviceID']])
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
+            print(len(not_exist_mongo_s),'  -total1')
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
 
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
             data_mongo_not_exist_s = pd.merge(not_exist_mongo_s_com, data_mongo_not_exist_s, on="concat_key_generate")
-            data_mongo_not_exist_s = json.loads(data_mongo_not_exist_s.to_json(orient="records"))
             print(data_mongo_not_exist_s,'hereeeeeeee totaaaaaaaaal')
             print(data_mongo_not_exist_s.columns,'colimns ok')
-        
-        print(len(not_exist_mongo_s),'  -total')
+            print(len(data_mongo_not_exist_s),'  -total222')
+            data_mongo_not_exist_s = json.loads(data_mongo_not_exist_s.to_json(orient="records"))
 
         # try:
             # comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
