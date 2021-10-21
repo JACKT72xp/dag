@@ -677,6 +677,7 @@ def puller_hughes():
     @task()
     def comparate_old_vs_new(data_platform,data_old):
         df1 = pd.DataFrame(data_platform)
+        data_plat = pd.DataFrame(data_platform)
         if len(data_old)==0:
             data_platform=df1.to_json(orient="records")
             return {'platform_data':data_platform,'comparation':[],'both':data_platform,'only_platform':[],'only_old':[]}
@@ -692,6 +693,7 @@ def puller_hughes():
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
         print(both.columns,'columns booth')
+        print(both['platform_'],'columns booth')
         if both.empty:
             both_send="empty"
         else:
@@ -706,7 +708,8 @@ def puller_hughes():
             old_send=[]
         else:
             old_send=old.to_json(orient="records")
-        data_platform=df1.to_json(orient="records")
+        data_platform=data_plat.to_json(orient="records")
+        print(data_platform,'xxx')
         return {'platform_data':data_platform,'comparation':comparation.to_json(orient="records"),'both':both_send,'only_platform':plat_send,'only_old':old_send}
 
     @task()
