@@ -691,6 +691,7 @@ def puller_hughes():
         both = comparation[comparation['_merge_']=='both']
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
+        print(both.columns,'columns booth')
         if both.empty:
             both_send="empty"
         else:
