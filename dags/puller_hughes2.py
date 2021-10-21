@@ -636,14 +636,20 @@ def puller_hughes_2():
             
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response).astype(str)
+                response =  response[3:5]
                 # response[['latitude','longitude']].astype(str)
                 # xaa=response[response['deviceID']=='1600032794']
                 # print(xaa[['latitude','longitude']],'aaa')
+                print(response,'responseresponsetwo')
                 response = response[response.columns].add_prefix('platform_')
+                print("1")
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
+                print("2")
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
+                print("3")
 
                 response = response.to_json(orient='records')
+                print("4")
                 response = json.loads(response)
                 return response
             try:
