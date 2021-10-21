@@ -1135,7 +1135,7 @@ def puller_hughes():
         data_insert_send['platformId'] = 1
         data_insert_send['status'] = 1
         data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
-        dateSaveHistoryInsert(data)
+        # dateSaveHistoryInsert(data)
         return "ok"
 
     @task()
@@ -1158,7 +1158,7 @@ def puller_hughes():
         elements = []
         query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
-        dateSaveHistoryUpdate(args_send)
+        # dateSaveHistoryUpdate(args_send)
         return ['ok']
     @task()
     def processDataInsertMongo(keys):
@@ -1262,7 +1262,7 @@ def puller_hughes():
             print(x,'datttttttttt')
             sqlesn = "UPDATE bifrost_terminal SET status =0  WHERE siteId = '"+  x['old_deviceID']  +"' and status!=0"
             connection_engi.execute(sqlesn)
-            dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
+            # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ['ok']    
 
     @task()
