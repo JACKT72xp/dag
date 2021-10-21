@@ -693,7 +693,7 @@ def puller_hughes():
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
         print(both.columns,'columns booth')
-        print(both['platform_latitude'],'columns booth')
+        print(both[both['platform_latitude']=='-71.36863333333332'],'xxxxxxxxxxx')
         if both.empty:
             both_send="empty"
         else:
@@ -708,8 +708,8 @@ def puller_hughes():
             old_send=[]
         else:
             old_send=old.to_json(orient="records")
+        print(data_plat,'xxxx')
         data_platform=data_plat.to_json(orient="records")
-        print(data_platform,'xxx')
         return {'platform_data':data_platform,'comparation':comparation.to_json(orient="records"),'both':both_send,'only_platform':plat_send,'only_old':old_send}
 
     @task()
