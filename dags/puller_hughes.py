@@ -629,6 +629,8 @@ def puller_hughes():
                 response = response[response.columns].add_prefix('platform_')
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
+                xaa=response[response['platform_deviceID']=='1600032794']
+                print(xaa[['platform_latitude','platform_longitude']],'aaa')
                 response = response.to_json(orient='records')
                 response = json.loads(response)
                 return response
