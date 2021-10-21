@@ -1022,8 +1022,8 @@ def puller_hughes():
             comparate = pd.DataFrame(comparate['exist_mongo'])
         except:
             comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
-        print(comparate,'comparateeeeee')
-        print(comparate.columns,'comparateeeeee')
+        # print(comparate,'comparateeeeee')
+        # print(comparate.columns,'comparateeeeee')
 
     
         try:
@@ -1039,8 +1039,6 @@ def puller_hughes():
 
         both = comparate
         try:
-            print(both.columns,'booxxxoooooth')
-            print(df_mongo['concat_key_generate_secondary'],'mongoooooooooooo')
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
@@ -1057,15 +1055,19 @@ def puller_hughes():
             not_exist_mongo_s = []
         else:
             not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
-            # print(not_exist_mongo_s[['concat_key_generate_secondary','deviceID']])
             del not_exist_mongo_s['concat_key_generate']
             del not_exist_mongo_s['concat_key_generate_secondary']
+            print(not_exist_mongo_s,'  -totalxxx1')
             print(len(not_exist_mongo_s),'  -total1')
             not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
 
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
+            del data_mongo_not_exist_s['concat_key_generate_secondary']
             data_mongo_not_exist_s = pd.merge(not_exist_mongo_s_com, data_mongo_not_exist_s, on="concat_key_generate")
+            data_mongo_not_exist_s.columns = data_mongo_not_exist_s.columns.str.replace('platform_', '') 
+            del data_mongo_not_exist_s['concat_key_generate']
+
             print(data_mongo_not_exist_s,'hereeeeeeee totaaaaaaaaal')
             print(data_mongo_not_exist_s.columns,'colimns ok')
             print(len(data_mongo_not_exist_s),'  -total222')
@@ -1075,7 +1077,7 @@ def puller_hughes():
             # comparate_not_exist = json.loads(comparate_not_exist.to_json(orient="records"))
         # except:
             # comparate_not_exist = []
-        return {'update_mongo':not_exist_mongo_s,'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
+        return {'update_mongo':data_mongo_not_exist_s,'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
 
 
     @task()
