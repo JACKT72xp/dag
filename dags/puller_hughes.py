@@ -692,11 +692,14 @@ def puller_hughes():
         both = comparation[comparation['_merge_']=='both']
         plat = comparation[comparation['_merge_']=='left_only']
         old = comparation[comparation['_merge_']=='right_only']
-        print(both.columns,'columns booth')
-        print(both[both['platform_deviceID']=='1600032794'],'ass')
-        print(data_plat[data_plat['platform_deviceID']=='1600032794'],'aaaa')
-        print(data_plat[data_plat['platform_longitude']=='-71.3686333333'],'xxxxxxaaaxxxxx')
-        print(both[both['platform_longitude']=='-71.3686333333'],'xxxxxxxxxxx')
+
+        xxxx = data_plat[data_plat['platform_deviceID']=='1600032794']
+        print(xxxx[['platform_latitude','platform_longitude']])
+
+        
+        xxxxxx = both[both['platform_deviceID']=='1600032794']
+        print(xxxxxx[['platform_latitude','platform_longitude']])
+
         if both.empty:
             both_send="empty"
         else:
