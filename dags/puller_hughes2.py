@@ -221,15 +221,15 @@ def puller_hughes_2():
                 "data":[],
                 "data_old":{
                     "latitude":data['mongo_latitude'],
-                    "longitude":data['mongo_longitude'],
+                    # "longitude":data['mongo_longitude'],
                     "terminalStatus":data['mongo_terminalStatus'],
-                    "esn":data['mongo_esn']
+                    # "esn":data['mongo_esn']
                 },
                 "changes":{
                     "latitude":data['latitude'],
-                    "longitude":data['longitude'],
+                    # "longitude":data['longitude'],
                     "terminalStatus":data['terminalStatus'],
-                    "esn":data['esn']
+                    # "esn":data['esn']
                 },
                 "type":'update_mongo',
                 "date_p":time_send_now,
@@ -1153,12 +1153,12 @@ def puller_hughes_2():
             return []
             
         data_insert_send = pd.DataFrame(data)
-        data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
+        data_insert_send = data_insert_send[['platform_deviceID','platform_latitude','platform_terminalStatus']]
         data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
         data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace = True)
-        data_insert_send.rename(columns={"platform_longitude": "longitud"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_longitude": "longitud"}, inplace = True)
         data_insert_send.rename(columns={"platform_terminalStatus": "statusTerminal"}, inplace = True)
-        data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
         data_insert_send['platformId'] = 39
         data_insert_send['status'] = 1
         data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
@@ -1179,11 +1179,11 @@ def puller_hughes_2():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data['updated_at_send'] = time_send_now
-        args_send = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID','mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud']].iloc[0:].to_dict('record') 
-        args = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
+        args_send = data[['platform_terminalStatus','platform_latitude','updated_at_send','platform_deviceID','mysql_statusTerminal','mysql_latitud']].iloc[0:].to_dict('record') 
+        args = data[['platform_terminalStatus','platform_latitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record') 
         elements = []
-        query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
+        query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , latitud=:platform_latitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
         return ['ok']
