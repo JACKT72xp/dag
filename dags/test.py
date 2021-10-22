@@ -109,7 +109,8 @@ def tutorial_taskflow_api_etl():
     load_data = load(order_summary["total_order_value"])
     end  = finish()
     # [END main_flow]
-    order_data >> order_summary >> [load_data,end]
+    order_data >> order_summary >> load_data
+    order_data >> order_summary >> end
 
 # [START dag_invocation]
 tutorial_etl_dag = tutorial_taskflow_api_etl()
