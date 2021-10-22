@@ -62,7 +62,7 @@ def tutorial_taskflow_api_etl():
         order_data_dict = json.loads(data_string)
         return order_data_dict
     @task()
-    def finish():
+    def finish(data):
         """
         #### Extract task
         A simple Extract task to get data ready for the rest of the data
@@ -107,7 +107,7 @@ def tutorial_taskflow_api_etl():
     order_data = extract()
     order_summary = transform(order_data)
     load_data = load(order_summary["total_order_value"])
-    end  = finish()
+    end  = finish(load_data)
     # [END main_flow]
     # order_data >> order_summary >> load_data >> end
 
