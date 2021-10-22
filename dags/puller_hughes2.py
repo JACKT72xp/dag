@@ -636,7 +636,7 @@ def puller_hughes_2():
             
             if  config['route_trunk'] == "":
                 response =  pd.DataFrame(response).astype(str)
-                response =  response[3:5]
+                # response =  response
                 # response[['latitude','longitude']].astype(str)
                 # xaa=response[response['deviceID']=='1600032794']
                 # print(xaa[['latitude','longitude']],'aaa')
