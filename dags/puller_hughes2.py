@@ -1075,6 +1075,7 @@ def puller_hughes_2():
 
         if not_exist_mongo_s.empty:
             not_exist_mongo_s = []
+            data_mongo_not_exist_s = []
         else:
             not_exist_mongo_s.columns = not_exist_mongo_s.columns.str.replace('platform_', '') 
             del not_exist_mongo_s['concat_key_generate']
