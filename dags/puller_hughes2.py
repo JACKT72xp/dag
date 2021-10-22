@@ -116,28 +116,28 @@ def puller_hughes_2():
         },
         "secondary_join_cols": {
           "mysql": [
-            "mysql_esn",
+            # "mysql_esn",
             "mysql_statusTerminal",
             "mysql_latitud",
-            "mysql_longitud"
+            # "mysql_longitud"
           ],
           "mongo": [
-            "mongo_esn",
+            # "mongo_esn",
             "mongo_terminalStatus",
             "mongo_latitude",
-            "mongo_longitude"
+            # "mongo_longitude"
           ],
           "platform": [
-            "platform_esn",
+            # "platform_esn",
             "platform_terminalStatus",
             "platform_latitude",
-            "platform_longitude",
+            # "platform_longitude",
           ],
           "old": [
-            "old_esn",
+            # "old_esn",
             "old_terminalStatus",
             "old_latitude",
-            "old_longitude"
+            # "old_longitude"
           ]
         },
         "platform_name": "hughes2"
