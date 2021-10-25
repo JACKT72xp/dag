@@ -40,7 +40,7 @@ from pymongo import MongoClient
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri,connect=False)
 db_ = conection["bifrost"]
-coltn_mdb = db_['hughes_2_test']
+coltn_mdb = db_['hughes2_v2']
 
 r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
 
@@ -107,7 +107,7 @@ def puller_hughes_2():
         "mysql_table": "bifrost_terminal",
         "mongo_normalization": "puller",
         "mongo_limit_time": 55,
-        "mongo_collection": "hughes_2_test",
+        "mongo_collection": "hughes2_v2",
         "primary_join_cols": {
           "mysql": "siteId",
           "mongo": "deviceID",
