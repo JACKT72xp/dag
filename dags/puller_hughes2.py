@@ -62,7 +62,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'retry_delay': timedelta(seconds=15),
-    # 'start_date': datetime(2021, 10, 19, 1, 0),
+    'start_date': datetime.now(),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
