@@ -68,7 +68,7 @@ default_args = {
     # 'email_on_retry': True,
     'max_active_runs':1,
     'concurrency':4,
-    # 'schedule_interval':timedelta(minutes=10),
+    'schedule_interval':timedelta(minutes=10),
     'retries': 4
 }
 # [END default_args]
@@ -76,8 +76,8 @@ default_args = {
 time_send_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes_2'])
-# @dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes'])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes_2'])
+@dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes_2'])
 def puller_hughes_2():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
