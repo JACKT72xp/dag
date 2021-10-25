@@ -286,7 +286,7 @@ def puller_hughes():
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]['id']
-            return {"btId":id_response,"mysqlFlag":1}
+            return {"btId":str(id_response),"mysqlFlag":1}
         except:
             return {"btId":0,"mysqlFlag":0}
     @task()
