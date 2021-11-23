@@ -43,9 +43,10 @@ uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.n
 conection = MongoClient(uri, connect=False)
 
 collection_puller = "idirect"
-table_mysql_puller = "bifrost_terminal_test"
+table_mysql_puller = "bifrost_terminal"
 tag_airflow = "idirect"
 platform_name = "idirect_lima"
+platform_id_puller=2
 db_ = conection["bifrost"]
 coltn_mdb = db_[collection_puller]
 
@@ -85,7 +86,7 @@ time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # [START instantiate_dag]
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=["hughes"])
-def puller_idirect_lima():
+def puller_idirct_lima():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
@@ -111,7 +112,7 @@ def puller_idirect_lima():
             "password": "tiws2019",
             "timeout": 120,
             "verify": "False",
-            "platform_id": 2,
+            "platform_id": platform_id_puller,
             "mysql_table": table_mysql_puller,
             "mongo_normalization": "puller",
             "mongo_limit_time": 55,
@@ -283,7 +284,7 @@ def puller_idirect_lima():
 
     def getDataMysqlBySiteId(siteId):
         # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from bifrost_terminal where siteId ='{siteId}' and status != 0 and platformId = 1"
+        query = f"select * from bifrost_terminal where siteId ='{siteId}' and status != 0 and platformId = {platform_id_puller}"
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]["id"]
@@ -1728,5 +1729,5 @@ def puller_idirect_lima():
 
 
 # [START dag_invocation]
-puller_idirect_lima = puller_idirect_lima ()
+puller_idirect_lima = puller_idirct_lima()
 # [END dag_invocation]
