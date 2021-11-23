@@ -133,14 +133,16 @@ def puller_idirect_lima_1h():
                 "old": "ID",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did"],
-                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID"],
-                "platform": ["platform_Name", "platform_SN", "platform_DID"],
-                "old": ["old_Name", "old_SN", "old_DID"],
+                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud"],
+                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon"],
+                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon"],
+                "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon"],
             },
             "platform_name": platform_name,
         }
     ]
+    
+
     config = config[0]
 
     def getDataOld(principal_key):
@@ -222,12 +224,27 @@ def puller_idirect_lima_1h():
                     "sn": data["mongo_SN"],
                     "active": str(data["mongo_Active"]),
                     "id": data["mongo_ID"],
+                    
+                    "modelType": data["mongo_ModelType"],
+                    "inrouteGroupID": data["mongo_InrouteGroupID"],
+                    "networkID": data["mongo_NetworkID"],
+                    "lat": data["mongo_Lat"],
+                    "lon": data["mongo_Lon"],
+                                       
                 },
                 "changes": {
                     "did": data["DID"],
                     "sn": data["SN"],
                     "active": str(data["Active"]),
                     "id": data["ID"],
+                    
+                    "modelType": data["ModelType"],
+                    "inrouteGroupID": data["InrouteGroupID"],
+                    "networkID": data["NetworkID"],
+                    "lat": data["Lat"],
+                    "lon": data["Lon"],
+                    
+                    
                 },
                 "type": "update_mongo",
                 "date_p": time_send_now,
@@ -615,6 +632,11 @@ def puller_idirect_lima_1h():
                 "puller.DID": True,
                 "puller.Name": True,
                 "puller.Active": True,
+                "puller.ModelType": True,
+                "puller.InrouteGroupID": True,
+                "puller.NetworkID": True,
+                "puller.Lat": True,
+                "puller.Lon": True
             },
         )
         list_cur = list(data_mdb)
@@ -779,7 +801,7 @@ def puller_idirect_lima_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms  FROM "
+            "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,modeltype,inroutegroupId,networkId,latitud,longitud  FROM "
             + str(config["mysql_table"])
             + " where status = 1 and  platformId = "
             + str(config["platform_id"])
@@ -1395,6 +1417,12 @@ def puller_idirect_lima_1h():
                 "platform_ID",
                 "platform_Active",
                 "platform_DID"
+                
+                "platform_ModelType",
+                "platform_InrouteGroupID",
+                "platform_NetworkID",
+                "platform_Lat",
+                "platform_Lon"
             ]
         ]
         data_insert_send.rename(columns={"platform_Name": "siteId"}, inplace=True)
@@ -1410,6 +1438,13 @@ def puller_idirect_lima_1h():
         data_insert_send["platformId"] = platform_id_puller
         data_insert_send["status"] = 1
         data_insert_send["fromPuller"] = 1
+        
+        data_insert_send.rename(columns={"platform_ModelType": "modeltype"}, inplace=True)
+        data_insert_send.rename(columns={"platform_InrouteGroupID": "inroutegroupId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_NetworkID": "networkId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
+        data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
+        
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
         )
@@ -1443,6 +1478,13 @@ def puller_idirect_lima_1h():
                     "mysql_statusTerminal",
                     "mysql_esn",
                     "mysql_did",
+                    
+                    "mysql_modeltype",
+                    "mysql_inroutegroupId",
+                    "mysql_networkId",
+                    "mysql_latitud",
+                    "mysql_longitud",
+
                     "mysql_id_nms",
                 ]
             ]
@@ -1456,6 +1498,14 @@ def puller_idirect_lima_1h():
                     "platform_SN",
                     "platform_DID",
                     "updated_at_send",
+                    
+                    "platform_ModelType",
+                    "platform_InrouteGroupID",
+                    "platform_NetworkID",
+                    "platform_Lat",
+                    "platform_Lon"
+                    
+                    
                     "platform_Name",
                     "platform_ID",
                 ]
@@ -1466,7 +1516,7 @@ def puller_idirect_lima_1h():
         
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
@@ -1523,12 +1573,12 @@ def puller_idirect_lima_1h():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
-            # bulk.find({"active": 1, "siteId": x["Name"]}).update(
-            #     {"$set": {"puller": x, "status": x["Active"], "active": 1}}
-            # )
             bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
-                {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+                {"$set": {"puller": x,"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
             )
+            # bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
+            #     {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+            # )
 
         bulk.execute()
         dateSaveHistoryUpdateMongo(data)
