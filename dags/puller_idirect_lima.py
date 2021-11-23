@@ -1373,6 +1373,7 @@ def puller_idirect_lima():
         data_insert_send.rename(columns={"platform_SN": "esn"}, inplace=True)
         data_insert_send["platformId"] = platform_id_puller
         data_insert_send["status"] = 1
+        data_insert_send["fromPuller"] = 1
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
         )
@@ -1427,7 +1428,7 @@ def puller_idirect_lima():
         )
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send WHERE siteId = :platform_Name and id_nms=:platform_ID "
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID "
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
@@ -1537,7 +1538,7 @@ def puller_idirect_lima():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0  WHERE siteId = '"
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
                 + x["old_Name"] + "and id_nms="
                 + x["old_ID"] 
                 + "' and status!=0"
