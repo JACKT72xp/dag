@@ -1241,6 +1241,7 @@ def puller_idirect_lima():
         exist_mongo_s = both[both["exist_mongo_secondary"] == 1]
         not_exist_mongo_s = both[both["exist_mongo_secondary"] == 0]
         not_exist_mongo_s_com = both[both["exist_mongo_secondary"] == 0]
+        data_mongo_not_exist_s=[]
         if exist_mongo_s.empty:
             exist_mongo_s = []
         else:
