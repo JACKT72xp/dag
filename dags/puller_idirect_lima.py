@@ -42,7 +42,7 @@ from pymongo import MongoClient
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri, connect=False)
 uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
-conection_2 = MongoClient(uri)
+conection_2 = MongoClient(uri_2)
 db_2 = conection_2["bifrost"]
 
 
