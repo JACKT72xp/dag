@@ -1578,8 +1578,9 @@ def puller_idirect_lima_1h():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
+            x["Active"] = str(x["Active"])
             bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
-                {"$set": {"puller": x,"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+                {"$set": {"puller": x, "status": str(x["Active"]), "active": 1}}
             )
             # bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
             #     {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
