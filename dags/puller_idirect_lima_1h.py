@@ -696,42 +696,14 @@ def puller_idirect_lima_1h():
                 
                 response = response.text
                 response = json.loads(response)
-                data_send = []
-                for item in response:
-                    print(item,"ITEM")
-                    response_terminal = requests.get(
-                        config["url"]+"/"+str(item['ID']),
-                        auth=HTTPBasicAuth(config["user"], config["password"]),
-                        verify=config["verify"],
-                        timeout=config["timeout"],
-                    )
-                    response_terminal = response_terminal.text
-                    response_terminal = json.loads(response_terminal)
-                    data_send.append(response_terminal)
-                response = data_send
-                
+       
             else:
                 response = requests.get(
                     config["url"], verify=config["verify"], timeout=config["timeout"]
                 )
                 response = response.text
                 response = json.loads(response)
-            
-                data_send = []
-                for item in response:
-                    print(item,"ITEM")
-                    response_terminal = requests.get(
-                        config["url"]+"/"+str(item['ID']),
-                        auth=HTTPBasicAuth(config["user"], config["password"]),
-                        verify=config["verify"],
-                        timeout=config["timeout"],
-                    )
-                    response_terminal = response_terminal.text
-                    response_terminal = json.loads(response_terminal)
-                    data_send.append(response_terminal)
-                response = data_send
-                
-                            
+
             if config["route_trunk"] == "":
                 response = pd.DataFrame(response).astype(str)
                 # response[['latitude','longitude']].astype(str)
@@ -759,6 +731,23 @@ def puller_idirect_lima_1h():
                             response = response[x]
                     except:
                         response = response
+
+                # print(response,'responseresponseresponseresponse')
+                data_send = []
+                for item in response:
+                    print(item,"ITEM")
+                    response_terminal = requests.get(
+                        config["url"]+"/"+str(item['ID']),
+                        auth=HTTPBasicAuth(config["user"], config["password"]),
+                        verify=config["verify"],
+                        timeout=config["timeout"],
+                    )
+                    response_terminal = response_terminal.text
+                    response_terminal = json.loads(response_terminal)
+                    data_send.append(response_terminal)
+                response = data_send
+                
+                
 
                 response = pd.DataFrame(response)
                 response = response.astype(str)
