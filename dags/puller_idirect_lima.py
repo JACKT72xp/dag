@@ -42,10 +42,10 @@ from pymongo import MongoClient
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri, connect=False)
 
-collection_puller = "idirect"
-table_mysql_puller = "bifrost_terminal"
+collection_puller = "idirect_test"
+table_mysql_puller = "bifrost_terminal_test"
 tag_airflow = "idirect"
-platform_name = "idirect_lima"
+platform_name = "idirect_lima_test"
 platform_id_puller = 2
 db_ = conection["bifrost"]
 coltn_mdb = db_[collection_puller]
@@ -284,7 +284,7 @@ def puller_idirect_lima():
 
     def getDataMysqlBySiteId(siteId):
         # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from bifrost_terminal where siteId ='{siteId}' and status != 0 and platformId = 1"
+        query = f"select * from {table_mysql_puller} where siteId ='{siteId}' and status != 0 and platformId = 1"
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]["id"]
@@ -1369,7 +1369,7 @@ def puller_idirect_lima():
         data_insert_send["platformId"] = 1
         data_insert_send["status"] = 1
         data_insert_send.to_sql(
-            "bifrost_terminal", engine, if_exists="append", index=False
+            table_mysql_puller, engine, if_exists="append", index=False
         )
         # dateSaveHistoryInsert(data)
         return "ok"
@@ -1391,16 +1391,16 @@ def puller_idirect_lima():
         args_send = (
             data[
                 [
-                    "platform_terminalStatus",
-                    "platform_esn",
-                    "platform_latitude",
-                    "platform_longitude",
+                    "platform_Active",
+                    "platform_SN",
+                    "platform_Name",
+                    "platform_DID",
                     "updated_at_send",
-                    "platform_deviceID",
+                    "platform_ID",
                     "mysql_statusTerminal",
                     "mysql_esn",
-                    "mysql_latitud",
-                    "mysql_longitud",
+                    "mysql_did",
+                    "mysql_id_nms",
                 ]
             ]
             .iloc[0:]
@@ -1409,12 +1409,12 @@ def puller_idirect_lima():
         args = (
             data[
                 [
-                    "platform_terminalStatus",
-                    "platform_esn",
-                    "platform_latitude",
-                    "platform_longitude",
+                    "platform_Active",
+                    "platform_SN",
+                    "platform_DID",
                     "updated_at_send",
-                    "platform_deviceID",
+                    "platform_Name",
+                    "platform_ID",
                 ]
             ]
             .iloc[0:]
@@ -1422,9 +1422,8 @@ def puller_idirect_lima():
         )
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        query_update = text(
-            """             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """
-        )
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send WHERE siteId = :platform_Name and id_nms=:platform_ID "
+        query_update = text(qry)
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
         return ["ok"]
@@ -1450,18 +1449,18 @@ def puller_idirect_lima():
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            data_mysql = getDataMysqlBySiteId(x["deviceID"])
+            data_mysql = getDataMysqlBySiteId(x["Name"])
             element = {
                 "puller": x,
-                "status": x["terminalStatus"],
+                "status": x["Active"],
                 "timeC": formatted_date,
                 "timeCO": "",
                 "btId": data_mysql["btId"],
                 "mysqlFlag": data_mysql["mysqlFlag"],
-                "comisioningFlag": 1 if x["terminalStatus"] == "normal" else 0,
+                # "comisioningFlag": 1 if x["terminalStatus"] == "normal" else 0,
                 "platform": 1,
                 "active": 1,
-                "siteId": x["deviceID"],
+                "siteId": x["Name"],
             }
             elements.append(element)
         coltn_mdb.insert_many(elements)
@@ -1481,8 +1480,8 @@ def puller_idirect_lima():
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
-            bulk.find({"active": 1, "siteId": x["deviceID"]}).update(
-                {"$set": {"puller": x, "status": x["terminalStatus"], "active": 1}}
+            bulk.find({"active": 1, "siteId": x["Name"]}).update(
+                {"$set": {"puller": x, "status": x["Active"], "active": 1}}
             )
         bulk.execute()
         dateSaveHistoryUpdateMongo(data)
@@ -1499,13 +1498,13 @@ def puller_idirect_lima():
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in json.loads(data):
-            bulk.find({"active": 1, "siteId": x["old_deviceID"]}).update(
+            bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
                 {"$set": {"active": 0}}
             )
             dateSaveHistory(
                 {
                     "type": "delete_mongo",
-                    "principal_key": x["old_deviceID"],
+                    "principal_key": x["old_ID"],
                     "changes": {"status": 0},
                 }
             )
@@ -1533,8 +1532,9 @@ def puller_idirect_lima():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE bifrost_terminal SET status =0  WHERE siteId = '"
-                + x["old_deviceID"]
+                "UPDATE "+table_mysql_puller+" SET status =0  WHERE siteId = '"
+                + x["old_Name"] + "and id_nms="
+                + x["old_ID"] 
                 + "' and status!=0"
             )
             connection_engi.execute(sqlesn)
