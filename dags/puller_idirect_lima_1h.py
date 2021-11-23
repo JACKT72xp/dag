@@ -756,8 +756,10 @@ def puller_idirect_lima_1h():
 
                 # print(response,'responseresponseresponseresponse')
                 data_send = []
-                print(len(response[0:100]),' LEN')
-                for item in response[0:100]:
+                tt=len(response)
+                print(tt,' LEN')
+                cc=0
+                for item in response:
                     # print(item,"ITEM")
                     response_terminal = requests.get(
                         config["url"]+"/"+str(item['ID']),
@@ -769,6 +771,8 @@ def puller_idirect_lima_1h():
                     response_terminal = json.loads(response_terminal)
                     # print(response_terminal)
                     data_send.append(response_terminal['data'])
+                    cc+=1
+                    print(cc,'/',tt)
                 response = data_send
                 
                 
