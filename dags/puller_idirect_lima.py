@@ -159,7 +159,7 @@ def puller_idirect_lima():
             "changes": data["changes"],
             "type": data["type"],
             "date_p": time_send_now,
-            "platform_id": 1,
+            "platform_id": platform_id_puller,
             "principalKey": data["principal_key"],
         }
         coltn_history_changes.insert_one(element)
@@ -174,7 +174,7 @@ def puller_idirect_lima():
                 "changes": data,
                 "type": "insert_mongo",
                 "date_p": time_send_now,
-                "platform_id": 1,
+                "platform_id": platform_id_puller,
                 "principalKey": data["siteId"],
             }
             coltn_history_changes.insert(element)
@@ -189,7 +189,7 @@ def puller_idirect_lima():
                 "changes": data,
                 "type": "insert_mysql",
                 "date_p": time_send_now,
-                "platform_id": 1,
+                "platform_id": platform_id_puller,
                 "principalKey": data["platform_ID"],
             }
             coltn_history_changes.insert(element)
@@ -604,7 +604,7 @@ def puller_idirect_lima():
         # db_ = conection["bifrost"]
         # coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find(
-            {},
+            {"platform":platform_id_puller},
             # {"active": 1},
             {
                 "_id": True,
@@ -1343,7 +1343,7 @@ def puller_idirect_lima():
 
     @task()
     def save_key_in_history_puller_cron(key, type_puller):
-        query_update = f"INSERT INTO puller_cron_platform (key_redis,status_cron,platform_id,type) values('{key}',1,1,'{type_puller}')"
+        query_update = f"INSERT INTO puller_cron_platform (key_redis,status_cron,platform_id,type) values('{key}','{platform_id_puller}',1,'{type_puller}')"
         connection_engi = engine.connect()
         resp = connection_engi.execute(query_update)
         if resp.rowcount > 0:
