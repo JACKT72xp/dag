@@ -1421,7 +1421,7 @@ def puller_idirect_lima_1h():
                 "platform_Name",
                 "platform_ID",
                 "platform_Active",
-                "platform_DID"
+                "platform_DID",
                 
                 "platform_ModelType",
                 "platform_InrouteGroupID",
@@ -1508,7 +1508,7 @@ def puller_idirect_lima_1h():
                     "platform_InrouteGroupID",
                     "platform_NetworkID",
                     "platform_Lat",
-                    "platform_Lon"
+                    "platform_Lon",
                     
                     
                     "platform_Name",
