@@ -458,6 +458,7 @@ def puller_idirect_lima():
             response = redis_cn.get("1-"+platform_name)
             response = json.loads(response)
             df_old = pd.DataFrame(response)
+            df_old = df_old.astype(str)
             df_old = df_old[df_old.columns].add_prefix("old_")
             if df_old is None:
                 return []
@@ -637,6 +638,7 @@ def puller_idirect_lima():
         # del df_datamongo['concat_key_generate_secondary']
         # except:
         # print("error delete")
+        df_datamongo = df_datamongo.astype(str)
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix("mongo_")
         df_datamongo = generateConcatKey(
             df_datamongo, ["mongo_" + config["primary_join_cols"]["mongo"]]
@@ -703,6 +705,7 @@ def puller_idirect_lima():
                 # xaa=response[response['deviceID']=='1600032794']
                 # print(xaa[['latitude','longitude']],'aaa')
                 response = response[response.columns].add_prefix("platform_")
+                response = response.astype(str)
                 response = generateConcatKey(
                     response, ["platform_" + config["primary_join_cols"]["platform"]]
                 )
@@ -725,6 +728,7 @@ def puller_idirect_lima():
                         response = response
 
                 response = pd.DataFrame(response)
+                response = response.astype(str)
                 response = response[response.columns].add_prefix("platform_")
                 # response = response.fillna(0)
                 response = generateConcatKey(
@@ -759,6 +763,7 @@ def puller_idirect_lima():
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
             return "[{}]"
+        df_mysql_total = df_mysql_total.astype(str)
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
         df_mysql_total = generateConcatKey(
