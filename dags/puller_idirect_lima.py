@@ -41,7 +41,9 @@ from pymongo import MongoClient
 
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri, connect=False)
-
+uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
+conection_2 = MongoClient(uri)
+db_2 = conection_2["bifrost"]
 
 
 collection_puller = "iditect_testfull"
@@ -148,7 +150,7 @@ def puller_idirect_lima():
         return list_cur
 
     def dateSaveHistory(data):
-        coltn_history_changes = db_[history_collection_mongo]
+        coltn_history_changes = db_2[history_collection_mongo]
         data_old = getDataOld(data["principal_key"])
         element = {
             "data": [],
@@ -163,7 +165,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryInsertMongo(data_global):
-        coltn_history_changes = db_[history_collection_mongo]
+        coltn_history_changes = db_2[history_collection_mongo]
         for data in data_global:
             element = {
                 "data": [],
@@ -178,7 +180,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryInsert(data_global):
-        coltn_history_changes = db_[history_collection_mongo]
+        coltn_history_changes = db_2[history_collection_mongo]
         for data in data_global:
             element = {
                 "data": [],
@@ -193,7 +195,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryUpdate(data_global):
-        coltn_history_changes = db_[history_collection_mongo]
+        coltn_history_changes = db_2[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
@@ -209,7 +211,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryUpdateMongo(data_global):
-        coltn_history_changes = db_[history_collection_mongo]
+        coltn_history_changes = db_2[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
