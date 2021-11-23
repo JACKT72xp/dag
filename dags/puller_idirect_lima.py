@@ -238,12 +238,12 @@ def puller_idirect_lima():
         try:
             df_stnd_key = df[cols].astype(str)
             for col in cols:
-                if col == "platform_esn":
+                if col == "platform_SN":
                     df_stnd_key[col] = df_stnd_key[col].map(
                         lambda eve: eve.replace(".0", "")
                     )
                     df[col] = df_stnd_key[col]
-                if col == "mongo_esn":
+                if col == "mongo_SN":
                     df_stnd_key[col] = df_stnd_key[col].map(
                         lambda eve: eve.replace(".0", "")
                     )
