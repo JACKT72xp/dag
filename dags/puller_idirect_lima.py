@@ -307,7 +307,7 @@ def puller_idirect_lima():
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
         redis_cn = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
-        redis_cn.set("1-hughes", data)
+        redis_cn.set("1-"+platform_name, data)
         return {"status": True, "data": ""}
 
     @task()
@@ -656,8 +656,8 @@ def puller_idirect_lima():
         time_send = datetime.now()
         formatted_date = time_send.strftime("%Y-%m-%d %H:%M:%S")
         coltn_mdb.replace_one(
-            {"platform": "hughes"},
-            {"platform": "hughes", "date": formatted_date},
+            {"platform": platform_name},
+            {"platform": platform_name, "date": formatted_date},
             upsert=True,
         )
         return ["OK"]
