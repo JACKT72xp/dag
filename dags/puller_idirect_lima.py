@@ -220,13 +220,13 @@ def puller_idirect_lima():
                 "data_old": {
                     "did": data["mongo_DID"],
                     "sn": data["mongo_SN"],
-                    "active": data["mongo_Active"],
+                    "active": str(data["mongo_Active"]),
                     "id": data["mongo_ID"],
                 },
                 "changes": {
                     "did": data["DID"],
                     "sn": data["SN"],
-                    "active": data["Active"],
+                    "active": str(data["Active"]),
                     "id": data["ID"],
                 },
                 "type": "update_mongo",
@@ -1373,6 +1373,7 @@ def puller_idirect_lima():
         data_insert_send.rename(
             columns={"platform_DID": "did"}, inplace=True
         )
+        data_insert_send['platform_Active'].astype(str)
         data_insert_send.rename(
             columns={"platform_Active": "statusTerminal"}, inplace=True
         )
@@ -1400,6 +1401,7 @@ def puller_idirect_lima():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
+        data["platform_Active"].astype(str)
         args_send = (
             data[
                 [
@@ -1432,6 +1434,7 @@ def puller_idirect_lima():
             .iloc[0:]
             .to_dict("record")
         )
+        
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
         qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID "
@@ -1464,7 +1467,7 @@ def puller_idirect_lima():
             data_mysql = getDataMysqlBySiteId(x["Name"])
             element = {
                 "puller": x,
-                "status": x["Active"],
+                "status": str(x["Active"]),
                 "timeC": formatted_date,
                 "timeCO": "",
                 "btId": data_mysql["btId"],
@@ -1495,7 +1498,7 @@ def puller_idirect_lima():
             #     {"$set": {"puller": x, "status": x["Active"], "active": 1}}
             # )
             bulk.find({"siteId": x["Name"]}).update(
-                {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": x["Active"], "status": x["Active"], "active": 1}}
+                {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
             )
 
         bulk.execute()
