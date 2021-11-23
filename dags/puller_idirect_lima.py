@@ -742,7 +742,7 @@ def puller_idirct_lima():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal  FROM "
+            "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms  FROM "
             + str(config["mysql_table"])
             + " where status = 1 and  platformId = "
             + str(config["platform_id"])
