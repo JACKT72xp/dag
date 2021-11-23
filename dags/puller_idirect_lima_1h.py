@@ -744,7 +744,7 @@ def puller_idirect_lima_1h():
                     )
                     response_terminal = response_terminal.text
                     response_terminal = json.loads(response_terminal)
-                    print(response_terminal)
+                    # print(response_terminal)
                     data_send.append(response_terminal['data'])
                 response = data_send
                 
