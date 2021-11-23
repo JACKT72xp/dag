@@ -1559,13 +1559,13 @@ def puller_idirct_lima():
     # [START main_flow]
     valid_puller_runing = valid_exist_puller_runing()
 
-    checkTask = BranchPythonOperator(
-        task_id="valid_puller_runing",
-        trigger_rule=TriggerRule.ONE_SUCCESS,
-        python_callable=valid_exist_puller_runing,  # Registered method
-        provide_context=True,
-        # dag=dag
-    )
+    # checkTask = BranchPythonOperator(
+    #     task_id="valid_puller_runing",
+    #     trigger_rule=TriggerRule.ONE_SUCCESS,
+    #     python_callable=valid_exist_puller_runing,  # Registered method
+    #     provide_context=True,
+    #     # dag=dag
+    # )
 
     rs = start()
     key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
