@@ -42,11 +42,17 @@ from pymongo import MongoClient
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri, connect=False)
 
+
+
 collection_puller = "idirect_test"
 table_mysql_puller = "bifrost_terminal_test"
 tag_airflow = "idirect"
 platform_name = "idirect_lima_test"
 platform_id_puller = 2
+history_collection_mongo="history_changes_test"
+
+
+
 db_ = conection["bifrost"]
 coltn_mdb = db_[collection_puller]
 
@@ -142,7 +148,7 @@ def puller_idirect_lima():
         return list_cur
 
     def dateSaveHistory(data):
-        coltn_history_changes = db_["history_changes"]
+        coltn_history_changes = db_[history_collection_mongo]
         data_old = getDataOld(data["principal_key"])
         element = {
             "data": [],
@@ -157,7 +163,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryInsertMongo(data_global):
-        coltn_history_changes = db_["history_changes"]
+        coltn_history_changes = db_[history_collection_mongo]
         for data in data_global:
             element = {
                 "data": [],
@@ -172,7 +178,7 @@ def puller_idirect_lima():
         return ["ok"]
 
     def dateSaveHistoryInsert(data_global):
-        coltn_history_changes = db_["history_changes"]
+        coltn_history_changes = db_[history_collection_mongo]
         for data in data_global:
             element = {
                 "data": [],
@@ -181,13 +187,13 @@ def puller_idirect_lima():
                 "type": "insert_mysql",
                 "date_p": time_send_now,
                 "platform_id": 1,
-                "principalKey": data["platform_deviceID"],
+                "principalKey": data["platform_ID"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
 
     def dateSaveHistoryUpdate(data_global):
-        coltn_history_changes = db_["history_changes"]
+        coltn_history_changes = db_[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
@@ -197,33 +203,33 @@ def puller_idirect_lima():
                 "type": "update_mysql",
                 "date_p": time_send_now,
                 "platform_id": 1,
-                "principalKey": data["platform_deviceID"],
+                "principalKey": data["platform_ID"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
 
     def dateSaveHistoryUpdateMongo(data_global):
-        coltn_history_changes = db_["history_changes"]
+        coltn_history_changes = db_[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
                 "data": [],
                 "data_old": {
-                    "latitude": data["mongo_latitude"],
-                    "longitude": data["mongo_longitude"],
-                    "terminalStatus": data["mongo_terminalStatus"],
-                    "esn": data["mongo_esn"],
+                    "did": data["mongo_DID"],
+                    "sn": data["mongo_SN"],
+                    "active": data["mongo_Active"],
+                    "id": data["mongo_ID"],
                 },
                 "changes": {
-                    "latitude": data["latitude"],
-                    "longitude": data["longitude"],
-                    "terminalStatus": data["terminalStatus"],
-                    "esn": data["esn"],
+                    "did": data["DID"],
+                    "sn": data["SN"],
+                    "active": data["Active"],
+                    "id": data["ID"],
                 },
                 "type": "update_mongo",
                 "date_p": time_send_now,
-                "platform_id": 1,
-                "principalKey": data["deviceID"],
+                "platform_id": platform_id_puller,
+                "principalKey": data["ID"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
@@ -284,7 +290,7 @@ def puller_idirect_lima():
 
     def getDataMysqlBySiteId(siteId):
         # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from {table_mysql_puller} where siteId ='{siteId}' and status != 0 and platformId = 1"
+        query = f"select * from {table_mysql_puller} where siteId ='{siteId}' and status != 0 and platformId = {platform_id_puller}"
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]["id"]
@@ -662,7 +668,7 @@ def puller_idirect_lima():
         time_send = datetime.now()
         formatted_date = time_send.strftime("%Y-%m-%d %H:%M:%S")
         connection_engi = engine.connect()
-        sql = f"UPDATE his_puller SET date='{formatted_date}'  WHERE platformId =1"
+        sql = f"UPDATE his_puller SET date='{formatted_date}'  WHERE platformId ={platform_id_puller}"
         connection_engi.execute(sql)
 
         return ["OK"]
@@ -1349,24 +1355,23 @@ def puller_idirect_lima():
         data_insert_send = pd.DataFrame(data)
         data_insert_send = data_insert_send[
             [
-                "platform_esn",
-                "platform_deviceID",
-                "platform_latitude",
-                "platform_longitude",
-                "platform_terminalStatus",
-                "platform_esn",
+                "platform_SN",
+                "platform_Name",
+                "platform_ID",
+                "platform_Active",
+                "platform_DID"
             ]
         ]
-        data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace=True)
-        data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace=True)
+        data_insert_send.rename(columns={"platform_Name": "siteId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_ID": "id_nms"}, inplace=True)
         data_insert_send.rename(
-            columns={"platform_longitude": "longitud"}, inplace=True
+            columns={"platform_DID": "did"}, inplace=True
         )
         data_insert_send.rename(
-            columns={"platform_terminalStatus": "statusTerminal"}, inplace=True
+            columns={"platform_Active": "statusTerminal"}, inplace=True
         )
-        data_insert_send.rename(columns={"platform_esn": "esn"}, inplace=True)
-        data_insert_send["platformId"] = 1
+        data_insert_send.rename(columns={"platform_SN": "esn"}, inplace=True)
+        data_insert_send["platformId"] = platform_id_puller
         data_insert_send["status"] = 1
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
@@ -1610,25 +1615,25 @@ def puller_idirect_lima():
 
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
-    # save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
+    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
     # # save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
-    # insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
-    # update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
-    # delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
+    insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
+    update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
+    delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    # save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
-    # # save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
-    # insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
-    # update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
-    # delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
+    # save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
+    insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
+    update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
+    delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    # save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
-    # # save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
-    # delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
-    # save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
+    # save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
+    delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
+    save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     # save_in_history_mongo_puller = save_in_history_mongo(config)
     # save_in_history_mysql_puller = save_in_history_mysql(engine)
 
@@ -1646,7 +1651,7 @@ def puller_idirect_lima():
     # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
     # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
     rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>   primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform,  primary_vs_mysql_only_old  ]  >> end
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >>  primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform , primary_vs_mongo_only_data_old ]   >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >>  end
 
     # [END main_flow]
 
