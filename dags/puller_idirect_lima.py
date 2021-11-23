@@ -85,7 +85,7 @@ time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # [START instantiate_dag]
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=["hughes"])
-def puller_hughes():
+def puller_idirect_lima():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
@@ -1728,5 +1728,5 @@ def puller_hughes():
 
 
 # [START dag_invocation]
-puller_hughes = puller_hughes()
+puller_hughes = puller_idirect_lima()
 # [END dag_invocation]
