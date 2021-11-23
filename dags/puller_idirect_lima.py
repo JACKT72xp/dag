@@ -266,14 +266,15 @@ def puller_idirct_lima():
 
     # @task()
     def valid_exist_puller_runing():
-        key_redis = None
-        query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
-        df = pd.read_sql_query(query, engine)
-        data = json.loads(df.to_json(orient="records"))
-        if len(data) == 0:
-            key_redis = "start"
-        else:
-            key_redis = "finish_process"
+        # key_redis = None
+        # query = f"SELECT * FROM puller_cron_platform where status=1 and status_cron=2  limit 1 "
+        # df = pd.read_sql_query(query, engine)
+        # data = json.loads(df.to_json(orient="records"))
+        # if len(data) == 0:
+        #     key_redis = "start"
+        # else:
+        #     key_redis = "finish_process"
+        key_redis = "start"
 
         return key_redis
 
