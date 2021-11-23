@@ -609,6 +609,7 @@ def puller_idirect_lima():
                 "puller.SN": True,
                 "puller.DID": True,
                 "puller.Name": True,
+                "puller.Active": True,
             },
         )
         list_cur = list(data_mdb)
