@@ -698,8 +698,9 @@ def puller_idirect_lima_1h():
                 response = json.loads(response)
                 data_send = []
                 for item in response:
+                    print(item,"ITEM")
                     response_terminal = requests.get(
-                        config["url"]+"/"+item['ID'],
+                        config["url"]+"/"+str(item['ID']),
                         auth=HTTPBasicAuth(config["user"], config["password"]),
                         verify=config["verify"],
                         timeout=config["timeout"],
@@ -719,7 +720,7 @@ def puller_idirect_lima_1h():
                 data_send = []
                 for item in response:
                     response_terminal = requests.get(
-                        config["url"]+"/"+item['ID'],
+                        config["url"]+"/"+str(item['ID']),
                         auth=HTTPBasicAuth(config["user"], config["password"]),
                         verify=config["verify"],
                         timeout=config["timeout"],
