@@ -719,6 +719,7 @@ def puller_idirect_lima_1h():
             
                 data_send = []
                 for item in response:
+                    print(item,"ITEM")
                     response_terminal = requests.get(
                         config["url"]+"/"+str(item['ID']),
                         auth=HTTPBasicAuth(config["user"], config["password"]),
