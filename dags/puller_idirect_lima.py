@@ -1728,5 +1728,5 @@ def puller_idirect_lima():
 
 
 # [START dag_invocation]
-puller_hughes = puller_idirect_lima()
+puller_idirect_lima = puller_idirect_lima ()
 # [END dag_invocation]
