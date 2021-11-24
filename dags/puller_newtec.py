@@ -833,7 +833,7 @@ def puller_newtec():
                         response = response
                 # response = pd.DataFrame(response)
                 # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
-                response=pd.json_normalize(response,'addresses')
+                pd.json_normalize(response,'addresses')
                 print(response.columns,' responseresponseresponseresponse')
                 # response['Lat'] = response['Lat'].astype(str)
                 # response['Lon'] = response['Lon'].astype(str)
