@@ -832,12 +832,11 @@ def puller_newtec():
                     except:
                         response = response
 
-
-                response = pd.DataFrame(response)
-                # response['Lat'] = response['Lat'].astype(str)
-                # response['Lon'] = response['Lon'].astype(str)
                 response=pd.json_normalize(response)
                 print(response,' responseresponseresponseresponse')
+                # response = pd.DataFrame(response)
+                # response['Lat'] = response['Lat'].astype(str)
+                # response['Lon'] = response['Lon'].astype(str)
                 response = response[response.columns].add_prefix("platform_")
                 response = generateConcatKey(
                     response, ["platform_" + config["primary_join_cols"]["platform"]]
