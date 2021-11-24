@@ -832,7 +832,7 @@ def puller_newtec():
                     except:
                         response = response
 
-                response=pd.json_normalize(response)
+                response=pd.json_normalize(response.addresses.apply(json.loads))
                 print(response.columns,' responseresponseresponseresponse')
                 # response = pd.DataFrame(response)
                 # response['Lat'] = response['Lat'].astype(str)
