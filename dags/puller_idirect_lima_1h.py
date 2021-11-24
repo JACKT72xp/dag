@@ -248,11 +248,11 @@ def puller_idirect_lima_1h():
         for data in data_global:
             element = {
                 "data": [],
-                "data_old": data,
+                "data_old": [],
                 "changes": data,
                 "type": "update_mysql",
                 "date_p": time_send_now,
-                "platform_id": 1,
+                "platform_id": platform_id_puller,
                 "principalKey": data["platform_ID"],
             }
             coltn_history_changes.insert(element)
@@ -1596,10 +1596,10 @@ def puller_idirect_lima_1h():
         del data_insert_send['crmId']
         
         print(data_insert_send,'data_insert_senddata_insert_send')
-        # data_insert_send.to_sql(
-        #     table_mysql_puller, engine, if_exists="append", index=False
-        # )
-        # dateSaveHistoryInsert(data)
+        data_insert_send.to_sql(
+            table_mysql_puller, engine, if_exists="append", index=False
+        )
+        dateSaveHistoryInsert(data)
         return "ok"
 
     @task()
@@ -1696,13 +1696,13 @@ def puller_idirect_lima_1h():
         datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(180)
         print(datax,' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
-
+        print(args, 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
         qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
-        # dateSaveHistoryUpdate(args_send)
+        dateSaveHistoryUpdate(args_send)
         return ["ok"]
 
     @task()
