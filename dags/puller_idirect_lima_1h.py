@@ -1645,24 +1645,6 @@ def puller_idirect_lima_1h():
             .iloc[0:]
             .to_dict("record")
         )
-        data = data[
-                [
-                    "platform_Active",
-                    "platform_SN",
-                    "platform_DID",
-                    "updated_at_send",
-                    
-                    "platform_ModelType",
-                    "platform_InrouteGroupID",
-                    "platform_NetworkID",
-                    "platform_Lat",
-                    "platform_Lon",
-                    
-                    
-                    "platform_Name",
-                    "platform_ID",
-                ]
-            ]
         
         
         datax = data[
@@ -1684,6 +1666,25 @@ def puller_idirect_lima_1h():
                     "platform_SERVICEPLANCRMID"
                 ]
             ]
+        data = data[
+                [
+                    "platform_Active",
+                    "platform_SN",
+                    "platform_DID",
+                    "updated_at_send",
+                    
+                    "platform_ModelType",
+                    "platform_InrouteGroupID",
+                    "platform_NetworkID",
+                    "platform_Lat",
+                    "platform_Lon",
+                    
+                    
+                    "platform_Name",
+                    "platform_ID",
+                ]
+            ]
+        
         
         
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
