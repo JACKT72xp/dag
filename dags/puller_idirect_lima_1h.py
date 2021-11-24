@@ -1676,7 +1676,7 @@ def puller_idirect_lima_1h():
                     "platform_Name",
                     "platform_ID",
                     "platform_SERVICEPLANCRMID",
-                    "concat_key_generate_secondary_x"
+                    "concat_key_generate_secondary_x",
                     "concat_key_generate_secondary_y"
                 ]
             ]
