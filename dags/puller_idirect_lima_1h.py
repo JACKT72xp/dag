@@ -740,7 +740,13 @@ def puller_idirect_lima_1h():
                 "puller.InrouteGroupID": True,
                 "puller.NetworkID": True,
                 "puller.Lat": True,
-                "puller.Lon": True
+                "puller.Lon": True,
+                
+                "puller.DownMIR": True,
+                "puller.UpMIR": True,
+                "puller.DownCIR": True,
+                "puller.DownMIR": True
+                
             },
         )
         list_cur = list(data_mdb)
