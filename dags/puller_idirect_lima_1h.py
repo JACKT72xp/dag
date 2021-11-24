@@ -1600,7 +1600,7 @@ def puller_idirect_lima_1h():
         
         
         data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
-        data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(180)
+        data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
         data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
         del data_insert_send['crmId']
         
@@ -1712,7 +1712,7 @@ def puller_idirect_lima_1h():
         
         
         datax = datax.join(list_sp.set_index('crmId'), on='crmId')
-        datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(180)
+        datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(1171)
         # print(datax[datax['servicePlanIdTable']==180]['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
         print(datax[['platform_Lat','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
