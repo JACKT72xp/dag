@@ -836,6 +836,7 @@ def puller_newtec():
                 response = pd.DataFrame(response)
                 # response['Lat'] = response['Lat'].astype(str)
                 # response['Lon'] = response['Lon'].astype(str)
+                response=pd.json_normalize(response)
                 print(response,' responseresponseresponseresponse')
                 response = response[response.columns].add_prefix("platform_")
                 response = generateConcatKey(
