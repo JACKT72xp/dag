@@ -952,9 +952,7 @@ def puller_idirect_lima_1h():
             return []
         query = (
             "SELECT  id as servicePlanIdTable,crmId FROM "
-            +table_mysql_serviceplan
-            +
-            + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
+            +table_mysql_serviceplan + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
             + str(config["platform_id"])
         )
         df_mysql = pd.read_sql_query(query, engine)
