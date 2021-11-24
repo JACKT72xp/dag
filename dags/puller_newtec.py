@@ -119,9 +119,14 @@ def puller_newtec():
             
             "concat_columns_api": [],
             "route_trunk": "data",
-            "url": "http://192.168.36.50:81/api/v1/evo/config/obj/remote",
-            "user": "systemapi",
-            "password": "tiws2019",
+            "url": "http://192.168.36.50:8081/orbith-api/public/v1/api-isp/subscribers?limit=50000",
+            "user": "",
+            "password": "",
+            
+            "user_login": "integracion-tiws@orbith.com",
+            "password_login": "GLRt3RV3sUNWMnN",
+            "url_login":"http://192.168.36.50:8081/orbith-api/public/v1/api-isp/auth",
+            
             "timeout": 120,
             "verify": "False",
             "platform_id": platform_id_puller,
