@@ -184,7 +184,7 @@ def puller_idirect_lima_1h():
                 "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID","mongo_Active"],
                 # "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_Active"],
                 "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANCRMID","platform_Active"],
-                "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon"],
+                "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon","old_SERVICEPLANCRMID","old_Active"],
             },
             "platform_name": platform_name,
         }
