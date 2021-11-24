@@ -1864,7 +1864,7 @@ def puller_idirect_lima_1h():
     comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
-    extract_servicesplan_data = extract_servicesplan(config, valid_puller_runing)
+    extract_servicesplan_data = extract_servicesplan(engine,config, valid_puller_runing)
     #COMPARATE MYSQL
     time_send = datetime.now()
     formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
