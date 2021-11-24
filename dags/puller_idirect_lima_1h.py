@@ -586,6 +586,10 @@ def puller_idirect_lima_1h():
             response = redis_cn.get("1-"+platform_name)
             response = json.loads(response)
             df_old = pd.DataFrame(response)
+
+
+            df_old['Lat'] = df_old['Lat'].astype(str)
+            df_old['Lon'] = df_old['Lon'].astype(str)
             #TD df_old = df_old.astype(str)
             df_old = df_old[df_old.columns].add_prefix("old_")
             if df_old is None:
@@ -777,7 +781,8 @@ def puller_idirect_lima_1h():
         # del df_datamongo['concat_key_generate_secondary']
         # except:
         # print("error delete")
-        #TD df_datamongo = df_datamongo.astype(str)
+        df_datamongo['Lat'] = df_datamongo['Lat'].astype(str)
+        df_datamongo['Lon'] = df_datamongo['Lon'].astype(str)
         df_datamongo = generateColumns(df_datamongo,config)
         print(df_datamongo,' generateColumnsresponsegenerateColumnsresponse')
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix("mongo_")
@@ -897,7 +902,8 @@ def puller_idirect_lima_1h():
                 
 
                 response = pd.DataFrame(response)
-                
+                response['Lat'] = response['Lat'].astype(str)
+                response['Lon'] = response['Lon'].astype(str)
                 response = generateColumns(response,config)
                 print(response,' generateColumnsresponsegenerateColumnsresponse')
                 # response = response.astype(str)
