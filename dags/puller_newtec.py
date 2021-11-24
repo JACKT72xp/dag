@@ -45,11 +45,11 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 
 
-collection_puller = "newtect_test_full"
+collection_puller = "newtec_test_full"
 table_mysql_puller = "bifrost_terminal_test"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "newtect"
-platform_name = "newtect_test"
+platform_name = "newtec_test_full"
 platform_id_puller = 107
 history_collection_mongo="history_changes_test"
 
