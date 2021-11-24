@@ -1694,7 +1694,7 @@ def puller_idirect_lima_1h():
         
         datax = datax.join(list_sp.set_index('crmId'), on='crmId')
         datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(180)
-        print(datax,' dataxdataxdataxdataxdatax')
+        print(datax[datax['servicePlanIdTable']==180]['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
         print(args, 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
