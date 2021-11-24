@@ -959,7 +959,7 @@ def puller_idirect_lima_1h():
             return "[{}]"
         print(df_mysql,'  xddddd')
         df_mysql = df_mysql.to_json(orient="records")
-        return df_mysql
+        return json.loads(df_mysql)
 
     @task()
     def comparate_old_vs_new(data_platform, data_old):
@@ -1688,6 +1688,7 @@ def puller_idirect_lima_1h():
         
         
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        print(data_servicesplan)
         list_sp = pd.DataFrame(data_servicesplan)
         
         
