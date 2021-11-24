@@ -319,31 +319,6 @@ def puller_idirect_lima_1h():
                         lambda eve: eve.replace(".0", "")
                     )
                     df[col] = df_stnd_key[col]
-                    
-                    
-                if col == "platform_Lat":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
-                if col == "mongo_Lat":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
-                    
-                if col == "platform_Lon":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
-                if col == "mongo_Lon":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
-                    
-                      
                 df_stnd_key[col] = df_stnd_key[col].map(
                     lambda eve: eve.replace("0.0000000000000000", " ")
                 )
@@ -1725,15 +1700,14 @@ def puller_idirect_lima_1h():
         
         
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
-        print(data_servicesplan)
         list_sp = pd.DataFrame(data_servicesplan)
         
         
         datax = datax.join(list_sp.set_index('crmId'), on='crmId')
         datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(180)
-        print(datax[datax['servicePlanIdTable']==180]['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
+        # print(datax[datax['servicePlanIdTable']==180]['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
-        print(args, 'argsargsargsargsargsargs')
+        print(data[['platform_Lat','platform_Lon']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
         qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
