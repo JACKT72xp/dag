@@ -118,7 +118,7 @@ def puller_idirect_lima_1h():
             
             "concat_columns_api": [
                 {
-                "name_column": "SERVICEPLANID",
+                "name_column": "SERVICEPLANCRMID",
                 "cols": [
                     {
                     "data": "DownMIR",
@@ -178,8 +178,8 @@ def puller_idirect_lima_1h():
             },
             "secondary_join_cols": {
                 "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId"],
-                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANID"],
-                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANID"],
+                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID"],
+                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANCRMID"],
                 "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon"],
             },
             "platform_name": platform_name,
@@ -275,6 +275,7 @@ def puller_idirect_lima_1h():
                     "networkID": data["mongo_NetworkID"],
                     "lat": data["mongo_Lat"],
                     "lon": data["mongo_Lon"],
+                    "serviceplan": data["mongo_SERVICEPLANCRMID"],
                                        
                 },
                 "changes": {
@@ -288,6 +289,7 @@ def puller_idirect_lima_1h():
                     "networkID": data["NetworkID"],
                     "lat": data["Lat"],
                     "lon": data["Lon"],
+                    "serviceplan": data["platform_SERVICEPLANCRMID"],
                     
                     
                 },
@@ -871,8 +873,8 @@ def puller_idirect_lima_1h():
                 tt=len(response)
                 print(tt,' LEN')
                 cc=0
-                for item in response[0:20]:
-                # for item in response:
+                # for item in response[0:20]:
+                for item in response:
                     # print(item,"ITEM")
                     response_terminal = requests.get(
                         config["url"]+"/"+str(item['ID']),
@@ -1798,64 +1800,64 @@ def puller_idirect_lima_1h():
     key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
     old_data = extract_old(key_process, config, valid_puller_runing)
     platform_data = extract_platform(config, valid_puller_runing)
-    # save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
+    save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
 
-    # comp = comparate_old_vs_new(platform_data, old_data)
+    comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
-    ##COMPARATE MYSQL
-    # time_send = datetime.now()
-    # formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
-    # key_redis_mysql = key_process+'-mysql-'+formatted_date
-    # key_redis_mongo = key_process+'-mongo-'+formatted_date
+    #COMPARATE MYSQL
+    time_send = datetime.now()
+    formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
+    key_redis_mysql = key_process+'-mysql-'+formatted_date
+    key_redis_mongo = key_process+'-mongo-'+formatted_date
 
-    # primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
-    # secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
-    # save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
-    # insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals)
-    # update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals)
-    # delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
+    primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
+    secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
+    save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
+    insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals)
+    update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals)
+    delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
 
-    # # # save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
+    # # save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
 
-    # primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
-    # secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
-    # save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
-    # # # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
-    # insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform)
-    # update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform)
-    # delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
+    primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
+    secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
+    save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
+    # # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
+    insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform)
+    update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform)
+    delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
 
-    # primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
-    # save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
-    # delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
-    # # # save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
+    primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
+    save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
+    delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
+    # # save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
 
-    # # ##COMPARATE MONGODB
+    # ##COMPARATE MONGODB
 
-    # primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
-    # secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
-    # save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    # # # save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
-    # insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
-    # update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
-    # delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
+    primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
+    secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
+    save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
+    # # save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
+    insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
+    update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
+    delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
 
-    # primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
-    # secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
-    # save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
-    # ## save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
-    # insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
-    # update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
-    # delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
+    primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
+    secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
+    save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
+    ## save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
+    insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
+    update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
+    delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
 
-    # primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
-    # save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
-    # ## save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
-    # delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
-    # save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
-    # save_in_history_mongo_puller = save_in_history_mongo(config)
-    # save_in_history_mysql_puller = save_in_history_mysql(engine)
+    primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
+    save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
+    ## save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
+    delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
+    save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
+    save_in_history_mongo_puller = save_in_history_mongo(config)
+    save_in_history_mysql_puller = save_in_history_mysql(engine)
 
     end = finish()
     end_process = finish_process()
@@ -1866,8 +1868,8 @@ def puller_idirect_lima_1h():
     rs >>Label("Extrae la data de mysql") >> mysql_data
     rs >>Label("Extrae la data de mongodb") >> mongo_data
     rs >>Label("Extrae la data de la imagen anterior") >> old_data
-    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
-    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
 
