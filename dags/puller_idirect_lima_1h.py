@@ -177,9 +177,9 @@ def puller_idirect_lima_1h():
                 "old": "ID",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud"],
-                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon"],
-                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon"],
+                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId"],
+                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANID"],
+                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANID"],
                 "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon"],
             },
             "platform_name": platform_name,
@@ -766,6 +766,8 @@ def puller_idirect_lima_1h():
         # except:
         # print("error delete")
         #TD df_datamongo = df_datamongo.astype(str)
+        df_datamongo = generateColumns(df_datamongo,config)
+        print(df_datamongo,' generateColumnsresponsegenerateColumnsresponse')
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix("mongo_")
         df_datamongo = generateConcatKey(
             df_datamongo, ["mongo_" + config["primary_join_cols"]["mongo"]]
