@@ -289,7 +289,7 @@ def puller_idirect_lima_1h():
                     "networkID": data["NetworkID"],
                     "lat": data["Lat"],
                     "lon": data["Lon"],
-                    "serviceplan": data["platform_SERVICEPLANCRMID"],
+                    "serviceplan": data["SERVICEPLANCRMID"],
                     
                     
                 },
