@@ -133,9 +133,9 @@ def puller_idirect_lima():
                 "old": "ID",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did"],
-                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID"],
-                "platform": ["platform_Name", "platform_SN", "platform_DID"],
+                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_statusTerminal"],
+                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_Active"],
+                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_Active"],
                 "old": ["old_Name", "old_SN", "old_DID"],
             },
             "platform_name": platform_name,
@@ -1378,7 +1378,7 @@ def puller_idirect_lima():
         data_insert_send.rename(
             columns={"platform_DID": "did"}, inplace=True
         )
-        data_insert_send['platform_Active'].astype(str)
+        data_insert_send['platform_Active'] =  data_insert_send['platform_Active'].astype(str)
         data_insert_send.rename(
             columns={"platform_Active": "statusTerminal"}, inplace=True
         )
@@ -1406,7 +1406,7 @@ def puller_idirect_lima():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
-        data["platform_Active"].astype(str)
+        data["platform_Active"] = data["platform_Active"].astype(str)
         args_send = (
             data[
                 [

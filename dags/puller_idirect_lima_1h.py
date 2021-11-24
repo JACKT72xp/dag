@@ -178,9 +178,9 @@ def puller_idirect_lima_1h():
                 "old": "ID",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId"],
-                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID"],
-                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANCRMID"],
+                "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId","mysql_statusTerminal"],
+                "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID","mongo_Active"],
+                "platform": ["platform_Name", "platform_SN", "platform_DID","platform_ModelType","platform_InrouteGroupID","platform_NetworkID","platform_Lat","platform_Lon","platform_SERVICEPLANCRMID","platform_Active"],
                 "old": ["old_Name", "old_SN", "old_DID","old_ModelType","old_InrouteGroupID","old_NetworkID","old_Lat","old_Lon"],
             },
             "platform_name": platform_name,
@@ -1571,7 +1571,7 @@ def puller_idirect_lima_1h():
         data_insert_send.rename(
             columns={"platform_DID": "did"}, inplace=True
         )
-        data_insert_send['platform_Active'].astype(str)
+        data_insert_send['platform_Active'] = data_insert_send['platform_Active'].astype(str)
         data_insert_send.rename(
             columns={"platform_Active": "statusTerminal"}, inplace=True
         )
@@ -1616,7 +1616,7 @@ def puller_idirect_lima_1h():
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
-        data["platform_Active"].astype(str)
+        data["platform_Active"] = data["platform_Active"].astype(str)
         
 
         
