@@ -924,7 +924,7 @@ def puller_idirect_lima_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,modeltype,inroutegroupId,networkId,mnos_serviceplan.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
             + str(config["mysql_table"])
             + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
             + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
