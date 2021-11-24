@@ -47,6 +47,7 @@ conection_2 = MongoClient(uri_2, connect=False)
 
 collection_puller = "iditect_testfull"
 table_mysql_puller = "bifrost_terminal_test"
+table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "idirect"
 platform_name = "idirect_lima_test_1h"
 platform_id_puller = 2
@@ -946,6 +947,24 @@ def puller_idirect_lima_1h():
         return df_mysql_total
 
     @task()
+    def extract_servicesplan(engine, config, valid_puller_runing):
+        if valid_puller_runing is None:
+            return []
+        query = (
+            "SELECT  id as servicePlanIdTable,crmId FROM "
+            +table_mysql_serviceplan
+            +
+            + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
+            + str(config["platform_id"])
+        )
+        df_mysql = pd.read_sql_query(query, engine)
+        if df_mysql.empty:
+            return "[{}]"
+        print(df_mysql,'  xddddd')
+        df_mysql = df_mysql.to_json(orient="records")
+        return df_mysql
+
+    @task()
     def comparate_old_vs_new(data_platform, data_old):
         df1 = pd.DataFrame(data_platform)
         data_plat = pd.DataFrame(data_platform)
@@ -1523,7 +1542,7 @@ def puller_idirect_lima_1h():
         return resp
 
     @task()
-    def processDataInsertMysql(keys):
+    def processDataInsertMysql(keys,data_servicesplan):
         key = keys["key_insert"]
         try:
             data = getDataRedisByKey(key)
@@ -1546,7 +1565,8 @@ def puller_idirect_lima_1h():
                 "platform_InrouteGroupID",
                 "platform_NetworkID",
                 "platform_Lat",
-                "platform_Lon"
+                "platform_Lon",
+                "platform_SERVICEPLANCRMID"
             ]
         ]
         data_insert_send.rename(columns={"platform_Name": "siteId"}, inplace=True)
@@ -1569,6 +1589,15 @@ def puller_idirect_lima_1h():
         data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
         data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
         
+        data_insert_send.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        list_sp = pd.DataFrame(data_servicesplan)
+        
+        
+        data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
+        data_insert_send['servicesPlanId'] = data_insert_send["servicesPlanId"].fillna(180)
+        
+        
+        print(data_insert_send,'data_insert_senddata_insert_send')
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
         )
@@ -1576,7 +1605,7 @@ def puller_idirect_lima_1h():
         return "ok"
 
     @task()
-    def processDataUpdateMysql(engine, keys):
+    def processDataUpdateMysql(engine, keys,data_servicesplan):
         key = keys["key_update"]
         try:
             data = getDataRedisByKey(key)
@@ -1805,6 +1834,7 @@ def puller_idirect_lima_1h():
     comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
+    extract_servicesplan_data = extract_servicesplan(config, valid_puller_runing)
     #COMPARATE MYSQL
     time_send = datetime.now()
     formatted_date = time_send.strftime('%Y-%m-%d-%H-%M')
@@ -1814,8 +1844,8 @@ def puller_idirect_lima_1h():
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
-    insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals)
-    update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals)
+    insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals,extract_servicesplan_data)
+    update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals,extract_servicesplan_data)
     delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
 
     # # save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
@@ -1824,8 +1854,8 @@ def puller_idirect_lima_1h():
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
     save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
     # # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
-    insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform)
-    update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform)
+    insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform,extract_servicesplan_data)
+    update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform,extract_servicesplan_data)
     delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
