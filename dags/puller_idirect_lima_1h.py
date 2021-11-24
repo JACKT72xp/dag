@@ -1693,7 +1693,7 @@ def puller_idirect_lima_1h():
         
         
         datax = datax.join(list_sp.set_index('crmId'), on='crmId')
-        datax['servicesPlanId'] = datax["servicesPlanId"].fillna(180)
+        datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(180)
         print(datax,' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
 
