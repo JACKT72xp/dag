@@ -951,7 +951,7 @@ def puller_idirect_lima_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  id as servicePlanIdTable,crmId FROM "+table_mysql_serviceplan + " where status = 1 and  platformId = "+ str(config["platform_id"])+'"'
+            "SELECT  id as 'servicePlanIdTable',crmId FROM "+table_mysql_serviceplan + " where status = 1 and  platformId = "+ str(config["platform_id"])+'"'
         )
         print(query)
         df_mysql = pd.read_sql_query(query, engine)
@@ -1591,13 +1591,14 @@ def puller_idirect_lima_1h():
         
         
         data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
-        data_insert_send['servicesPlanId'] = data_insert_send["servicesPlanId"].fillna(180)
-        
+        data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(180)
+        data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
+        del data_insert_send['crmId']
         
         print(data_insert_send,'data_insert_senddata_insert_send')
-        data_insert_send.to_sql(
-            table_mysql_puller, engine, if_exists="append", index=False
-        )
+        # data_insert_send.to_sql(
+        #     table_mysql_puller, engine, if_exists="append", index=False
+        # )
         # dateSaveHistoryInsert(data)
         return "ok"
 
