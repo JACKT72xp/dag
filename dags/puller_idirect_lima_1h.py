@@ -1632,6 +1632,13 @@ def puller_idirect_lima_1h():
                     "platform_DID",
                     "updated_at_send",
                     "platform_ID",
+                    "platform_ModelType",
+                    "platform_InrouteGroupID",
+                    "platform_NetworkID",
+                    "platform_Lat",
+                    "platform_Lon",
+                    
+                    
                     "mysql_statusTerminal",
                     "mysql_esn",
                     "mysql_did",
@@ -1643,6 +1650,8 @@ def puller_idirect_lima_1h():
                     "mysql_longitud",
 
                     "mysql_id_nms",
+                    
+                    
                 ]
             ]
             .iloc[0:]
