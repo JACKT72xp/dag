@@ -319,6 +319,31 @@ def puller_idirect_lima_1h():
                         lambda eve: eve.replace(".0", "")
                     )
                     df[col] = df_stnd_key[col]
+                    
+                    
+                if col == "platform_Lat":
+                    df_stnd_key[col] = df_stnd_key[col].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+                    df[col] = df_stnd_key[col]
+                if col == "mongo_Lat":
+                    df_stnd_key[col] = df_stnd_key[col].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+                    df[col] = df_stnd_key[col]
+                    
+                if col == "platform_Lon":
+                    df_stnd_key[col] = df_stnd_key[col].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+                    df[col] = df_stnd_key[col]
+                if col == "mongo_Lon":
+                    df_stnd_key[col] = df_stnd_key[col].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+                    df[col] = df_stnd_key[col]
+                    
+                      
                 df_stnd_key[col] = df_stnd_key[col].map(
                     lambda eve: eve.replace("0.0000000000000000", " ")
                 )
