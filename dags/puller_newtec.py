@@ -821,34 +821,33 @@ def puller_newtec():
                 response = response.to_json(orient="records")
                 response = json.loads(response)
                 return response
-            try:
-                for x in config["route_trunk"].split("-"):
-                    try:
-
-                        if x.isnumeric():
-                            response = response[int(x)]
-                        else:
-                            response = response[x]
-                    except:
-                        response = response
-                # response = pd.DataFrame(response)
-                # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
-                pd.json_normalize(response,'addresses')
-                print(response.columns,' responseresponseresponseresponse')
-                # response['Lat'] = response['Lat'].astype(str)
-                # response['Lon'] = response['Lon'].astype(str)
-                response = response[response.columns].add_prefix("platform_")
-                response = generateConcatKey(
-                    response, ["platform_" + config["primary_join_cols"]["platform"]]
-                )
-                response = generateConcatKeySecondary(
-                    response, config["secondary_join_cols"]["platform"]
-                )
-                response = response.to_json(orient="records")
-                response = json.loads(response)
-            except:
-                print("ERROR IN route_trunk")
-                response = {}
+            # try:
+            for x in config["route_trunk"].split("-"):
+                try:
+                    if x.isnumeric():
+                        response = response[int(x)]
+                    else:
+                        response = response[x]
+                except:
+                    response = response
+            response_2 = pd.DataFrame(response)
+            # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
+            response = pd.json_normalize(response,response_2.columns)
+            print(response.columns,' responseresponseresponseresponse')
+            # response['Lat'] = response['Lat'].astype(str)
+            # response['Lon'] = response['Lon'].astype(str)
+            response = response[response.columns].add_prefix("platform_")
+            response = generateConcatKey(
+                response, ["platform_" + config["primary_join_cols"]["platform"]]
+            )
+            response = generateConcatKeySecondary(
+                response, config["secondary_join_cols"]["platform"]
+            )
+            response = response.to_json(orient="records")
+            response = json.loads(response)
+            # except:
+                # print("ERROR IN route_trunk")
+                # response = {}
 
         except requests.exceptions.RequestException as e:
             response = {}
