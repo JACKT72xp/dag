@@ -863,7 +863,8 @@ def puller_idirect_lima_1h():
                 tt=len(response)
                 print(tt,' LEN')
                 cc=0
-                for item in response:
+                for item in response[0:20]:
+                # for item in response:
                     # print(item,"ITEM")
                     response_terminal = requests.get(
                         config["url"]+"/"+str(item['ID']),
