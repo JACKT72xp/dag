@@ -1657,7 +1657,7 @@ def puller_idirect_lima_1h():
             .iloc[0:]
             .to_dict("record")
         )
-        
+        print(data.columns,'colls')
         
         datax = data[
                 [
