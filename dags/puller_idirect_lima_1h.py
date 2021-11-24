@@ -1619,6 +1619,9 @@ def puller_idirect_lima_1h():
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
         data["platform_Active"].astype(str)
+        
+
+        
         args_send = (
             data[
                 [
@@ -1644,8 +1647,7 @@ def puller_idirect_lima_1h():
             .iloc[0:]
             .to_dict("record")
         )
-        args = (
-            data[
+        data = data[
                 [
                     "platform_Active",
                     "platform_SN",
@@ -1663,10 +1665,38 @@ def puller_idirect_lima_1h():
                     "platform_ID",
                 ]
             ]
-            .iloc[0:]
-            .to_dict("record")
-        )
         
+        
+        datax = data[
+                [
+                    "platform_Active",
+                    "platform_SN",
+                    "platform_DID",
+                    "updated_at_send",
+                    
+                    "platform_ModelType",
+                    "platform_InrouteGroupID",
+                    "platform_NetworkID",
+                    "platform_Lat",
+                    "platform_Lon",
+                    
+                    
+                    "platform_Name",
+                    "platform_ID",
+                    "platform_SERVICEPLANCRMID"
+                ]
+            ]
+        
+        
+        datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        list_sp = pd.DataFrame(data_servicesplan)
+        
+        
+        datax = datax.join(list_sp.set_index('crmId'), on='crmId')
+        datax['servicesPlanId'] = datax["servicesPlanId"].fillna(180)
+        print(datax,' dataxdataxdataxdataxdatax')
+        args = (data.iloc[0:].to_dict("record"))
+
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
         qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
