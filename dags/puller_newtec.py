@@ -555,12 +555,19 @@ def puller_newtec():
             )
             response = redis_cn.get("1-"+platform_name)
             response = json.loads(response)
-            df_old = pd.DataFrame(response)
+            
+            resp = pd.DataFrame(response)
+            addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.', errors='ignore')
+            servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.', errors='ignore')
+            df_old  = pd.concat([addre, servi,resp], axis=1)
+            print(df_old.columns,' responseresponseresponseresponse')
+            
+            
 
-
-            df_old['Lat'] = df_old['Lat'].astype(str)
-            df_old['Lon'] = df_old['Lon'].astype(str)
-            #TD df_old = df_old.astype(str)
+            df_old['addresses.latitude'] = df_old['addresses.latitude'].astype(str)
+            df_old['addresses.longitude'] = df_old['addresses.longitude'].astype(str)
+            print(df_old,' responseresponseresponseresponse')
+            
             df_old = df_old[df_old.columns].add_prefix("old_")
             if df_old is None:
                 return []
@@ -739,6 +746,7 @@ def puller_newtec():
             df_datamongo, ["mongo_" + config["primary_join_cols"]["mongo"]]
         )
         print(df_datamongo,'df_datamongodf_datamongodf_datamongodf_datamongodf_datamongodf_datamongo')
+        print(df_datamongo.columns,'colscolscolscols')
         df_datamongo = generateConcatKeySecondary(
             df_datamongo, config["secondary_join_cols"]["mongo"]
         )
@@ -1862,10 +1870,10 @@ def puller_newtec():
 
     checkTask >> end_process
     checkTask >> rs
-    rs >>Label("Extrae la data de plataforma") >> token_orbith >> platform_data
+    rs >>Label("Extrae el token del api auth de plataforma") >> token_orbith >> Label("Extrae la data de plataforma") >> platform_data
     rs >>Label("Extrae la data de mysql") >> mysql_data
     rs >>Label("Extrae la data de mongodb") >> mongo_data
-    rs >>Label("Extrae la data de la imagen anterior") >> old_data
+    rs >>Label("Extrae la data del pulleo anterior para verificar cambios") >> old_data
     # rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
     # rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
