@@ -586,7 +586,7 @@ def puller_newtec():
             resp = pd.DataFrame(response)
             addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.')
             servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.')
-            df_old  = pd.concat([addre, servi,resp], axis=1)
+            df_old  = pd.concat([resp,addre, servi], axis=1)
             print(df_old.columns,' responseresponseresponseresponse')
             
             
