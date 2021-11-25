@@ -831,8 +831,9 @@ def puller_newtec():
                 except:
                     response = response
             # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
-            response = pd.json_normalize(response,record_path =['addresses'],meta=['business_brand_name'], errors='ignore')
+            response = pd.json_normalize(response,record_path =[['addresses'],['services']],meta=['business_brand_name'], errors='ignore')
             print(response.columns,' responseresponseresponseresponse')
+            print(response,' responseresponseresponseresponse')
             # response['Lat'] = response['Lat'].astype(str)
             # response['Lon'] = response['Lon'].astype(str)
             response = response[response.columns].add_prefix("platform_")
