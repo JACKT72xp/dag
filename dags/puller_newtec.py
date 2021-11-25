@@ -726,7 +726,7 @@ def puller_newtec():
         df_datamongo = pd.DataFrame(loads(json_data))
         # df_datamongo_origin = pd.DataFrame(
         # df_datamongo_origin = pd.DataFrame(json_data)
-        print(df_datamongo,'df_datamongodf_datamongodf_datamongodf_datamongo')
+        print(json_data,'json_datajson_datajson_datajson_datajson_data')
         df_datamongo_origin = pd.DataFrame(json.loads(json_data))
         df_datamongo = df_datamongo[config["mongo_normalization"]].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
