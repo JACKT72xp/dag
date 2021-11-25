@@ -273,15 +273,25 @@ def puller_newtec():
                 "data": [],
                 "data_old": {
                     "document_number": data["mongo_document_number"],
-                    "addresses": data["mongo_addresses"],
-                    "services": data["mongo_services"],
+                    "addresses.latitude": data["mongo_addresses.latitude"],
+                    "addresses.longitude": ["mongo_addresses.longitude"],
+                    "services.product.description": data["mongo_services.product.description"],
+                    "services.terminal.serial_number": data["mongo_services.terminal.serial_number"],
+                    "services.terminal.ssid": data["mongo_services.terminal.ssid"],
+                    "services.terminal.mac_address": data["mongo_services.terminal.mac_address"],
+                    "services.terminal.terminal_name": data["mongo_services.terminal.terminal_name"],
                     "status": data["mongo_status"],
                                        
                 },
                 "changes": {
                     "document_number": data["document_number"],
-                    "addresses": data["addresses"],
-                    "services": data["services"],
+                    "addresses.latitude": data["addresses.latitude"],
+                    "addresses.longitude": data["addresses.longitude"],
+                    "services.product.description": data["services.product.description"],
+                    "services.terminal.serial_number": data["services.terminal.serial_number"],
+                    "services.terminal.ssid": data["services.terminal.ssid"],
+                    "services.terminal.mac_address": data["services.terminal.mac_address"],
+                    "services.terminal.terminal_name": data["services.terminal.terminal_name"],
                     "status": data["status"],                   
                 },
                 "type": "update_mongo",
@@ -1727,7 +1737,9 @@ def puller_newtec():
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         
         df = pd.DataFrame(data)
+        df_ori = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
+        df_ori.columns = df_ori.columns.str.replace("platform_", "")
         try:
 
             print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
@@ -1760,7 +1772,9 @@ def puller_newtec():
             # )
 
         bulk.execute()
-        dateSaveHistoryUpdateMongo(data)
+        df_ori = df_ori.to_json(orient="records")
+        df_ori = json.loads(df_ori)
+        dateSaveHistoryUpdateMongo(df_ori)
         return [keys]
 
     @task()
