@@ -779,7 +779,7 @@ def puller_newtec():
         
         addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'],    record_prefix='addresses.', errors='ignore')
         servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],   record_prefix='services.', errors='ignore')
-        df_datamongo  = pd.concat([addre, servi,df_datamongo], axis=1)
+        df_datamongo  = pd.concat([df_datamongo,addre, servi], axis=1)
         print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
             
             
@@ -913,9 +913,9 @@ def puller_newtec():
                     response = response
             # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
             resp = pd.DataFrame(response)
-            addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.', errors='ignore')
-            servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.', errors='ignore')
-            response  = pd.concat([addre, servi,resp], axis=1)
+            addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.')
+            servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.')
+            response  = pd.concat([resp,addre, servi], axis=1)
             print(len(resp),'<<resp',len(addre),'<<addre',len(servi),'<<servi',len(response),'<<response')
             # print(response.columns,' responseresponseresponseresponse')
             # print(response,' responseresponseresponseresponse')
