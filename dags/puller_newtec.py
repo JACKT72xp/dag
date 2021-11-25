@@ -1543,6 +1543,7 @@ def puller_newtec():
         key = keys["key_insert"]
         try:
             data = getDataRedisByKey(key)
+            print(data,'datadatadatadatadatadata')
         except:
             # if len(data)==0:
             return []
@@ -1550,6 +1551,7 @@ def puller_newtec():
             return []
 
         data_insert_send = pd.DataFrame(data)
+        print(data_insert_send,'data_insert_senddata_insert_senddata_insert_senddata_insert_send')
         data_insert_send = data_insert_send[
             [
                 "platform_business_brand_name",
@@ -1690,10 +1692,10 @@ def puller_newtec():
         df.columns = df.columns.str.replace("platform_", "")
    
         try:
-            # print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
-            # df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
-            # df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
-            print(df,'dfdfdfdfdfdfdfdfdfdfdf')
+            print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
+            df = df[df.columns.difference(list(df.filter(regex='addresses.').columns))]
+            print(df,'dfdfdfdf')
+            df = df[df.columns.difference(list(df.filter(regex='services.').columns))]
         except:
             print("error")
             
