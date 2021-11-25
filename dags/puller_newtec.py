@@ -1743,11 +1743,15 @@ def puller_newtec():
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
         try:
+            print(list(df.filter(regex='services.').columns))
             df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
             df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
 
         except:
             print("error")
+        
+        if len(df) == 0:
+            return []
 
 
         data = df.to_json(orient="records")
