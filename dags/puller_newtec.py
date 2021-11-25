@@ -1581,11 +1581,11 @@ def puller_newtec():
         data_insert_send["fromPuller"] = 1
         
         print(data_insert_send,'data_insert_senddata_insert_send')
-        data_insert_send.to_sql(table_mysql_puller, engine, if_exists="append", index=False)
+        data_insert_send.to_sql(table_mysql_puller, engine, if_exists="replace", index=False)
         
         
-        df = pd.DataFrame(data)
-        df.columns = df.columns.str.replace("platform_", "")
+        # df = pd.DataFrame(data)
+        # df.columns = df.columns.str.replace("platform_", "")
    
         # try:
             # print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
@@ -1661,12 +1661,13 @@ def puller_newtec():
                 "platform_business_brand_name"
                 ]
             ]
-        
+        data.columns = data.columns.str.replace(".", "_")
+
         args = (data.iloc[0:].to_dict("record"))
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller} SET suscriberId=:platform_document_number ,         latitud=:platform_addresses.latitude,         longitud=:platform_addresses.longitude,         slaname=:platform_services.product.description, esn=:platform_services.terminal.serial_number, nmsId=:platform_services.terminal.ssid, mac=:platform_services.terminal.mac_address, description=:platform_services.terminal.terminal_name, statusTerminal=:platform_status, updated_at=:updated_at_send,fromPuller=1 WHERE siteId = :platform_business_brand_name  and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller} SET suscriberId=:platform_document_number ,         latitud=:platform_addresses_latitude,         longitud=:platform_addresses_longitude,         slaname=:platform_services_product_description, esn=:platform_services_terminal_serial_number, nmsId=:platform_services_terminal_ssid, mac=:platform_services_terminal_mac_address, description=:platform_services_terminal_terminal_name, statusTerminal=:platform_status, updated_at=:updated_at_send,fromPuller=1 WHERE siteId = :platform_business_brand_name  and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
@@ -1678,6 +1679,7 @@ def puller_newtec():
         key = keys["key_insert"]
         try:
             data = getDataRedisByKey(key)
+            print(data, 'data inser mongodata inser mongodata inser mongodata inser mongo')
         except:
             return []
         if len(data) == 0:
