@@ -273,25 +273,25 @@ def puller_newtec():
                 "data": [],
                 "data_old": {
                     "document_number": data["mongo_document_number"],
-                    "addresses.latitude": data["mongo_addresses.latitude"],
-                    "addresses.longitude": ["mongo_addresses.longitude"],
-                    "services.product.description": data["mongo_services.product.description"],
-                    "services.terminal.serial_number": data["mongo_services.terminal.serial_number"],
-                    "services.terminal.ssid": data["mongo_services.terminal.ssid"],
-                    "services.terminal.mac_address": data["mongo_services.terminal.mac_address"],
-                    "services.terminal.terminal_name": data["mongo_services.terminal.terminal_name"],
+                    "addresses_latitude": data["mongo_addresses_latitude"],
+                    "addresses_longitude": ["mongo_addresses_longitude"],
+                    "services_product_description": data["mongo_services_product_description"],
+                    "services_terminal_serial_number": data["mongo_services_terminal_serial_number"],
+                    "services_terminal_ssid": data["mongo_services_terminal_ssid"],
+                    "services_terminal_mac_address": data["mongo_services_terminal_mac_address"],
+                    "services_terminal_terminal_name": data["mongo_services_terminal_terminal_name"],
                     "status": data["mongo_status"],
                                        
                 },
                 "changes": {
                     "document_number": data["document_number"],
-                    "addresses.latitude": data["addresses.latitude"],
-                    "addresses.longitude": data["addresses.longitude"],
-                    "services.product.description": data["services.product.description"],
-                    "services.terminal.serial_number": data["services.terminal.serial_number"],
-                    "services.terminal.ssid": data["services.terminal.ssid"],
-                    "services.terminal.mac_address": data["services.terminal.mac_address"],
-                    "services.terminal.terminal_name": data["services.terminal.terminal_name"],
+                    "addresses_latitude": data["addresses_latitude"],
+                    "addresses_longitude": data["addresses_longitude"],
+                    "services_product_description": data["services_product_description"],
+                    "services_terminal_serial_number": data["services_terminal_serial_number"],
+                    "services_terminal_ssid": data["services_terminal_ssid"],
+                    "services_terminal_mac_address": data["services_terminal_mac_address"],
+                    "services_terminal_terminal_name": data["services_terminal_terminal_name"],
                     "status": data["status"],                   
                 },
                 "type": "update_mongo",
@@ -1772,6 +1772,7 @@ def puller_newtec():
             # )
 
         bulk.execute()
+        df_ori.columns = df_ori.columns.str.replace(".", "_")
         df_ori = df_ori.to_json(orient="records")
         df_ori = json.loads(df_ori)
         dateSaveHistoryUpdateMongo(df_ori)
