@@ -777,7 +777,7 @@ def puller_newtec():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         df_datamongo_services = df_datamongo["services"].apply(pd.Series)
         df_datamongo_services[df_datamongo.columns] = df_datamongo
-        df_datamongo_addresses = df_datamongo_services["services"].apply(pd.Series)
+        df_datamongo_addresses = df_datamongo_services["addresses"].apply(pd.Series)
         df_datamongo_addresses[df_datamongo_services.columns] = df_datamongo
         print(len(df_datamongo_addresses),'<<df_datamongo_addresses',len(df_datamongo),'<<<df_datamongo',len(df_datamongo_services),"<<<df_datamongo_services")
         del df_datamongo[config["mongo_normalization"]]
