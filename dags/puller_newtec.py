@@ -136,7 +136,7 @@ def puller_newtec():
             "mongo_collection": collection_puller,
             "primary_join_cols": {
                 "mysql": "siteId",
-                "mongo": "business_brand_name",
+                "mongo": "siteId",
                 "platform": "business_brand_name",
                 "old": "business_brand_name",
             },           
