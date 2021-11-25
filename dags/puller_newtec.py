@@ -730,6 +730,10 @@ def puller_newtec():
             return []
 
         json_data = dumps(list_cur, indent=2)
+        
+        
+
+            
         # df_datamongo = pd.DataFrame(data_mdb)
         # df_datamongo_origin = pd.DataFrame(data_mdb)
         # json_data = dumps(list_cur, indent = 2)
@@ -737,10 +741,23 @@ def puller_newtec():
         # df_datamongo_origin = pd.DataFrame(
         # df_datamongo_origin = pd.DataFrame(json_data)
         df_datamongo_origin = pd.DataFrame(json.loads(json_data))
+        
+      
+
+
         df_datamongo = df_datamongo[config["mongo_normalization"]].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         del df_datamongo[config["mongo_normalization"]]
         del df_datamongo["_id"]
+        
+        
+          
+        addre = pd.json_normalize(json.loads(json_data),record_path =['addresses'],    record_prefix='addresses.', errors='ignore')
+        servi = pd.json_normalize(json.loads(json_data),record_path =['services'],   record_prefix='services.', errors='ignore')
+        df_datamongo  = pd.concat([addre, servi,df_datamongo], axis=1)
+
+
+
         # df_datamongo['Lat'] = df_datamongo['Lat'].astype(str)
         # df_datamongo['Lon'] = df_datamongo['Lon'].astype(str)
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix("mongo_")
