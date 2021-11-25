@@ -830,9 +830,8 @@ def puller_newtec():
                         response = response[x]
                 except:
                     response = response
-            response_2 = pd.DataFrame(response)
             # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
-            response = pd.json_normalize(response,response_2.columns)
+            response = pd.json_normalize(response,record_path =['addresses','services'],meta=['business_brand_name'])
             print(response.columns,' responseresponseresponseresponse')
             # response['Lat'] = response['Lat'].astype(str)
             # response['Lon'] = response['Lon'].astype(str)
