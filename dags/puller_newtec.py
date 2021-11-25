@@ -1688,9 +1688,10 @@ def puller_newtec():
         df.columns = df.columns.str.replace("platform_", "")
    
         try:
-            print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
-            df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
-            df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
+            # print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
+            # df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
+            # df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
+            print(df,'dfdfdfdfdfdfdfdfdfdfdf')
         except:
             print("error")
             
