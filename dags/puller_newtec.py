@@ -1582,7 +1582,20 @@ def puller_newtec():
         
         print(data_insert_send,'data_insert_senddata_insert_send')
         data_insert_send.to_sql(table_mysql_puller, engine, if_exists="append", index=False)
-        dateSaveHistoryInsert(data)
+        
+        
+        df = pd.DataFrame(data)
+        df.columns = df.columns.str.replace("platform_", "")
+   
+        # try:
+            # print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
+            # df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
+            # df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
+            # data_send = df.to_json('orient')
+        # except:
+            # print("error")
+            
+        # dateSaveHistoryInsert(data)}
         return "ok"
 
     @task()
