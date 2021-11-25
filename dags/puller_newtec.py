@@ -274,7 +274,7 @@ def puller_newtec():
                 "data_old": {
                     "document_number": data["mongo_document_number"],
                     "addresses_latitude": data["mongo_addresses_latitude"],
-                    "addresses_longitude": ["mongo_addresses_longitude"],
+                    "addresses_longitude": data["mongo_addresses_longitude"],
                     "services_product_description": data["mongo_services_product_description"],
                     "services_terminal_serial_number": data["mongo_services_terminal_serial_number"],
                     "services_terminal_ssid": data["mongo_services_terminal_ssid"],
@@ -778,11 +778,11 @@ def puller_newtec():
         del df_datamongo[config["mongo_normalization"]]
         del df_datamongo["_id"]
         
-        
           
         addre = pd.json_normalize(json.loads(json_data),record_path =['puller','addresses'],    record_prefix='addresses.', errors='ignore')
         servi = pd.json_normalize(json.loads(json_data),record_path =['puller','services'],   record_prefix='services.', errors='ignore')
-        df_datamongo  = pd.concat([addre, servi,df_datamongo], axis=1)
+        df_datamongo  = pd.concat([addre, servi,df_datamongo],ignore_index=False, axis=1)
+        print(len(df_datamongo),'<df_datamongo',len(addre),'<addre',len(servi),'<servi',len(df_datamongo),'<df_datamongo')
 
 
 
