@@ -46,7 +46,7 @@ conection_2 = MongoClient(uri_2, connect=False)
 
 
 collection_puller = "newtec_test_full"
-table_mysql_puller = "bifrost_terminal_test"
+table_mysql_puller = "bifrost_terminal_full"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "newtect"
 platform_name = "newtec_test_full"
