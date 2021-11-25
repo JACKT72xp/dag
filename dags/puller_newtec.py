@@ -268,41 +268,36 @@ def puller_newtec():
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             print("dataaaaaaaa",data)
+                      
             element = {
                 "data": [],
                 "data_old": {
-                    "did": data["mongo_DID"],
-                    "sn": data["mongo_SN"],
-                    "active": str(data["mongo_Active"]),
-                    "id": data["mongo_ID"],
-                    
-                    "modelType": data["mongo_ModelType"],
-                    "inrouteGroupID": data["mongo_InrouteGroupID"],
-                    "networkID": data["mongo_NetworkID"],
-                    "lat": data["mongo_Lat"],
-                    "lon": data["mongo_Lon"],
-                    "serviceplan": data["mongo_SERVICEPLANCRMID"],
+                    "document_number": data["mongo_document_number"],
+                    "addresses.latitude": data["mongo_addresses.latitude"],
+                    "addresses.longitude": ["mongo_addresses.longitude"],
+                    "services.product.description": data["mongo_services.product.description"],
+                    "services.terminal.serial_number": data["mongo_services.terminal.serial_number"],
+                    "services.terminal.ssid": data["mongo_services.terminal.ssid"],
+                    "services.terminal.mac_address": data["mongo_services.terminal.mac_address"],
+                    "services.terminal.terminal_name": data["mongo_services.terminal.terminal_name"],
+                    "status": data["mongo_status"],
                                        
                 },
                 "changes": {
-                    "did": data["DID"],
-                    "sn": data["SN"],
-                    "active": str(data["Active"]),
-                    "id": data["ID"],
-                    
-                    "modelType": data["ModelType"],
-                    "inrouteGroupID": data["InrouteGroupID"],
-                    "networkID": data["NetworkID"],
-                    "lat": data["Lat"],
-                    "lon": data["Lon"],
-                    "serviceplan": data["SERVICEPLANCRMID"],
-                    
-                    
+                    "document_number": data["document_number"],
+                    "addresses.latitude": data["addresses.latitude"],
+                    "addresses.longitude": data["addresses.longitude"],
+                    "services.product.description": data["services.product.description"],
+                    "services.terminal.serial_number": data["services.terminal.serial_number"],
+                    "services.terminal.ssid": data["services.terminal.ssid"],
+                    "services.terminal.mac_address": data["services.terminal.mac_address"],
+                    "services.terminal.terminal_name": data["services.terminal.terminal_name"],
+                    "status": data["status"],                   
                 },
                 "type": "update_mongo",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["ID"],
+                "principalKey": data["business_brand_name"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
