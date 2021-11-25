@@ -781,7 +781,7 @@ def puller_newtec():
           
         addre = pd.json_normalize(json.loads(json_data),record_path =['puller','addresses'],    record_prefix='addresses.')
         servi = pd.json_normalize(json.loads(json_data),record_path =['puller','services'],   record_prefix='services.')
-        df_datamongo  = pd.concat([addre, servi,df_datamongo],ignore_index=False, axis=1)
+        df_datamongo  = pd.concat([addre, servi,df_datamongo], axis=1)
         print(len(df_datamongo),'<df_datamongo',len(addre),'<addre',len(servi),'<servi',len(df_datamongo),'<df_datamongo')
 
 
