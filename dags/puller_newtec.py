@@ -1615,10 +1615,7 @@ def puller_newtec():
         data = pd.DataFrame(data)
         # data["platform_Active"] = data["platform_Active"].astype(str)
         
-
-        
-        args_send = (
-            data[
+        data_arg=data[
                 [
                 "platform_business_brand_name",
                 "platform_document_number",
@@ -1642,9 +1639,8 @@ def puller_newtec():
                 "mysql_statusTerminal"
                 ]
             ]
-            .iloc[0:]
-            .to_dict("record")
-        )
+        data_arg.columns = data.columns.str.replace(".", "_")
+        args_send = (data_arg.iloc[0:].to_dict("record"))
         data["updated_at_send"] = time_send_now
 
         data = data[
