@@ -773,13 +773,13 @@ def puller_newtec():
         print(json.loads(json_data))
 
 
-        df_datamongo = df_datamongo[config["mongo_normalization"]].apply(pd.Series)
+        df_datamongo = df_datamongo[['puller','puller.services','puller.addresses']].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
-        df_datamongo_services = df_datamongo["services"].apply(pd.Series)
-        df_datamongo_services[df_datamongo.columns] = df_datamongo
-        df_datamongo_addresses = df_datamongo_services["addresses"].apply(pd.Series)
-        df_datamongo_addresses[df_datamongo_services.columns] = df_datamongo
-        print(len(df_datamongo_addresses),'<<df_datamongo_addresses',len(df_datamongo),'<<<df_datamongo',len(df_datamongo_services),"<<<df_datamongo_services")
+        # df_datamongo_services = df_datamongo["services"].apply(pd.Series)
+        # df_datamongo_services[df_datamongo.columns] = df_datamongo
+        # df_datamongo_addresses = df_datamongo_services["addresses"].apply(pd.Series)
+        # df_datamongo_addresses[df_datamongo_services.columns] = df_datamongo
+        # print(len(df_datamongo_addresses),'<<df_datamongo_addresses',len(df_datamongo),'<<<df_datamongo',len(df_datamongo_services),"<<<df_datamongo_services")
         del df_datamongo[config["mongo_normalization"]]
         del df_datamongo["_id"]
         
@@ -907,8 +907,9 @@ def puller_newtec():
             addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.', errors='ignore')
             servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.', errors='ignore')
             response  = pd.concat([addre, servi,resp], axis=1)
-            print(response.columns,' responseresponseresponseresponse')
-            print(response,' responseresponseresponseresponse')
+            print(len(resp),'<<resp',len(addre),'<<addre',len(servi),'<<servi',len(response),'<<response')
+            # print(response.columns,' responseresponseresponseresponse')
+            # print(response,' responseresponseresponseresponse')
             # response['Lat'] = response['Lat'].astype(str)
             # response['Lon'] = response['Lon'].astype(str)
             response = response[response.columns].add_prefix("platform_")
