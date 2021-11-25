@@ -242,7 +242,7 @@ def puller_newtec():
                 "type": "insert_mysql",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["platform_ID"],
+                "principalKey": data["platform_business_brand_name"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
@@ -258,7 +258,7 @@ def puller_newtec():
                 "type": "update_mysql",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["platform_ID"],
+                "principalKey": data["platform_business_brand_name"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
@@ -1632,28 +1632,7 @@ def puller_newtec():
             .to_dict("record")
         )
         print(data.columns,'colls')
-        
-        datax = data[
-                [
-                    "platform_Active",
-                    "platform_SN",
-                    "platform_DID",
-                    "updated_at_send",
-                    
-                    "platform_ModelType",
-                    "platform_InrouteGroupID",
-                    "platform_NetworkID",
-                    "platform_Lat",
-                    "platform_Lon",
-                    
-                    
-                    "platform_Name",
-                    "platform_ID",
-                    "platform_SERVICEPLANCRMID",
-                    "concat_key_generate_secondary_x",
-                    "concat_key_generate_secondary_y"
-                ]
-            ]
+
         data = data[
                 [
                 "platform_document_number",
@@ -1699,6 +1678,12 @@ def puller_newtec():
             df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
         except:
             print("error")
+            
+                  
+        if df is None:
+            print(df)
+            return []
+        
         if len(df) == 0:
             return []
 
@@ -1749,6 +1734,10 @@ def puller_newtec():
 
         except:
             print("error")
+             
+        if df is None:
+            print(df)
+            return []
         
         if len(df) == 0:
             return []
