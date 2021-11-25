@@ -151,6 +151,7 @@ def puller_newtec():
                     "mysql_nmsId",
                     "mysql_mac",
                     "mysql_description",
+                    "mysql_statusTerminal"
 ],
                 "mongo": [
                     "mongo_document_number",
@@ -160,7 +161,8 @@ def puller_newtec():
                     "mongo_services.terminal.serial_number",
                     "mongo_services.terminal.ssid",
                     "mongo_services.terminal.mac_address",
-                    "mongo_services.terminal.terminal_name"
+                    "mongo_services.terminal.terminal_name",
+                    "mongo_status"
                     ],
                 "platform": [
                     "platform_document_number",
@@ -170,7 +172,8 @@ def puller_newtec():
                     "platform_services.terminal.serial_number",
                     "platform_services.terminal.ssid",
                     "platform_services.terminal.mac_address",
-                    "platform_services.terminal.terminal_name"
+                    "platform_services.terminal.terminal_name",
+                    "platform_status"
                     ],
                 "old": [
                     "old_document_number",
@@ -180,7 +183,8 @@ def puller_newtec():
                     "old_services.terminal.serial_number",
                     "old_services.terminal.ssid",
                     "old_services.terminal.mac_address",
-                    "old_services.terminal.terminal_name"
+                    "old_services.terminal.terminal_name",
+                    "old_status"
                     
                     ],
             },
@@ -749,7 +753,8 @@ def puller_newtec():
                 "puller.addresses": True,
                 "puller.services": True,
                 "puller.business_brand_name": True,
-                "puller.document_number": True
+                "puller.document_number": True,
+                "puller.status": True
                 
             },
         )
