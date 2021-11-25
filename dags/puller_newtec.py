@@ -1647,6 +1647,7 @@ def puller_newtec():
 
         data = data[
                 [
+                "updated_at_send",
                 "platform_document_number",
                 "platform_addresses.latitude",
                 "platform_addresses.longitude",
@@ -1668,7 +1669,7 @@ def puller_newtec():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller} SET suscriberId=:platform_document_number ,         latitud=:platform_addresses_latitude,         longitud=:platform_addresses_longitude,         slaname=:platform_services_product_description, esn=:platform_services_terminal_serial_number, nmsId=:platform_services_terminal_ssid, mac=:platform_services_terminal_mac_address, description=:platform_services_terminal_terminal_name, statusTerminal=:platform_status, fromPuller=1 WHERE siteId = :platform_business_brand_name  and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller} SET updated_at=:updated_at_send, suscriberId=:platform_document_number ,         latitud=:platform_addresses_latitude,         longitud=:platform_addresses_longitude,         slaname=:platform_services_product_description, esn=:platform_services_terminal_serial_number, nmsId=:platform_services_terminal_ssid, mac=:platform_services_terminal_mac_address, description=:platform_services_terminal_terminal_name, statusTerminal=:platform_status, fromPuller=1 WHERE siteId = :platform_business_brand_name  and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
