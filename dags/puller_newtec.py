@@ -1573,6 +1573,7 @@ def puller_newtec():
         data_insert_send.rename(columns={"platform_services.terminal.mac_address": "mac"}, inplace=True)
         data_insert_send.rename(columns={"platform_services.terminal.terminal_name": "description"}, inplace=True)
         data_insert_send.rename(columns={"platform_status": "statusTerminal"}, inplace=True)
+        data_insert_send.rename(columns={"platform_business_brand_name": "siteId"}, inplace=True)
         
         
         data_insert_send["platformId"] = platform_id_puller
@@ -1698,7 +1699,8 @@ def puller_newtec():
             df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
         except:
             print("error")
-
+        if len(df) == 0:
+            return []
 
         data = df.to_json(orient="records")
         data = json.loads(data)
