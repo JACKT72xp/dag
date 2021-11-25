@@ -711,7 +711,8 @@ def puller_newtec():
             {
                 "_id": True,
                 "siteId": True,
-                "puller.business_brand_name": True
+                "puller.business_brand_name": True,
+                "puller.document_number": True
                 
             },
         )
@@ -726,7 +727,6 @@ def puller_newtec():
         df_datamongo = pd.DataFrame(loads(json_data))
         # df_datamongo_origin = pd.DataFrame(
         # df_datamongo_origin = pd.DataFrame(json_data)
-        print(json_data,'json_datajson_datajson_datajson_datajson_data')
         df_datamongo_origin = pd.DataFrame(json.loads(json_data))
         df_datamongo = df_datamongo[config["mongo_normalization"]].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
@@ -738,9 +738,11 @@ def puller_newtec():
         df_datamongo = generateConcatKey(
             df_datamongo, ["mongo_" + config["primary_join_cols"]["mongo"]]
         )
+        print(df_datamongo,'df_datamongodf_datamongodf_datamongodf_datamongodf_datamongodf_datamongo')
         df_datamongo = generateConcatKeySecondary(
             df_datamongo, config["secondary_join_cols"]["mongo"]
         )
+        print(df_datamongo.columns, 'colsolsoslsoslso')
         return json.loads(df_datamongo.to_json(orient="records"))
 
     @task()
