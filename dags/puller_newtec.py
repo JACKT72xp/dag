@@ -775,14 +775,20 @@ def puller_newtec():
 
         df_datamongo = df_datamongo[config["mongo_normalization"]].apply(pd.Series)
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
+        df_datamongo_services = df_datamongo["services"].apply(pd.Series)
+        df_datamongo_services[df_datamongo.columns] = df_datamongo
+        df_datamongo_addresses = df_datamongo_services["services"].apply(pd.Series)
+        df_datamongo_addresses[df_datamongo_services.columns] = df_datamongo
+        print(len(df_datamongo_addresses),'<<df_datamongo_addresses',len(df_datamongo),'<<<df_datamongo',len(df_datamongo_services),"<<<df_datamongo_services")
         del df_datamongo[config["mongo_normalization"]]
         del df_datamongo["_id"]
         
           
-        addre = pd.json_normalize(json.loads(json_data),record_path =['puller','addresses'],    record_prefix='addresses.')
-        servi = pd.json_normalize(json.loads(json_data),record_path =['puller','services'],   record_prefix='services.')
-        df_datamongo  = pd.concat([addre, servi,df_datamongo], axis=1)
-        print(len(df_datamongo),'<df_datamongo',len(addre),'<addre',len(servi),'<servi',len(df_datamongo_origin),'<df_datamongo_origin')
+        # addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'], meta=["services","siteId","status","puller"],   record_prefix='addresses.')
+        # df_datamongo = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],    record_prefix='services.')
+        # df_datamongo  = pd.concat([addre, df_datamongo], axis=1)
+        # servi = pd.json_normalize(json.loads(json_data),record_path =['puller','services'],   record_prefix='services.')
+        # print(len(df_datamongo),'<df_datamongo',len(addre),'<addre',len(servi),'<servi',len(df_datamongo_origin),'<df_datamongo_origin')
 
 
 
