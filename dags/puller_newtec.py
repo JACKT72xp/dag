@@ -144,7 +144,16 @@ def puller_newtec():
                 "mysql": ["mysql_suscriberId"],
                 # "mysql": ["mysql_suscriberId","mysql_slaname","mysql_esn","mysql_nmsId","mysql_mac","mysql_description","mysql_latitud","mysql_longitud"],
                 "mongo": ["mongo_document_number"],
-                "platform": ["platform_document_number"],
+                "platform": [
+                    "platform_document_number",
+                    "platform_addresses.latitude",
+                    "platform_addresses.longitude",
+                    "platform_services.product.description",
+                    "platform_services.terminal.serial_number",
+                    "platform_services.terminal.ssid",
+                    "platform_services.terminal.mac_address",
+                    "platform_services.terminal.terminal_name"
+                    ],
                 "old": ["old_document_number"],
             },
             "platform_name": platform_name,
