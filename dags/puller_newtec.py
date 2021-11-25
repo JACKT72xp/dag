@@ -141,9 +141,27 @@ def puller_newtec():
                 "old": "business_brand_name",
             },           
             "secondary_join_cols": {
-                "mysql": ["mysql_suscriberId"],
-                # "mysql": ["mysql_suscriberId","mysql_slaname","mysql_esn","mysql_nmsId","mysql_mac","mysql_description","mysql_latitud","mysql_longitud"],
-                "mongo": ["mongo_document_number"],
+                # "mysql": ["mysql_suscriberId"],
+                "mysql": [
+                    "mysql_suscriberId",
+                    "mysql_latitud",
+                    "mysql_longitud",
+                    "mysql_slaname",
+                    "mysql_esn",
+                    "mysql_nmsId",
+                    "mysql_mac",
+                    "mysql_description",
+],
+                "mongo": [
+                    "mongo_document_number",
+                    "mongo_addresses.latitude",
+                    "mongo_addresses.longitude",
+                    "mongo_services.product.description",
+                    "mongo_services.terminal.serial_number",
+                    "mongo_services.terminal.ssid",
+                    "mongo_services.terminal.mac_address",
+                    "mongo_services.terminal.terminal_name"
+                    ],
                 "platform": [
                     "platform_document_number",
                     "platform_addresses.latitude",
@@ -154,7 +172,17 @@ def puller_newtec():
                     "platform_services.terminal.mac_address",
                     "platform_services.terminal.terminal_name"
                     ],
-                "old": ["old_document_number"],
+                "old": [
+                    "old_document_number",
+                    "old_addresses.latitude",
+                    "old_addresses.longitude",
+                    "old_services.product.description",
+                    "old_services.terminal.serial_number",
+                    "old_services.terminal.ssid",
+                    "old_services.terminal.mac_address",
+                    "old_services.terminal.terminal_name"
+                    
+                    ],
             },
             "platform_name": platform_name,
         }
@@ -900,9 +928,8 @@ def puller_newtec():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,suscriberId,slaname,nmsId,mac,description  FROM "
             + str(config["mysql_table"])
-            + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
             + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
             + str(config["platform_id"])
         )
