@@ -718,6 +718,8 @@ def puller_newtec():
             {
                 "_id": True,
                 "siteId": True,
+                "puller.addresses": True,
+                "puller.services": True,
                 "puller.business_brand_name": True,
                 "puller.document_number": True
                 
