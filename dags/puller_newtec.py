@@ -1343,7 +1343,14 @@ def puller_newtec():
                 0,
             )
         except:
-            return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
+            return {
+                "update_mysql": [],
+                "insert_mysql": glob_comparate["not_exist_mysql"],
+                "delete_mysql": old["only_old"],
+            }
+                    
+                    
+            # return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
 
         exist_mysql_s = both[both["exist_mysql_secondary"] == 1]
         not_exist_mysql_s = both[both["exist_mysql_secondary"] == 0]
@@ -1684,10 +1691,13 @@ def puller_newtec():
             return []
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
-        print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
-        df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
-        df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
-
+   
+        try:
+            print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
+            df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
+            df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
+        except:
+            print("error")
 
 
         data = df.to_json(orient="records")
@@ -1730,10 +1740,12 @@ def puller_newtec():
         
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
-        
-        df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
-        df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
+        try:
+            df = df.drop(list(df.filter(regex='services.').columns), axis=1, inplace=True)
+            df = df.drop(list(df.filter(regex='addresses.').columns), axis=1, inplace=True)
 
+        except:
+            print("error")
 
 
         data = df.to_json(orient="records")
