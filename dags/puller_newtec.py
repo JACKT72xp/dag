@@ -1639,7 +1639,7 @@ def puller_newtec():
                 "mysql_statusTerminal"
                 ]
             ]
-        data_arg.columns = data.columns.str.replace(".", "_")
+        data_arg.columns = data_arg.columns.str.replace(".", "_")
         args_send = (data_arg.iloc[0:].to_dict("record"))
         data["updated_at_send"] = time_send_now
 
