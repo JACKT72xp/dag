@@ -51,7 +51,7 @@ table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "newtect"
 platform_name = "newtec_test_full"
 platform_id_puller = 107
-history_collection_mongo="history_changes_test"
+history_collection_mongo="history_changes"
 
 
 
@@ -1713,8 +1713,9 @@ def puller_newtec():
         try:
             print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
             df = df[df.columns.difference(list(df.filter(regex='addresses.').columns))]
-            print(df,'dfdfdfdf')
             df = df[df.columns.difference(list(df.filter(regex='services.').columns))]
+            df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
+            print(df,'dfdfdfdf')
         except:
             print("error")
             
@@ -1772,8 +1773,9 @@ def puller_newtec():
 
             print(df.filter(regex='addresses.').columns,"colcolcolcolcolcol")
             df = df[df.columns.difference(list(df.filter(regex='addresses.').columns))]
-            print(df,'dfdfdfdf')
             df = df[df.columns.difference(list(df.filter(regex='services.').columns))]
+            df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
+            print(df,'dfdfdfdf')
             
         except:
             print("error")
