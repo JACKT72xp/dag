@@ -1816,23 +1816,43 @@ def puller_newtec():
         if len(data) == 0:
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
-        for x in json.loads(data):
+        try:
+            for x in json.loads(data):
             # bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
             #     {"$set": {"active": 0}}
             # )
             # print(x,' vdatadatadatadatadatadata')
-            r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
-            print(r,'rrrrrrrrrr')
-            if r is None:
-                print('.')
-            else:
-                dateSaveHistory(
-                    {
-                        "type": "delete_mongo",
-                        "principal_key": x["platform_business_brand_name"],
-                        "changes": {"status": 0},
-                    }
-                )
+                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+                print(r,'rrrrrrrrrr')
+                if r is None:
+                    print('.')
+                else:
+                    dateSaveHistory(
+                        {
+                            "type": "delete_mongo",
+                            "principal_key": x["platform_business_brand_name"],
+                            "changes": {"status": 0},
+                        }
+                    )
+
+        except:
+            for x in data:
+                # bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
+                #     {"$set": {"active": 0}}
+                # )
+                # print(x,' vdatadatadatadatadatadata')
+                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+                print(r,'rrrrrrrrrr')
+                if r is None:
+                    print('.')
+                else:
+                    dateSaveHistory(
+                        {
+                            "type": "delete_mongo",
+                            "principal_key": x["platform_business_brand_name"],
+                            "changes": {"status": 0},
+                        }
+                    )
 
             # bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
         bulk.execute()
