@@ -919,7 +919,6 @@ def puller_newtec():
             # print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
                 
             
-            
             # response  = pd.concat([resp,addre, servi], axis=1)
             print(len(resp),'<<resp',len(addre),'<<addre',len(servi),'<<servi',len(response),'<<response')
             # print(response.columns,' responseresponseresponseresponse')
@@ -933,6 +932,7 @@ def puller_newtec():
             response = generateConcatKeySecondary(
                 response, config["secondary_join_cols"]["platform"]
             )
+            print(response['concat_key_generate_secondary'],'concat_key_generate_secondaryconcat_key_generate_secondaryconcat_key_generate_secondaryconcat_key_generate_secondaryconcat_key_generate_secondary')
             response = response.to_json(orient="records")
             response = json.loads(response)
             # except:
