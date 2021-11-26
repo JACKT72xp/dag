@@ -431,7 +431,7 @@ def puller_newtec():
     def save_in_redis_data_old(config, data, key_process):
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
-        df = df[df['status']!='Baja']
+        # df = df[df['status']!='Baja']
         del df["concat_key_generate"]
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
