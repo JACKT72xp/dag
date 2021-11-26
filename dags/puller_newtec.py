@@ -959,6 +959,7 @@ def puller_newtec():
         if df_mysql_total.empty:
             return "[{}]"
         df_mysql_total = df_mysql_total.astype(str)
+        df_mysql_total = df_mysql_total.replace('None','nan')
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
         df_mysql_total = generateConcatKey(
