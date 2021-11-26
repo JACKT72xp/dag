@@ -1822,13 +1822,16 @@ def puller_newtec():
             # print(x,' vdatadatadatadatadatadata')
             r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
             print(r,'rrrrrrrrrr')
-            dateSaveHistory(
-                {
-                    "type": "delete_mongo",
-                    "principal_key": x["platform_business_brand_name"],
-                    "changes": {"status": 0},
-                }
-            )
+            if r is None:
+                print('.')
+            else:
+                dateSaveHistory(
+                    {
+                        "type": "delete_mongo",
+                        "principal_key": x["platform_business_brand_name"],
+                        "changes": {"status": 0},
+                    }
+                )
 
             # bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
         bulk.execute()
