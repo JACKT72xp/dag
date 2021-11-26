@@ -1815,7 +1815,7 @@ def puller_newtec():
         if len(data) == 0:
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
-        for x in data:
+        for x in json.loads(data):
             # bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
             #     {"$set": {"active": 0}}
             # )
