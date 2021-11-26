@@ -1377,7 +1377,8 @@ def puller_newtec():
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
         # print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
-        print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        print(not_exist_mysql_s['concat_key_generate_secondary'],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        print(df_mysql['concat_key_generate_secondary'],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
