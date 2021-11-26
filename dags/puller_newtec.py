@@ -1816,7 +1816,7 @@ def puller_newtec():
         if len(data) == 0:
             return []
         bulk = coltn_mdb.initialize_unordered_bulk_op()
-        for x in json.loads(data):
+        for x in data:
             # bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
             #     {"$set": {"active": 0}}
             # )
@@ -1851,11 +1851,11 @@ def puller_newtec():
 
         # time_send = time_send_now
         # formatted_date = str(time_send)
-        for x in json.loads(data):
+        for x in data:
             sqlesn = (
                 "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
                 + x["old_business_brand_name"] 
-                + "' and platformId="+platform_id_puller+" and status!=0"
+                + "' and platformId="+str(platform_id_puller)+" and status!=0"
             )
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
