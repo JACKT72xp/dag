@@ -587,8 +587,8 @@ def puller_newtec():
         servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
         mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
         df_old = pd.merge(resp, mrg, on = 'business_brand_name',how='outer')
-        df_old['addresses.latitude'] = df_old['addresses.latitude'].astype(str)
-        df_old['addresses.longitude'] = df_old['addresses.longitude'].astype(str)
+        # df_old['addresses.latitude'] = df_old['addresses.latitude'].astype(str)
+        # df_old['addresses.longitude'] = df_old['addresses.longitude'].astype(str)
         print(df_old,' responseresponseresponseresponse')
         df_old = df_old[df_old.columns].add_prefix("old_")
         if df_old is None:
