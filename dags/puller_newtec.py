@@ -953,6 +953,7 @@ def puller_newtec():
             + str(config["mysql_table"])
             + " where "+table_mysql_puller+".status = 1 and  "+table_mysql_puller+".platformId = "
             + str(config["platform_id"])
+            + " group by siteId" 
         )
         print(query,'  xddddd')
         df_mysql_total = pd.read_sql_query(query, engine)
