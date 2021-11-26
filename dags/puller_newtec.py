@@ -584,12 +584,14 @@ def puller_newtec():
             response = json.loads(response)
             
             resp = pd.DataFrame(response)
-            addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.')
-            servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.')
-            df_old  = pd.concat([resp,addre, servi], axis=1)
-            print(df_old.columns,' responseresponseresponseresponse')
             
-            
+            addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
+            servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
+            mrg = pd.merge(addre, servi, on = 'business_brand_name')
+            df_old = pd.merge(resp, mrg, on = 'business_brand_name')
+       
+       
+       
 
             df_old['addresses.latitude'] = df_old['addresses.latitude'].astype(str)
             df_old['addresses.longitude'] = df_old['addresses.longitude'].astype(str)
@@ -777,9 +779,10 @@ def puller_newtec():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         
         
-        addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'],    record_prefix='addresses.')
-        servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],   record_prefix='services.')
-        df_datamongo  = pd.concat([df_datamongo,addre, servi], axis=1)
+        addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
+        servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
+        mrg = pd.merge(addre, servi, on = 'business_brand_name')
+        df_datamongo = pd.merge(df_datamongo, mrg, on = 'business_brand_name')
         print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
             
             
@@ -913,9 +916,15 @@ def puller_newtec():
                     response = response
             # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
             resp = pd.DataFrame(response)
-            addre = pd.json_normalize(response,record_path =['addresses'],    record_prefix='addresses.')
-            servi = pd.json_normalize(response,record_path =['services'],   record_prefix='services.')
-            response  = pd.concat([resp,addre, servi], axis=1)
+            addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
+            servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
+            mrg = pd.merge(addre, servi, on = 'business_brand_name')
+            response = pd.merge(resp, mrg, on = 'business_brand_name')
+            # print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
+                
+            
+            
+            # response  = pd.concat([resp,addre, servi], axis=1)
             print(len(resp),'<<resp',len(addre),'<<addre',len(servi),'<<servi',len(response),'<<response')
             # print(response.columns,' responseresponseresponseresponse')
             # print(response,' responseresponseresponseresponse')
