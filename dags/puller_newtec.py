@@ -977,8 +977,9 @@ def puller_newtec():
     def comparate_old_vs_new(data_platform, data_old):
         df1 = pd.DataFrame(data_platform)
         data_plat = pd.DataFrame(data_platform)
+        data_plat = data_plat[data_plat["platform_status"] != "Baja"]
         if len(data_old) == 0:
-            data_platform = df1.to_json(orient="records")
+            data_platform = data_plat.to_json(orient="records")
             return {
                 "platform_data": data_platform,
                 "comparation": [],
@@ -991,9 +992,9 @@ def puller_newtec():
         comparation = df1.merge(
             df2, on="concat_key_generate", indicator="_merge_", how="outer"
         )
-        both = comparation[comparation["_merge_"] == "both"]
-        plat = comparation[comparation["_merge_"] == "left_only"]
-        old = comparation[comparation["_merge_"] == "right_only"]
+        both = comparation[comparation["_merge_"] == "both" and comparation["platform_status"] != "Baja"]
+        plat = comparation[comparation["_merge_"] == "left_only" and comparation["platform_status"] != "Baja"]
+        old = comparation[comparation["platform_status"] == "Baja"]
 
         if both.empty:
             both_send = "empty"
