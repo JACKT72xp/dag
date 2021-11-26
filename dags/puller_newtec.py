@@ -1821,11 +1821,11 @@ def puller_newtec():
             #     {"$set": {"active": 0}}
             # )
             print(x,' vdatadatadatadatadatadata')
-            bulk.find({"siteId": x["old_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+            bulk.find({"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
             dateSaveHistory(
                 {
                     "type": "delete_mongo",
-                    "principal_key": x["old_business_brand_name"],
+                    "principal_key": x["platform_business_brand_name"],
                     "changes": {"status": 0},
                 }
             )
@@ -1851,8 +1851,8 @@ def puller_newtec():
 
         # time_send = time_send_now
         # formatted_date = str(time_send)
-        print(data,'datadatadatadatadatadata')
         for x in data:
+            print(x, 'datadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadata')
             sqlesn = (
                 "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
                 + x["old_business_brand_name"] 
