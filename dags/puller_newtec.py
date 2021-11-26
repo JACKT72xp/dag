@@ -1819,8 +1819,9 @@ def puller_newtec():
             # bulk.find({"active": 1, "siteId": x["old_Name"]}).update(
             #     {"$set": {"active": 0}}
             # )
-            print(x,' vdatadatadatadatadatadata')
-            bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+            # print(x,' vdatadatadatadatadatadata')
+            r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+            print(r,'rrrrrrrrrr')
             dateSaveHistory(
                 {
                     "type": "delete_mongo",
