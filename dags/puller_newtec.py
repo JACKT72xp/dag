@@ -1037,7 +1037,8 @@ def puller_newtec():
                 list(exist_mysql_p["concat_key_generate"])
             )
         ]
-
+        print(both['concat_key_generate'],'bothbothbothbothboth')
+        print(df_mysql['concat_key_generate'],'df_mysqldf_mysqldf_mysqldf_mysqldf_mysql')
         if exist_mysql_p.empty:
             exist_mysql_p = []
         else:
