@@ -967,6 +967,7 @@ def puller_newtec():
         df_mysql_total = generateConcatKeySecondary(
             df_mysql_total, config["secondary_join_cols"]["mysql"]
         )
+        print(df_mysql_total,'df_mysql_totaldf_mysql_totaldf_mysql_totaldf_mysql_total')
         df_mysql_total = df_mysql_total.to_json(orient="records")
         return df_mysql_total
 
