@@ -587,8 +587,8 @@ def puller_newtec():
             
             addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
             servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
-            mrg = pd.merge(addre, servi, on = 'business_brand_name')
-            df_old = pd.merge(resp, mrg, on = 'business_brand_name')
+            mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
+            df_old = pd.merge(resp, mrg, on = 'business_brand_name',how='outer')
        
        
        
@@ -781,8 +781,8 @@ def puller_newtec():
         
         addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
         servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
-        mrg = pd.merge(addre, servi, on = 'business_brand_name')
-        df_datamongo = pd.merge(df_datamongo, mrg, on = 'business_brand_name')
+        mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
+        df_datamongo = pd.merge(df_datamongo, mrg, on = 'business_brand_name',how='outer')
         print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
             
             
@@ -918,8 +918,11 @@ def puller_newtec():
             resp = pd.DataFrame(response)
             addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.')
             servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.')
-            mrg = pd.merge(addre, servi, on = 'business_brand_name')
-            response = pd.merge(resp, mrg, on = 'business_brand_name')
+            mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
+            response = pd.merge(resp, mrg, on = 'business_brand_name',how='outer')
+            print(resp.columns)
+            print(addre.columns)
+            print(servi.columns)
             # print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
                 
             
