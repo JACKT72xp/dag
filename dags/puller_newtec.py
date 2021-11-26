@@ -1879,7 +1879,7 @@ def puller_newtec():
             print(x, 'datadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadata')
             sqlesn = (
                 "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + x["old_business_brand_name"] 
+                + x["platform_business_brand_name"] 
                 + "' and platformId="+str(platform_id_puller)+" and status!=0"
             )
             connection_engi.execute(sqlesn)
