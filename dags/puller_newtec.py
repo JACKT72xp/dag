@@ -135,15 +135,15 @@ def puller_newtec():
             "mongo_limit_time": 55,
             "mongo_collection": collection_puller,
             "primary_join_cols": {
-                "mysql": "siteId",
-                "mongo": "siteId",
-                "platform": "business_brand_name",
-                "old": "business_brand_name",
+                "mysql": "suscriberId",
+                "mongo": "document_number",
+                "platform": "document_number",
+                "old": "document_number",
             },           
             "secondary_join_cols": {
                 # "mysql": ["mysql_suscriberId"],
                 "mysql": [
-                    "mysql_suscriberId",
+                    "mysql_siteId",
                     "mysql_latitud",
                     "mysql_longitud",
                     "mysql_slaname",
@@ -154,7 +154,7 @@ def puller_newtec():
                     "mysql_statusTerminal"
                 ],
                 "mongo": [
-                    "mongo_document_number",
+                    "mongo_business_brand_name",
                     "mongo_addresses.latitude",
                     "mongo_addresses.longitude",
                     "mongo_services.product.description",
@@ -165,7 +165,7 @@ def puller_newtec():
                     "mongo_status"
                     ],
                 "platform": [
-                    "platform_document_number",
+                    "platform_business_brand_name",
                     "platform_addresses.latitude",
                     "platform_addresses.longitude",
                     "platform_services.product.description",
@@ -176,7 +176,7 @@ def puller_newtec():
                     "platform_status"
                     ],
                 "old": [
-                    "old_document_number",
+                    "old_business_brand_name",
                     "old_addresses.latitude",
                     "old_addresses.longitude",
                     "old_services.product.description",
@@ -258,7 +258,7 @@ def puller_newtec():
                 "type": "update_mysql",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["platform_business_brand_name"],
+                "principalKey": data["platform_document_number"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
@@ -297,7 +297,7 @@ def puller_newtec():
                 "type": "update_mongo",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["business_brand_name"],
+                "principalKey": data["document_number"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
@@ -358,7 +358,7 @@ def puller_newtec():
 
     def getDataMysqlBySiteId(siteId):
         # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from {table_mysql_puller} where siteId ='{siteId}' and status != 0 and platformId = {platform_id_puller}"
+        query = f"select * from {table_mysql_puller} where suscriberId ='{siteId}' and status != 0 and platformId = {platform_id_puller}"
         df = pd.read_sql_query(query, engine)
         try:
             id_response = json.loads(df.to_json(orient="records"))[0]["id"]
@@ -772,10 +772,10 @@ def puller_newtec():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         
         
-        addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.').astype(str)
-        servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.').astype(str)
-        mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
-        df_datamongo = pd.merge(df_datamongo, mrg, on = 'business_brand_name',how='outer')
+        addre = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['addresses'], meta=['document_number'],   record_prefix='addresses.').astype(str)
+        servi = pd.json_normalize(json.loads(df_datamongo.to_json(orient="records")),record_path =['services'],  meta=['document_number'], record_prefix='services.').astype(str)
+        mrg = pd.merge(addre, servi, on = 'document_number',how='outer')
+        df_datamongo = pd.merge(df_datamongo, mrg, on = 'document_number',how='outer')
         print(len(df_datamongo),'<<df_datamongo',len(addre),'<<addre',len(servi),'<<servi',len(df_datamongo_origin),'<<df_datamongo_origin')
             
             
@@ -909,10 +909,10 @@ def puller_newtec():
                     response = response
             # print(response['addresses'],'addressesaddressesaddressesaddressesaddresses')
             resp = pd.DataFrame(response)
-            addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['business_brand_name'],   record_prefix='addresses.').astype(str)
-            servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['business_brand_name'], record_prefix='services.').astype(str)
-            mrg = pd.merge(addre, servi, on = 'business_brand_name',how='outer')
-            response = pd.merge(resp, mrg, on = 'business_brand_name',how='outer')
+            addre = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['addresses'], meta=['document_number'],   record_prefix='addresses.').astype(str)
+            servi = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['services'],  meta=['document_number'], record_prefix='services.').astype(str)
+            mrg = pd.merge(addre, servi, on = 'document_number',how='outer')
+            response = pd.merge(resp, mrg, on = 'document_number',how='outer')
             print(resp.columns)
             print(addre.columns)
             print(servi.columns)
@@ -1669,7 +1669,6 @@ def puller_newtec():
         data = data[
                 [
                 "updated_at_send",
-                "platform_document_number",
                 "platform_addresses.latitude",
                 "platform_addresses.longitude",
                 "platform_services.product.description",
@@ -1678,7 +1677,8 @@ def puller_newtec():
                 "platform_services.terminal.mac_address",
                 "platform_services.terminal.terminal_name",
                 "platform_status",
-                "platform_business_brand_name"
+                "platform_document_number"
+                
                 ]
             ]
         print(data.columns,'colls')
@@ -1690,7 +1690,7 @@ def puller_newtec():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller} SET updated_at=:updated_at_send, suscriberId=:platform_document_number ,         latitud=:platform_addresses_latitude,         longitud=:platform_addresses_longitude,         slaname=:platform_services_product_description, esn=:platform_services_terminal_serial_number, nmsId=:platform_services_terminal_ssid, mac=:platform_services_terminal_mac_address, description=:platform_services_terminal_terminal_name, statusTerminal=:platform_status, fromPuller=1 WHERE siteId = :platform_business_brand_name  and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller} SET updated_at=:updated_at_send,          latitud=:platform_addresses_latitude,         longitud=:platform_addresses_longitude,         slaname=:platform_services_product_description, esn=:platform_services_terminal_serial_number, nmsId=:platform_services_terminal_ssid, mac=:platform_services_terminal_mac_address, description=:platform_services_terminal_terminal_name, statusTerminal=:platform_status, fromPuller=1 WHERE suscriberId = :platform_document_number  and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
@@ -1734,7 +1734,7 @@ def puller_newtec():
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            data_mysql = getDataMysqlBySiteId(x["business_brand_name"])
+            data_mysql = getDataMysqlBySiteId(x["document_number"])
             element = {
                 "puller": x,
                 "status": str(x["status"]),
@@ -1792,7 +1792,7 @@ def puller_newtec():
         for x in data:
             print(x,'DATAAAAAAAA')
             # x["Active"] = str(x["Active"])
-            bulk.find({"siteId": x["business_brand_name"],"platform":platform_id_puller}).update(
+            bulk.find({"siteId": x["business_brand_name"],"puller.document_number":x['document_number'],"platform":platform_id_puller}).update(
                 {"$set": {"puller": x, "status": str(x["status"]), "active": 1}}
             )
             # bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
@@ -1822,7 +1822,7 @@ def puller_newtec():
             #     {"$set": {"active": 0}}
             # )
             # print(x,' vdatadatadatadatadatadata')
-                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"puller.document_number":x["platform_document_number"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
                 print(r,'rrrrrrrrrr')
                 if r is None:
                     print('.')
@@ -1830,7 +1830,7 @@ def puller_newtec():
                     dateSaveHistory(
                         {
                             "type": "delete_mongo",
-                            "principal_key": x["platform_business_brand_name"],
+                            "principal_key": x["platform_document_number"],
                             "changes": {"status": 0},
                         }
                     )
@@ -1841,7 +1841,7 @@ def puller_newtec():
                 #     {"$set": {"active": 0}}
                 # )
                 # print(x,' vdatadatadatadatadatadata')
-                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
+                r = bulk.find({"active": 1,"siteId": x["platform_business_brand_name"],"puller.document_number":x["platform_document_number"],"platform":platform_id_puller}).update({"$set": {"active": 0}})
                 print(r,'rrrrrrrrrr')
                 if r is None:
                     print('.')
@@ -1849,7 +1849,7 @@ def puller_newtec():
                     dateSaveHistory(
                         {
                             "type": "delete_mongo",
-                            "principal_key": x["platform_business_brand_name"],
+                            "principal_key": x["platform_document_number"],
                             "changes": {"status": 0},
                         }
                     )
@@ -1878,8 +1878,8 @@ def puller_newtec():
         for x in json.loads(data):
             print(x, 'datadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadata')
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + x["platform_business_brand_name"] 
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE suscriberId = '"
+                + x["platform_document_number"] 
                 + "' and platformId="+str(platform_id_puller)+" and status!=0"
             )
             connection_engi.execute(sqlesn)
@@ -1975,12 +1975,12 @@ def puller_newtec():
     rs >>Label("Extrae la data de mysql") >> mysql_data
     rs >>Label("Extrae la data de mongodb") >> mongo_data
     rs >>Label("Extrae la data del pulleo anterior para verificar cambios") >> old_data
-    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
-    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
 
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> update_data_mysql_equals,delete_data_mysql_equals >> insert_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> update_data_mysql_only_platform,delete_data_mysql_only_platform>>insert_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> update_data_mongo_equals,delete_data_mongo_equals >> insert_data_mongo_equals, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform >> insert_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> update_data_mysql_equals,delete_data_mysql_equals >> insert_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> update_data_mysql_only_platform,delete_data_mysql_only_platform>>insert_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> update_data_mongo_equals,delete_data_mongo_equals >> insert_data_mongo_equals, primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform >> insert_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
 
 
