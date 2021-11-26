@@ -1381,6 +1381,7 @@ def puller_newtec():
         # print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
         print(both['concat_key_generate_secondary'],'bothbothbothboth>>>>',len(both))
         print(df_mysql['concat_key_generate_secondary'],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        print(not_exist_mysql_s_com['concat_key_generate_secondary'],'not_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_com')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
