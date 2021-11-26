@@ -1605,6 +1605,7 @@ def puller_newtec():
         data_insert_send["fromPuller"] = 1
         
         print(data_insert_send,'data_insert_senddata_insert_send')
+        data_insert_send = data_insert_send.drop_duplicates()
         data_insert_send.to_sql(table_mysql_puller, engine, if_exists="append", index=False)
         
         
