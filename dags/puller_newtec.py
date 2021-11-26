@@ -992,8 +992,8 @@ def puller_newtec():
         comparation = df1.merge(
             df2, on="concat_key_generate", indicator="_merge_", how="outer"
         )
-        both = comparation[comparation["_merge_"] == "both" and comparation["platform_status"] != "Baja"]
-        plat = comparation[comparation["_merge_"] == "left_only" and comparation["platform_status"] != "Baja"]
+        both = comparation[(comparation["_merge_"] == "both") &  (comparation["platform_status"] != "Baja")]
+        plat = comparation[(comparation["_merge_"] == "left_only") &  (comparation["platform_status"] != "Baja")]
         old = comparation[comparation["platform_status"] == "Baja"]
 
         if both.empty:
