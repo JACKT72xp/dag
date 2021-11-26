@@ -736,7 +736,7 @@ def puller_newtec():
         # coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find(
             {"platform":platform_id_puller},
-            # {"active": 1},
+            {"active": 1},
             {
                 "_id": True,
                 "siteId": True,
