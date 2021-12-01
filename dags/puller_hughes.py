@@ -41,6 +41,9 @@ uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.n
 conection = MongoClient(uri,connect=False)
 db_ = conection["bifrost"]
 coltn_mdb = db_['hughes']
+uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
+conection_2 = MongoClient(uri_2, connect=False)
+db_2 = conection_2["bifrost"]
 
 r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
 
@@ -154,7 +157,7 @@ def puller_hughes():
 
 
     def dateSaveHistory(data):
-        coltn_history_changes = db_['history_changes']
+        coltn_history_changes = db_2['history_changes']
         data_old = getDataOld(data['principal_key'])
         element = {
             "data":[],
@@ -169,7 +172,7 @@ def puller_hughes():
         return ['ok']
 
     def dateSaveHistoryInsertMongo(data_global):
-        coltn_history_changes = db_['history_changes']
+        coltn_history_changes = db_2['history_changes']
         for data in data_global:
             element = {
                 "data":[],
@@ -184,7 +187,7 @@ def puller_hughes():
         return ['ok']
 
     def dateSaveHistoryInsert(data_global):
-        coltn_history_changes = db_['history_changes']
+        coltn_history_changes = db_2['history_changes']
         for data in data_global:
             element = {
                 "data":[],
@@ -198,7 +201,7 @@ def puller_hughes():
             coltn_history_changes.insert(element)
         return ['ok']
     def dateSaveHistoryUpdate(data_global):
-        coltn_history_changes = db_['history_changes']
+        coltn_history_changes = db_2['history_changes']
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
@@ -214,7 +217,7 @@ def puller_hughes():
         return ['ok']
 
     def dateSaveHistoryUpdateMongo(data_global):
-        coltn_history_changes = db_['history_changes']
+        coltn_history_changes = db_2['history_changes']
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             element = {
