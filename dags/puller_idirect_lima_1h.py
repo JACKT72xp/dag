@@ -36,7 +36,7 @@ from functools import reduce
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, text
 import numpy as np
-from sqlalchemy.sql.expression import exists
+from sqlalchemy.sql.expression import exists, null
 from pymongo import MongoClient
 
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
@@ -1601,6 +1601,9 @@ def puller_idirect_lima_1h():
         
         data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
         data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
+        data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = None, 3
+
+
         data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
         del data_insert_send['crmId']
         
