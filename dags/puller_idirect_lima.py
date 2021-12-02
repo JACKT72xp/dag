@@ -1589,10 +1589,9 @@ def puller_idirect_lima():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + x["old_Name"] + "and id_nms="
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE  id_nms="
                 + x["old_ID"] 
-                + "' and status!=0"
+                + " and status!=0"
             )
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})

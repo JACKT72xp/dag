@@ -1467,7 +1467,7 @@ def puller_idirect_arg():
         
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID "
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active , esn=:platform_SN, did=:platform_DID, updated_at=:updated_at_send, fromPuller=1 ,siteId = :platform_Name WHERE  id_nms=:platform_ID "
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
@@ -1589,10 +1589,9 @@ def puller_idirect_arg():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + x["old_Name"] + "and id_nms="
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE  id_nms="
                 + x["old_ID"] 
-                + "' and status!=0"
+                + " and status!=0"
             )
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
