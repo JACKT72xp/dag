@@ -1164,7 +1164,12 @@ def puller_idirect_hub5():
                 0,
             )
         except:
-            return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
+            return {
+                "update_mysql": [],
+                "insert_mysql": glob_comparate["not_exist_mysql"],
+                "delete_mysql": old["only_old"],
+            }
+            # return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
 
         exist_mysql_s = both[both["exist_mysql_secondary"] == 1]
         not_exist_mysql_s = both[both["exist_mysql_secondary"] == 0]
