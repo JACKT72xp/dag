@@ -1601,7 +1601,7 @@ def puller_idirect_lima_1h():
         
         data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
         data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = None, 3
+        data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
 
 
         data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
