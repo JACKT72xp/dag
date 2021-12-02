@@ -85,9 +85,9 @@ default_args = {
     # 'email_on_failure': True,
     # 'email_on_retry': True,
     "max_active_runs": 1,
-    "concurrency": 4,
+    # "concurrency": 4,
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 4,
+    "retries": 5,
 }
 # [END default_args]
 # start_date=days_ago(2)
