@@ -215,26 +215,50 @@ def puller_idirect_arg():
         coltn_history_changes = db_2[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
-            element = {
-                "data": [],
-                "data_old": {
-                    "did": data["mongo_DID"],
-                    "sn": data["mongo_SN"],
-                    "active": str(data["mongo_Active"]),
-                    "id": data["mongo_ID"],
-                },
-                "changes": {
-                    "did": data["DID"],
-                    "sn": data["SN"],
-                    "active": str(data["Active"]),
-                    "id": data["ID"],
-                },
-                "type": "update_mongo",
-                "date_p": time_send_now,
-                "platform_id": platform_id_puller,
-                "principalKey": data["ID"],
-            }
-            coltn_history_changes.insert(element)
+            try:
+                
+                element = {
+                    "data": [],
+                    "changes": {
+                        "did": data["platform_DID"],
+                        "sn": data["platform_SN"],
+                        "active": str(data["platform_Active"]),
+                        "id": data["platform_ID"],
+                    },
+                    # "changes": {
+                    #     "did": data["DID"],
+                    #     "sn": data["SN"],
+                    #     "active": str(data["Active"]),
+                    #     "id": data["ID"],
+                    # },
+                    "type": "update_mongo",
+                    "date_p": time_send_now,
+                    "platform_id": platform_id_puller,
+                    "principalKey": data["platform_ID"],
+                }
+                coltn_history_changes.insert(element)
+            except:
+                element = {
+                    "data": [],
+                    "data_old": {
+                        "did": data["mongo_DID"],
+                        "sn": data["mongo_SN"],
+                        "active": str(data["mongo_Active"]),
+                        "id": data["mongo_ID"],
+                    },
+                    "changes": {
+                        "did": data["DID"],
+                        "sn": data["SN"],
+                        "active": str(data["Active"]),
+                        "id": data["ID"],
+                    },
+                    "type": "update_mongo",
+                    "date_p": time_send_now,
+                    "platform_id": platform_id_puller,
+                    "principalKey": data["ID"],
+                }
+                coltn_history_changes.insert(element)
+                
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
@@ -604,7 +628,7 @@ def puller_idirect_arg():
         # db_ = conection["bifrost"]
         # coltn_mdb = db_['hughes_test']
         data_mdb = coltn_mdb.find(
-            {"platform":platform_id_puller},
+            {"platform":platform_id_puller,"active":1},
             # {"active": 1},
             {
                 "_id": True,
@@ -812,6 +836,7 @@ def puller_idirect_arg():
         else:
             old_send = old.to_json(orient="records")
         data_platform = data_plat.to_json(orient="records")
+        print(old_send,'old_sendold_send')
         return {
             "platform_data": data_platform,
             "comparation": comparation.to_json(orient="records"),
@@ -1502,9 +1527,14 @@ def puller_idirect_arg():
             # bulk.find({"active": 1, "siteId": x["Name"]}).update(
             #     {"$set": {"puller": x, "status": x["Active"], "active": 1}}
             # )
-            bulk.find({"siteId": x["Name"]}).update(
-                {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
-            )
+            try:
+                 bulk.find({"siteId": x["platform_Name"]}).update(
+                    {"$set": {"puller.DID": x["platform_DID"],"puller.SN": x["platform_SN"],"puller.Active": str(x["platform_Active"]), "status": str(x["platform_Active"]), "active": 1}}
+                )
+            except:
+                bulk.find({"siteId": x["Name"]}).update(
+                    {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+                )
 
         bulk.execute()
         dateSaveHistoryUpdateMongo(data)
@@ -1676,7 +1706,6 @@ def puller_idirect_arg():
     rs >> [platform_data >> save_in_redis_data_platform_data,old_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
-
 
 # [START dag_invocation]
 puller_idirect_arge = puller_idirect_arg()
