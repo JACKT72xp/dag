@@ -307,6 +307,7 @@ def puller_idirect_arg_1h():
             
             except:
                 print("error",data)
+                continue
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
