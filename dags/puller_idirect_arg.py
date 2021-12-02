@@ -1679,5 +1679,5 @@ def puller_idirect_arg():
 
 
 # [START dag_invocation]
-puller_idirect_arg = puller_idirect_arg()
+puller_idirect_arge = puller_idirect_arg()
 # [END dag_invocation]
