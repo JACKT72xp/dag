@@ -836,7 +836,7 @@ def puller_idirect_lima():
         else:
             old_send = old.to_json(orient="records")
         data_platform = data_plat.to_json(orient="records")
-        print(old_send,'old_sendold_sendold_sendold_send')
+        print(old_send,'old_sendold_send')
         return {
             "platform_data": data_platform,
             "comparation": comparation.to_json(orient="records"),
@@ -854,20 +854,19 @@ def puller_idirect_lima():
         platform_data = pd.DataFrame(json.loads(comparate["platform_data"]))
         comparate = pd.DataFrame(json.loads(comparate["both"]))
         both = comparate
-        df_mysql["exist_mysql"] = np.where(
-            df_mysql["concat_key_generate"].isin(list(both["concat_key_generate"])),
+        both["exist_mysql"] = np.where(
+            both["concat_key_generate"].isin(list(df_mysql["concat_key_generate"])),
             1,
             0,
         )
-        print(both,'bothbothbothboth')
-        exist_mysql_p = df_mysql[df_mysql["exist_mysql"] == 1]
-        not_exist_mysql_p = df_mysql[df_mysql["exist_mysql"] == 0]
+        exist_mysql_p = both[both["exist_mysql"] == 1]
+        not_exist_mysql_p = both[both["exist_mysql"] == 0]
         exist_mysql_p = platform_data[
             platform_data["concat_key_generate"].isin(
                 list(exist_mysql_p["concat_key_generate"])
             )
         ]
-        print(not_exist_mysql_p,'not_exist_mysql_pnot_exist_mysql_pnot_exist_mysql_p')
+
         if exist_mysql_p.empty:
             exist_mysql_p = []
         else:
@@ -900,8 +899,8 @@ def puller_idirect_lima():
             comparate = pd.DataFrame(columns=["concat_key_generate"])
         only_platform = comparate
         only_platform["exist_mysql"] = np.where(
-            df_mysql["concat_key_generate"].isin(
-                list(only_platform["concat_key_generate"])
+            only_platform["concat_key_generate"].isin(
+                list(df_mysql["concat_key_generate"])
             ),
             1,
             0,
@@ -940,7 +939,7 @@ def puller_idirect_lima():
         comparate = pd.DataFrame(json.loads(comparate["only_old"]))
         only_old = comparate
         only_old["exist_mysql"] = np.where(
-            df_mysql["concat_key_generate"].isin(list(only_old["concat_key_generate"])),
+            only_old["concat_key_generate"].isin(list(df_mysql["concat_key_generate"])),
             1,
             0,
         )
@@ -1529,8 +1528,8 @@ def puller_idirect_lima():
             #     {"$set": {"puller": x, "status": x["Active"], "active": 1}}
             # )
             try:
-                 bulk.find({"siteId": x["Name"]}).update(
-                    {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+                 bulk.find({"siteId": x["platform_Name"]}).update(
+                    {"$set": {"puller.DID": x["platform_DID"],"puller.SN": x["platform_SN"],"puller.Active": str(x["platform_Active"]), "status": str(x["platform_Active"]), "active": 1}}
                 )
             except:
                 bulk.find({"siteId": x["Name"]}).update(
