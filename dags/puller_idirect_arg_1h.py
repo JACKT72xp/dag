@@ -266,43 +266,47 @@ def puller_idirect_arg_1h():
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             print("dataaaaaaaa",data)
-            element = {
-                "data": [],
-                "data_old": {
-                    "did": data["mongo_DID"],
-                    "sn": data["mongo_SN"],
-                    "active": str(data["mongo_Active"]),
-                    "id": data["mongo_ID"],
-                    
-                    "modelType": data["mongo_ModelType"],
-                    "inrouteGroupID": data["mongo_InrouteGroupID"],
-                    "networkID": data["mongo_NetworkID"],
-                    "lat": data["mongo_Lat"],
-                    "lon": data["mongo_Lon"],
-                    "serviceplan": data["mongo_SERVICEPLANCRMID"],
-                                       
-                },
-                "changes": {
-                    "did": data["DID"],
-                    "sn": data["SN"],
-                    "active": str(data["Active"]),
-                    "id": data["ID"],
-                    
-                    "modelType": data["ModelType"],
-                    "inrouteGroupID": data["InrouteGroupID"],
-                    "networkID": data["NetworkID"],
-                    "lat": data["Lat"],
-                    "lon": data["Lon"],
-                    "serviceplan": data["SERVICEPLANCRMID"],
-                    
-                    
-                },
-                "type": "update_mongo",
-                "date_p": time_send_now,
-                "platform_id": platform_id_puller,
-                "principalKey": data["ID"],
-            }
-            coltn_history_changes.insert(element)
+            try:
+                element = {
+                    "data": [],
+                    "data_old": {
+                        "did": data["mongo_DID"],
+                        "sn": data["mongo_SN"],
+                        "active": str(data["mongo_Active"]),
+                        "id": data["mongo_ID"],
+                        
+                        "modelType": data["mongo_ModelType"],
+                        "inrouteGroupID": data["mongo_InrouteGroupID"],
+                        "networkID": data["mongo_NetworkID"],
+                        "lat": data["mongo_Lat"],
+                        "lon": data["mongo_Lon"],
+                        "serviceplan": data["mongo_SERVICEPLANCRMID"],
+                                        
+                    },
+                    "changes": {
+                        "did": data["DID"],
+                        "sn": data["SN"],
+                        "active": str(data["Active"]),
+                        "id": data["ID"],
+                        
+                        "modelType": data["ModelType"],
+                        "inrouteGroupID": data["InrouteGroupID"],
+                        "networkID": data["NetworkID"],
+                        "lat": data["Lat"],
+                        "lon": data["Lon"],
+                        "serviceplan": data["SERVICEPLANCRMID"],
+                        
+                        
+                    },
+                    "type": "update_mongo",
+                    "date_p": time_send_now,
+                    "platform_id": platform_id_puller,
+                    "principalKey": data["ID"],
+                }
+                coltn_history_changes.insert(element)
+            
+            except:
+                print("error",data)
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
