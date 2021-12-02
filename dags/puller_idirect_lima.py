@@ -757,7 +757,7 @@ def puller_idirect_lima():
         query = (
             "SELECT  id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms  FROM "
             + str(config["mysql_table"])
-            + " where status = 1 and  platformId = "
+            + " where status != 0 and  platformId = "
             + str(config["platform_id"])
         )
         df_mysql_total = pd.read_sql_query(query, engine)
