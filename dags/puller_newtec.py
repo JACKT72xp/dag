@@ -1877,13 +1877,15 @@ def puller_newtec():
         # time_send = time_send_now
         # formatted_date = str(time_send)
         for x in json.loads(data):
-            print(x, 'datadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadatadata')
-            sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE suscriberId = '"
-                + x["platform_document_number"] 
-                + "' and platformId="+str(platform_id_puller)+" and status!=0"
-            )
-            connection_engi.execute(sqlesn)
+            try:
+                sqlesn = (
+                    "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE suscriberId = '"
+                    + x["platform_document_number"] 
+                    + "' and platformId="+str(platform_id_puller)+" and status!=0"
+                )
+                connection_engi.execute(sqlesn)
+            except:
+                print("error",x)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ["ok"]
 
