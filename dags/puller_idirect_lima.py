@@ -866,7 +866,7 @@ def puller_idirect_lima():
                 list(exist_mysql_p["concat_key_generate"])
             )
         ]
-
+        print(not_exist_mysql_p,'not_exist_mysql_pnot_exist_mysql_pnot_exist_mysql_p')
         if exist_mysql_p.empty:
             exist_mysql_p = []
         else:
