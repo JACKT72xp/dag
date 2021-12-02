@@ -1985,5 +1985,5 @@ def puller_idirect_arg_1h():
 
 
 # [START dag_invocation]
-puller_idirect_arg_1h = puller_idirect_arg_1h()
+puller_idirect_arge_1h = puller_idirect_arg_1h()
 # [END dag_invocation]
