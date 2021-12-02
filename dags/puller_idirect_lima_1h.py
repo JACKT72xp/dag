@@ -1795,6 +1795,9 @@ def puller_idirect_lima_1h():
         
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
+        
+        df2 = pd.DataFrame(data)
+        df2.columns = df2.columns.str.replace("platform_", "")
         try:
             df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
             print(df,'dfdfdfdf')
@@ -1805,7 +1808,8 @@ def puller_idirect_lima_1h():
             
         data = df.to_json(orient="records")
         data = json.loads(data)
-        
+        datax = df2.to_json(orient="records")
+        datax = json.loads(datax)
         for x in data:
             print(x,'DATAAAAAAAA')
             x["Active"] = str(x["Active"])
@@ -1817,7 +1821,7 @@ def puller_idirect_lima_1h():
             # )
 
         bulk.execute()
-        dateSaveHistoryUpdateMongo(data)
+        dateSaveHistoryUpdateMongo(datax)
         return [keys]
 
     @task()
