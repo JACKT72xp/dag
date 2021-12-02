@@ -854,14 +854,14 @@ def puller_idirect_lima():
         platform_data = pd.DataFrame(json.loads(comparate["platform_data"]))
         comparate = pd.DataFrame(json.loads(comparate["both"]))
         both = comparate
-        both["exist_mysql"] = np.where(
+        df_mysql["exist_mysql"] = np.where(
             df_mysql["concat_key_generate"].isin(list(both["concat_key_generate"])),
             1,
             0,
         )
         print(both,'bothbothbothboth')
-        exist_mysql_p = both[both["exist_mysql"] == 1]
-        not_exist_mysql_p = both[both["exist_mysql"] == 0]
+        exist_mysql_p = df_mysql[df_mysql["exist_mysql"] == 1]
+        not_exist_mysql_p = df_mysql[df_mysql["exist_mysql"] == 0]
         exist_mysql_p = platform_data[
             platform_data["concat_key_generate"].isin(
                 list(exist_mysql_p["concat_key_generate"])
