@@ -86,6 +86,8 @@ default_args = {
     # 'email_on_retry': True,
     "max_active_runs": 1,
     "concurrency": 5,
+    'trigger_rule': 'all_done',
+    
     # "schedule_interval": timedelta(minutes=10),
     "retries": 5,
 }
