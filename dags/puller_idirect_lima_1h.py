@@ -1702,7 +1702,7 @@ def puller_idirect_lima_1h():
                     "platform_Lat",
                     "platform_Lon",
                     
-                    
+                    "platform_SERVICEPLANCRMID",
                     "platform_Name",
                     "platform_ID",
                 ]
@@ -1715,13 +1715,16 @@ def puller_idirect_lima_1h():
         
         
         datax = datax.join(list_sp.set_index('crmId'), on='crmId')
-        datax['servicePlanIdTable'] = datax["servicePlanIdTable"].fillna(1171)
-        print(datax['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
+        data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
+            #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
+        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = None, 3
+
+        print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1 WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
