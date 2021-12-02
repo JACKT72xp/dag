@@ -1629,6 +1629,7 @@ def puller_idirect_lima_1h():
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
         data["platform_Active"] = data["platform_Active"].astype(str)
+        data["platform_status"] = 1
         
 
         
@@ -1703,6 +1704,7 @@ def puller_idirect_lima_1h():
                     "platform_Lon",
                     
                     "platform_SERVICEPLANCRMID",
+                    "platform_status",
                     "platform_Name",
                     "platform_ID",
                 ]
@@ -1718,14 +1720,14 @@ def puller_idirect_lima_1h():
         data = data.join(list_sp.set_index('crmId'), on='crmId')
         data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
+        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'platform_status']] = '', 3
 
         print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
