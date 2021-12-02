@@ -1359,8 +1359,11 @@ def puller_idirect_lima_1h():
                 0,
             )
         except:
-            return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
-
+            return {
+                    "update_mysql": [],
+                    "insert_mysql": glob_comparate["not_exist_mysql"],
+                    "delete_mysql": old["only_old"],
+                }
         exist_mysql_s = both[both["exist_mysql_secondary"] == 1]
         not_exist_mysql_s = both[both["exist_mysql_secondary"] == 0]
         not_exist_mysql_s_com = both[both["exist_mysql_secondary"] == 0]
@@ -1727,7 +1730,7 @@ def puller_idirect_lima_1h():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
