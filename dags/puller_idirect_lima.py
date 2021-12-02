@@ -855,7 +855,7 @@ def puller_idirect_lima():
         comparate = pd.DataFrame(json.loads(comparate["both"]))
         both = comparate
         both["exist_mysql"] = np.where(
-            both["concat_key_generate"].isin(list(df_mysql["concat_key_generate"])),
+            df_mysql["concat_key_generate"].isin(list(both["concat_key_generate"])),
             1,
             0,
         )
@@ -900,8 +900,8 @@ def puller_idirect_lima():
             comparate = pd.DataFrame(columns=["concat_key_generate"])
         only_platform = comparate
         only_platform["exist_mysql"] = np.where(
-            only_platform["concat_key_generate"].isin(
-                list(df_mysql["concat_key_generate"])
+            df_mysql["concat_key_generate"].isin(
+                list(only_platform["concat_key_generate"])
             ),
             1,
             0,
@@ -940,7 +940,7 @@ def puller_idirect_lima():
         comparate = pd.DataFrame(json.loads(comparate["only_old"]))
         only_old = comparate
         only_old["exist_mysql"] = np.where(
-            only_old["concat_key_generate"].isin(list(df_mysql["concat_key_generate"])),
+            df_mysql["concat_key_generate"].isin(list(only_old["concat_key_generate"])),
             1,
             0,
         )
