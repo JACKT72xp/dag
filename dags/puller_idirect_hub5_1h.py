@@ -266,48 +266,43 @@ def puller_idirect_hub5_1h():
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
             print("dataaaaaaaa",data)
-            try:
-                element = {
-                    "data": [],
-                    "data_old": {
-                        "did": data["mongo_DID"],
-                        "sn": data["mongo_SN"],
-                        "active": str(data["mongo_Active"]),
-                        "id": data["mongo_ID"],
-                        
-                        "modelType": data["mongo_ModelType"],
-                        "inrouteGroupID": data["mongo_InrouteGroupID"],
-                        "networkID": data["mongo_NetworkID"],
-                        "lat": data["mongo_Lat"],
-                        "lon": data["mongo_Lon"],
-                        "serviceplan": data["mongo_SERVICEPLANCRMID"],
-                                        
-                    },
-                    "changes": {
-                        "did": data["DID"],
-                        "sn": data["SN"],
-                        "active": str(data["Active"]),
-                        "id": data["ID"],
-                        
-                        "modelType": data["ModelType"],
-                        "inrouteGroupID": data["InrouteGroupID"],
-                        "networkID": data["NetworkID"],
-                        "lat": data["Lat"],
-                        "lon": data["Lon"],
-                        "serviceplan": data["SERVICEPLANCRMID"],
-                        
-                        
-                    },
-                    "type": "update_mongo",
-                    "date_p": time_send_now,
-                    "platform_id": platform_id_puller,
-                    "principalKey": data["ID"],
-                }
-                coltn_history_changes.insert(element)
-            
-            except:
-                print("error",data)
-                continue
+            element = {
+                "data": [],
+                "data_old": {
+                    "did": data["mongo_DID"],
+                    "sn": data["mongo_SN"],
+                    "active": str(data["mongo_Active"]),
+                    "id": data["mongo_ID"],
+                    
+                    "modelType": data["mongo_ModelType"],
+                    "inrouteGroupID": data["mongo_InrouteGroupID"],
+                    "networkID": data["mongo_NetworkID"],
+                    "lat": data["mongo_Lat"],
+                    "lon": data["mongo_Lon"],
+                    "serviceplan": data["mongo_SERVICEPLANCRMID"],
+                                       
+                },
+                "changes": {
+                    "did": data["DID"],
+                    "sn": data["SN"],
+                    "active": str(data["Active"]),
+                    "id": data["ID"],
+                    
+                    "modelType": data["ModelType"],
+                    "inrouteGroupID": data["InrouteGroupID"],
+                    "networkID": data["NetworkID"],
+                    "lat": data["Lat"],
+                    "lon": data["Lon"],
+                    "serviceplan": data["SERVICEPLANCRMID"],
+                    
+                    
+                },
+                "type": "update_mongo",
+                "date_p": time_send_now,
+                "platform_id": platform_id_puller,
+                "principalKey": data["ID"],
+            }
+            coltn_history_changes.insert(element)
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
@@ -1364,8 +1359,11 @@ def puller_idirect_hub5_1h():
                 0,
             )
         except:
-            return {"exist_mysql_secondary": [], "not_exist_mysql_secondary": []}
-
+            return {
+                    "update_mysql": [],
+                    "insert_mysql": glob_comparate["not_exist_mysql"],
+                    "delete_mysql": old["only_old"],
+                }
         exist_mysql_s = both[both["exist_mysql_secondary"] == 1]
         not_exist_mysql_s = both[both["exist_mysql_secondary"] == 0]
         not_exist_mysql_s_com = both[both["exist_mysql_secondary"] == 0]
@@ -1732,7 +1730,7 @@ def puller_idirect_hub5_1h():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status WHERE siteId = :platform_Name and id_nms=:platform_ID and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         dateSaveHistoryUpdate(args_send)
@@ -1878,11 +1876,12 @@ def puller_idirect_hub5_1h():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + str(x["old_Name"]) + "and id_nms="
-                + str(x["old_ID"])
-                + "' and platformId="+str(platform_id_puller)+" and status!=0"
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE "
+                # + str(x["old_Name"]) + "and
+                +"id_nms="+ str(x["old_ID"])
+                + " and platformId="+str(platform_id_puller)+" and status!=0"
             )
+            print(sqlesn,'sqlesnsqlesnsqlesnsqlesn')
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ["ok"]
@@ -1987,7 +1986,6 @@ def puller_idirect_hub5_1h():
     rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
-
 
 # [START dag_invocation]
 puller_idirect_hub5_1h_ = puller_idirect_hub5_1h()
