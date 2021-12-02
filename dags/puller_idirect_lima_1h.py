@@ -78,23 +78,24 @@ r = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
-    "depends_on_past": False,
-    "retry_delay": timedelta(seconds=15),
-    # "start_date": datetime(2021, 10, 19, 1, 0),
+    # "depends_on_past": False,
+    "retry_delay": timedelta(seconds=20),
+    "start_date": datetime(2021, 12, 2, 20, 40),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
     "max_active_runs": 1,
-    "concurrency": 4,
+    "concurrency": 5,
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 4,
+    "retries": 5,
 }
 # [END default_args]
 # start_date=days_ago(2)
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=["hughes"])
 def puller_idirect_lima_1h():
 
@@ -164,7 +165,7 @@ def puller_idirect_lima_1h():
             "url": "http://192.168.36.50:81/api/v1/evo/config/obj/remote",
             "user": "systemapi",
             "password": "tiws2019",
-            "timeout": 120,
+            "timeout": 40,
             "verify": "False",
             "platform_id": platform_id_puller,
             "mysql_table": table_mysql_puller,

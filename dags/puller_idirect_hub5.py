@@ -119,7 +119,7 @@ def puller_idirect_hub5():
             "url": "http://192.168.36.50:84/api/v1/evo/config/obj/remote",
             "user": "systemapi",
             "password": "tiws2019",
-            "timeout": 120,
+            "timeout": 40,
             "verify": "False",
             "platform_id": platform_id_puller,
             "mysql_table": table_mysql_puller,
