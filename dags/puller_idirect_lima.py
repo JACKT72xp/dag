@@ -1502,8 +1502,8 @@ def puller_idirect_lima():
             # bulk.find({"active": 1, "siteId": x["Name"]}).update(
             #     {"$set": {"puller": x, "status": x["Active"], "active": 1}}
             # )
-            bulk.find({"siteId": x["Name"]}).update(
-                {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
+            bulk.find({"siteId": x["platform_Name"]}).update(
+                {"$set": {"puller.DID": x["platform_DID"],"puller.SN": x["platform_SN"],"puller.Active": str(x["platform_Active"]), "status": str(x["platform_Active"]), "active": 1}}
             )
 
         bulk.execute()
