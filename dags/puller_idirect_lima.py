@@ -217,22 +217,22 @@ def puller_idirect_lima():
         for data in data_global:
             element = {
                 "data": [],
-                "data_old": {
-                    "did": data["mongo_DID"],
-                    "sn": data["mongo_SN"],
-                    "active": str(data["mongo_Active"]),
-                    "id": data["mongo_ID"],
-                },
                 "changes": {
-                    "did": data["DID"],
-                    "sn": data["SN"],
-                    "active": str(data["Active"]),
-                    "id": data["ID"],
+                    "did": data["platform_DID"],
+                    "sn": data["platform_SN"],
+                    "active": str(data["platform_Active"]),
+                    "id": data["platform_ID"],
                 },
+                # "changes": {
+                #     "did": data["DID"],
+                #     "sn": data["SN"],
+                #     "active": str(data["Active"]),
+                #     "id": data["ID"],
+                # },
                 "type": "update_mongo",
                 "date_p": time_send_now,
                 "platform_id": platform_id_puller,
-                "principalKey": data["ID"],
+                "principalKey": data["platform_ID"],
             }
             coltn_history_changes.insert(element)
         return ["ok"]
