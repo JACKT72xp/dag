@@ -859,6 +859,7 @@ def puller_idirect_lima():
             1,
             0,
         )
+        print(both,'bothbothbothboth')
         exist_mysql_p = both[both["exist_mysql"] == 1]
         not_exist_mysql_p = both[both["exist_mysql"] == 0]
         exist_mysql_p = platform_data[
