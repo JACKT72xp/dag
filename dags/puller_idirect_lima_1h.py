@@ -1713,8 +1713,9 @@ def puller_idirect_lima_1h():
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
         
+        data.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         
-        datax = datax.join(list_sp.set_index('crmId'), on='crmId')
+        data = data.join(list_sp.set_index('crmId'), on='crmId')
         data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
         data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = None, 3
