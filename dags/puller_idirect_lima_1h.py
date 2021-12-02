@@ -1876,11 +1876,12 @@ def puller_idirect_lima_1h():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + str(x["old_Name"]) + "and id_nms="
-                + str(x["old_ID"])
+                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE "
+                # + str(x["old_Name"]) + "and
+                +"id_nms="+ str(x["old_ID"])
                 + "' and platformId="+str(platform_id_puller)+" and status!=0"
             )
+            print(sqlesn,'sqlesnsqlesnsqlesnsqlesn')
             connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ["ok"]
