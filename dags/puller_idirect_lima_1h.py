@@ -1745,6 +1745,15 @@ def puller_idirect_lima_1h():
             return []
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
+        
+        try:
+            df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
+            print(df,'dfdfdfdf')
+        except:
+            print("error")
+            
+            
+            
         data = df.to_json(orient="records")
         data = json.loads(data)
 
@@ -1786,6 +1795,14 @@ def puller_idirect_lima_1h():
         
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
+        try:
+            df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
+            print(df,'dfdfdfdf')
+        except:
+            print("error")
+            
+            
+            
         data = df.to_json(orient="records")
         data = json.loads(data)
         
