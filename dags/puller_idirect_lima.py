@@ -215,26 +215,50 @@ def puller_idirect_lima():
         coltn_history_changes = db_2[history_collection_mongo]
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
-            element = {
-                "data": [],
-                "changes": {
-                    "did": data["platform_DID"],
-                    "sn": data["platform_SN"],
-                    "active": str(data["platform_Active"]),
-                    "id": data["platform_ID"],
-                },
-                # "changes": {
-                #     "did": data["DID"],
-                #     "sn": data["SN"],
-                #     "active": str(data["Active"]),
-                #     "id": data["ID"],
-                # },
-                "type": "update_mongo",
-                "date_p": time_send_now,
-                "platform_id": platform_id_puller,
-                "principalKey": data["platform_ID"],
-            }
-            coltn_history_changes.insert(element)
+            try:
+                
+                element = {
+                    "data": [],
+                    "changes": {
+                        "did": data["platform_DID"],
+                        "sn": data["platform_SN"],
+                        "active": str(data["platform_Active"]),
+                        "id": data["platform_ID"],
+                    },
+                    # "changes": {
+                    #     "did": data["DID"],
+                    #     "sn": data["SN"],
+                    #     "active": str(data["Active"]),
+                    #     "id": data["ID"],
+                    # },
+                    "type": "update_mongo",
+                    "date_p": time_send_now,
+                    "platform_id": platform_id_puller,
+                    "principalKey": data["platform_ID"],
+                }
+                coltn_history_changes.insert(element)
+            except:
+                element = {
+                    "data": [],
+                    "data_old": {
+                        "did": data["mongo_DID"],
+                        "sn": data["mongo_SN"],
+                        "active": str(data["mongo_Active"]),
+                        "id": data["mongo_ID"],
+                    },
+                    "changes": {
+                        "did": data["DID"],
+                        "sn": data["SN"],
+                        "active": str(data["Active"]),
+                        "id": data["ID"],
+                    },
+                    "type": "update_mongo",
+                    "date_p": time_send_now,
+                    "platform_id": platform_id_puller,
+                    "principalKey": data["ID"],
+                }
+                coltn_history_changes.insert(element)
+                
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
@@ -1507,8 +1531,8 @@ def puller_idirect_lima():
                     {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
                 )
             except:
-                bulk.find({"siteId": x["platform_Name"]}).update(
-                    {"$set": {"puller.DID": x["platform_DID"],"puller.SN": x["platform_SN"],"puller.Active": str(x["platform_Active"]), "status": str(x["platform_Active"]), "active": 1}}
+                bulk.find({"siteId": x["Name"]}).update(
+                    {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
                 )
 
         bulk.execute()
