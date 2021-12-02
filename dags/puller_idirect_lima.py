@@ -836,6 +836,7 @@ def puller_idirect_lima():
         else:
             old_send = old.to_json(orient="records")
         data_platform = data_plat.to_json(orient="records")
+        print(old_send,'old_sendold_sendold_sendold_send')
         return {
             "platform_data": data_platform,
             "comparation": comparation.to_json(orient="records"),
