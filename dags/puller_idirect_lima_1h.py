@@ -1718,7 +1718,7 @@ def puller_idirect_lima_1h():
         data = data.join(list_sp.set_index('crmId'), on='crmId')
         data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = None, 3
+        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
 
         print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
