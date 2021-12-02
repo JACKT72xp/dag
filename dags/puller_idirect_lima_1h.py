@@ -1850,8 +1850,8 @@ def puller_idirect_lima_1h():
         for x in json.loads(data):
             sqlesn = (
                 "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE siteId = '"
-                + x["old_Name"] + "and id_nms="
-                + x["old_ID"] 
+                + str(x["old_Name"]) + "and id_nms="
+                + str(x["old_ID"])
                 + "' and platformId="+str(platform_id_puller)+" and status!=0"
             )
             connection_engi.execute(sqlesn)
