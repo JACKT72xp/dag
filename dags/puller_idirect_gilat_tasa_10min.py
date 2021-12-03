@@ -115,7 +115,8 @@ def puller_gilat_tasa_10min():
         {
             
             "concat_columns_api": [],
-            "route_trunk": "soap:Envelope-soap:Body-ns2:getCPEsByManagedGroupResponse-return-cpes-ns3:CPE",
+            "route_trunk": "",
+            # "route_trunk": "soap:Envelope-soap:Body-ns2:getCPEsByManagedGroupResponse-return-cpes-ns3:CPE",
             "url": "http://192.168.36.50:8082/ws/cpeService?wsdl",
             "headers":{
             'Content-Type': 'text/xml',
@@ -811,6 +812,7 @@ def puller_gilat_tasa_10min():
                 response=json.dumps(o)
                 print(response,'responseresponseresponseresponse')
                 response=json.loads(response)
+                response=response['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
 
             if config["route_trunk"] == "":
                 response = pd.DataFrame(response).astype(str)
