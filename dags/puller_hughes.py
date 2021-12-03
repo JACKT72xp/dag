@@ -1257,7 +1257,10 @@ def puller_hughes():
         bulk = coltn_mdb.initialize_unordered_bulk_op()
         for x in data:
             # bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
-            bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            try:
+                bulk.find({"active":1,"siteId": x['deviceID']}).update({'$set':  {"puller":x,"status": x['terminalStatus'],"active":1}})
+            except:
+                print("error UPDATE MONGO",x)
         bulk.execute()
         dateSaveHistoryUpdateMongo(data)
         return [keys]
