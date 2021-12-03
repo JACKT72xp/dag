@@ -1193,8 +1193,9 @@ def puller_hughes():
         args = data[['platform_terminalStatus','platform_esn','platform_latitude','platform_longitude','updated_at_send','platform_deviceID']].iloc[0:].to_dict('record') 
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record') 
         elements = []
-        query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
+        query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID and status IN (1,3) """)             
         connection_engi.execute(query_update, args)
+        print(args)
         dateSaveHistoryUpdate(args_send)
         return ['ok']
     @task()
