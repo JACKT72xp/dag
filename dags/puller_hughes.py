@@ -1037,7 +1037,7 @@ def puller_hughes():
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
         
         # print(data_mysql_not_exist_s.columns,'hereeeeeee')
-        # print(data_mysql_not_exist_s['concat_key_generate_secondary','platform_deviceID'],'hereeeeeee')
+        print(data_mysql_not_exist_s['concat_key_generate_secondary','platform_deviceID'],'hereeeeeee')
         print(len(data_mysql_not_exist_s),'  -total')
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok']
@@ -1195,7 +1195,7 @@ def puller_hughes():
         elements = []
         query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send WHERE siteId = :platform_deviceID """)         
         connection_engi.execute(query_update, args)
-        # dateSaveHistoryUpdate(args_send)
+        dateSaveHistoryUpdate(args_send)
         return ['ok']
     @task()
     def processDataInsertMongo(keys):

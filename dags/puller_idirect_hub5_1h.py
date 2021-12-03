@@ -498,8 +498,25 @@ def puller_idirect_hub5_1h():
         
         
         cols_insert_order = ['btId_get','input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
-        json_data_insert = json.loads(data_insert_send[cols_insert_order].to_json(orient="records"))
-        # mnos_order.transactionId = 3
+        data_insert_send = data_insert_send[cols_insert_order]
+        # data_insert_send.rename(columns={"input_message": "input_message"}, inplace = True)
+        # data_insert_send.rename(columns={"output_message": "output_message"}, inplace = True)
+        # data_insert_send.rename(columns={"functionId": "functionId"}, inplace = True)
+        # data_insert_send.rename(columns={"userId_order": "userId_order"}, inplace = True)
+        # data_insert_send.rename(columns={"error_id_order": "error_id_order"}, inplace = True)
+        # data_insert_send.rename(columns={"transaction_id_order": "transaction_id_order"}, inplace = True)
+        # data_insert_send.rename(columns={"created_at_order": "created_at_order"}, inplace = True)
+        # data_insert_send.rename(columns={"order_statusId": "order_statusId"}, inplace = True)
+        # data_insert_send.rename(columns={"order_execution_count": "order_execution_count"}, inplace = True)
+        # data_insert_send.rename(columns={"order_input_typeId": "order_input_typeId"}, inplace = True)
+        # data_insert_send.rename(columns={"impact_typeId": "impact_typeId"}, inplace = True)
+        # data_insert_send.rename(columns={"status_order": "status_order"}, inplace = True)
+        # data_insert_send.rename(columns={"bkp": "bkp"}, inplace = True)
+        # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
+        
+        
+        
+        json_data_insert = json.loads(data_insert_send.to_json(orient="records"))
         print(json_data_insert)
         for jdt in json_data_insert:
             print(jdt,'jdtjdtjdtjdtjdtjdt')
