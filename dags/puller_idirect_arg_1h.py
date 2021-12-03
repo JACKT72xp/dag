@@ -949,6 +949,9 @@ def puller_idirect_arg_1h():
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
             return "[{}]"
+        
+        df_mysql_total['id_nms'] = df_mysql_total['id_nms'].astype(str)
+
         #rd df_mysql_total = df_mysql_total.astype(str)
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
