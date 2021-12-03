@@ -310,12 +310,13 @@ def puller_hughes_2():
     
     @task()
     def create_orders_of_alta(result,keys,template_orders):
-        print(result,'resultresult')
-        print(keys,'keyskeys')
-        print(template_orders,'template_orderstemplate_orders')
         key = keys['key_insert']
+        print(result,'resultresult')
+        print(key,'keykeykey')
+        print(template_orders,'template_orderstemplate_orders')
         try:
             data = getDataRedisByKey(key)
+            print(data,'datatatatata')
         except:
         # if len(data)==0:
             return []
