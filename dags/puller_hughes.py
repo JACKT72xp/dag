@@ -1040,7 +1040,7 @@ def puller_hughes():
         print(data_mysql_not_exist_s[['concat_key_generate_secondary','platform_deviceID']],'hereeeeeee')
         print(len(data_mysql_not_exist_s),'  -total')
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
-        # return ['ok']
+        # return ['ok'] 
 
     @task()
     def comparate_secondary_mongo_equals(df_mongo,comparate,old):
@@ -1082,6 +1082,7 @@ def puller_hughes():
             exist_mongo_s = []
         else:
             exist_mongo_s = json.loads(exist_mongo_s.to_json(orient="records"))
+        data_mongo_not_exist_s = []
 
         if not_exist_mongo_s.empty:
             not_exist_mongo_s = []
