@@ -1014,11 +1014,11 @@ def puller_hughes():
         both = comparate
   
         try:
+            print(both[both['platform_deviceID']=='ORBITHB600301']['concat_key_generate_secondary'],'platform_deviceIDplatform_deviceIDplatform_deviceIDplatform_deviceIDconcat_key_generate_secondarytry')
+            print(df_mysql[df_mysql['mysql_siteId']=='ORBITHB600301']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mysql':[],'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
-        print(both['exist_mysql_secondary'])
-        print(df_mysql[df_mysql['mysql_siteId']=='ORBITHB600301']['concat_key_generate_secondary'],'mysql_siteIdmysql_siteIdconcat_key_generate_secondary')
 
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
