@@ -469,8 +469,9 @@ def puller_idirect_hub5_1h():
         data_insert_send['input_template'] = input_template
         data_insert_send['functionId'] =  json_template['functionId']
         data_insert_send['userId_order'] = json_template['userId']
-        data_insert_send['type_order'] = json_template['type']
         data_insert_send['error_id_order'] = json_template['errorId']
+        data_insert_send['transaction_id_order'] = json_template['transactionId']
+        # mnos_order.transactionId = 3
         print(data_insert_send)
         
         
