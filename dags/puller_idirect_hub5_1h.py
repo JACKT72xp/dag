@@ -370,6 +370,18 @@ def puller_idirect_hub5_1h():
             return {"btId": str(id_response), "mysqlFlag": 1}
         except:
             return {"btId": 0, "mysqlFlag": 0}
+        
+        
+    def getDataMysqlByPrincipalKey(value):
+        # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
+        query = f"select * from {table_mysql_puller} where id_nms ='{value}' and status != 0 and platformId = {platform_id_puller}"
+        df = pd.read_sql_query(query, engine)
+        try:
+            id_response = json.loads(df.to_json(orient="records"))[0]["id"]
+            return {"btId": str(id_response), "mysqlFlag": 1}
+        except:
+            return {"btId": 0, "mysqlFlag": 0}
+        
     # def getAllDataFromTerminals(data):
 
 
@@ -481,7 +493,7 @@ def puller_idirect_hub5_1h():
         data_insert_send['bkp'] = 3
         
         data_insert_send['btId_get'] = data_insert_send['platform_'+config['primary_join_cols']['platform']].map(
-                        lambda eve: eve.replace(".0", "")
+                        lambda eve: getDataMysqlByPrincipalKey(eve)['btId']
                     )
         
         
