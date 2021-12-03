@@ -938,7 +938,7 @@ def puller_idirect_hub5_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,id_nms,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
             + str(config["mysql_table"])
             + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
             + " where "+table_mysql_puller+".status != 0 and  "+table_mysql_puller+".platformId = "
@@ -948,7 +948,7 @@ def puller_idirect_hub5_1h():
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
             return "[{}]"
-        df_mysql_total['id_nms'] = df_mysql_total['id_nms'].astype(int)
+        # df_mysql_total['id_nms'] = df_mysql_total['id_nms'].
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
         df_mysql_total = generateConcatKey(
