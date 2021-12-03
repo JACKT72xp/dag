@@ -431,6 +431,56 @@ def puller_idirect_hub5_1h():
                 
         return data
 
+
+       
+    
+    @task()
+    def extract_template_orders(engine,config,valid_puller_runing):
+        if valid_puller_runing is None:
+            return []
+        query = "SELECT  * from template_order where platformId = "+str(config['platform_id'])
+        df_mysql_total = pd.read_sql_query(query, engine)
+        if df_mysql_total.empty:
+            return '[{}]'
+        # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
+        return df_mysql_total.to_json(orient="records")
+    
+    
+    @task()
+    def create_orders_of_alta(result,keys,template_orders):
+        key = keys['key_insert']
+        print(result,'resultresult')
+        print(key,'keykeykey')
+        print(template_orders,'template_orderstemplate_orders')
+        try:
+            data = getDataRedisByKey(key)
+            print(data,'datatatatata')
+        except:
+        # if len(data)==0:
+            return []
+        if len(data)==0:
+            return []
+            
+        data_insert_send = pd.DataFrame(data)
+        print(data_insert_send,' data_insert_senddata_insert_senddata_insert_senddata_insert_send')
+        print(keys,' keyskeyskeyskeyskeys')
+        print(template_orders,' template_orderstemplate_orderstemplate_orderstemplate_orders')
+        # data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
+        # data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_longitude": "longitud"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_terminalStatus": "statusTerminal"}, inplace = True)
+        # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
+        # data_insert_send['platformId'] = 1
+        # data_insert_send['status'] = 1
+        # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
+        
+        
+        return ['VALID ORDERS']
+
+
+
+
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_old(config, data, key_process):
@@ -1923,6 +1973,7 @@ def puller_idirect_hub5_1h():
     comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
+    template_orders = extract_template_orders(engine,config,valid_puller_runing)
     extract_servicesplan_data = extract_servicesplan(engine,config, valid_puller_runing)
     #COMPARATE MYSQL
     time_send = datetime.now()
@@ -1934,6 +1985,7 @@ def puller_idirect_hub5_1h():
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
     insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals,extract_servicesplan_data)
+    create_orders_of_alta_equals = create_orders_of_alta(insert_data_mysql_equals,save_in_redis_result_equals,template_orders)
     update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals,extract_servicesplan_data)
     delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
 
@@ -1944,6 +1996,7 @@ def puller_idirect_hub5_1h():
     save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
     # # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
     insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform,extract_servicesplan_data)
+    create_orders_of_alta_only_platform = create_orders_of_alta(insert_data_mysql_only_platform,save_in_redis_result_only_platform,template_orders)
     update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform,extract_servicesplan_data)
     delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
 
@@ -1987,8 +2040,9 @@ def puller_idirect_hub5_1h():
     rs >>Label("Extrae la data de mysql") >> mysql_data
     rs >>Label("Extrae la data de mongodb") >> mongo_data
     rs >>Label("Extrae la data de la imagen anterior") >> old_data
+    rs >>Label("Extrae las plantillas para las ordenes") >> template_orders
     rs >>Label("Extrae la lista de servicesPlan para obtener su Id") >> extract_servicesplan_data
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals >> create_orders_of_alta_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform >> create_orders_of_alta_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
     rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
