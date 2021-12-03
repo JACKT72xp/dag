@@ -1021,11 +1021,11 @@ def puller_hughes():
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
         not_exist_mysql_s_com = both[both['exist_mysql_secondary']==0]
+        print(exist_mysql_s[exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'exist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_s')
         if exist_mysql_s.empty:
             exist_mysql_s = []
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-        print(exist_mysql_s[exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'exist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_s')
         print(not_exist_mysql_s[not_exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
