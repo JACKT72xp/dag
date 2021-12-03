@@ -598,11 +598,11 @@ def puller_hughes():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         del df_datamongo[config['mongo_normalization']]
         del df_datamongo['_id']
-        # try:
-            # del df_datamongo['concat_key_generate']
-            # del df_datamongo['concat_key_generate_secondary']
-        # except:
-            # print("error delete")
+        try:
+            del df_datamongo['concat_key_generate']
+            del df_datamongo['concat_key_generate_secondary']
+        except:
+            print("error delete")
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
         df_datamongo = generateConcatKey(df_datamongo,['mongo_'+config['primary_join_cols']['mongo']])
         df_datamongo = generateConcatKeySecondary(df_datamongo,config['secondary_join_cols']['mongo'])
