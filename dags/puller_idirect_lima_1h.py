@@ -45,13 +45,13 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 
 
-collection_puller = "iditect_testfull"
-table_mysql_puller = "bifrost_terminal_full"
+collection_puller = "idirect"
+table_mysql_puller = "bifrost_terminal"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "idirect"
 platform_name = "idirect_lima_test_1h"
 platform_id_puller = 2
-history_collection_mongo="history_changes_test"
+history_collection_mongo="history_changes"
 
 
 
