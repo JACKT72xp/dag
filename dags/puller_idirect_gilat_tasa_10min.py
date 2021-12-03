@@ -1861,7 +1861,7 @@ def puller_gilat_tasa_10min():
     # save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
 
     # comp = comparate_old_vs_new(platform_data, old_data)
-    # mysql_data = extract_mysql(engine, config, valid_puller_runing)
+    mysql_data = extract_mysql(engine, config, valid_puller_runing)
     # mongo_data = extract_mongo(config, valid_puller_runing)
     # extract_servicesplan_data = extract_servicesplan(engine,config, valid_puller_runing)
     # #COMPARATE MYSQL
@@ -1918,7 +1918,7 @@ def puller_gilat_tasa_10min():
     checkTask >> end_process
     checkTask >> rs
     rs >>Label("Extrae la data de plataforma") >> platform_data
-    # rs >>Label("Extrae la data de mysql") >> mysql_data
+    rs >>Label("Extrae la data de mysql") >> mysql_data
     # rs >>Label("Extrae la data de mongodb") >> mongo_data
     # rs >>Label("Extrae la data de la imagen anterior") >> old_data
     # rs >>Label("Extrae la lista de servicesPlan para obtener su Id") >> extract_servicesplan_data
