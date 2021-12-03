@@ -1106,7 +1106,7 @@ def puller_hughes():
             # del not_exist_mongo_s['concat_key_generate_secondary']
             # not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
-            print(df_mongo[df_mongo['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+            print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
             print(data_mongo_not_exist_s[data_mongo_not_exist_s['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
 
