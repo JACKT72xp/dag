@@ -1108,12 +1108,12 @@ def puller_hughes():
         
             print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
-            print(not_exist_mongo_s_com[not_exist_mongo_s_com['platform_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+            print(not_exist_mongo_s_com[not_exist_mongo_s_com['concat_key_generate']=='ORBITHB600263']['concat_key_generate'],'mysql_siteIdconcat_key_generate_secondary')
 
-            try:
-                del data_mongo_not_exist_s['concat_key_generate_secondary']
-            except:
-                print("error dete")
+            # try:
+            #     del data_mongo_not_exist_s['concat_key_generate_secondary']
+            # except:
+            #     print("error dete")
             data_mongo_not_exist_s = pd.merge(not_exist_mongo_s_com, data_mongo_not_exist_s, on="concat_key_generate")
             data_mongo_not_exist_s.columns = data_mongo_not_exist_s.columns.str.replace('platform_', '') 
             try:
