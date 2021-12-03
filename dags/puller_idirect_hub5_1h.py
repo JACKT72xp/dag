@@ -466,27 +466,32 @@ def puller_idirect_hub5_1h():
         input_template = json_template['input']
         print(json_template,' json_templatejson_templatejson_template')
         print(input_template,' input_templateinput_templateinput_templateinput_template')
-        data_insert_send['input_template'] = input_template
+        data_insert_send['input_message'] = input_template
+        data_insert_send['output_message'] = "output"
         data_insert_send['functionId'] =  json_template['functionId']
         data_insert_send['userId_order'] = json_template['userId']
         data_insert_send['error_id_order'] = json_template['errorId']
         data_insert_send['transaction_id_order'] = json_template['transactionId']
+        data_insert_send['created_at_order'] = time_send_now
+        data_insert_send['order_statusId'] = 33
+        data_insert_send['order_execution_count'] = 1
+        data_insert_send['order_input_typeId'] = 44
+        data_insert_send['impact_typeId'] = 34
+        data_insert_send['status_order'] = 1
+        data_insert_send['bkp'] = 1
+        json_data_insert = json.loads(data_insert_send.to_json(orient="records"))
         # mnos_order.transactionId = 3
         print(data_insert_send)
-        
+        for dt in json_data_insert:
+            print(dt)
         
         #mnos_order=MnosOrder()
-        # mnos_order.created_at = created_at
         # mnos_order.btId = btId
         # mnos_order.vnoId = vnoId
-        # mnos_order.functionId = functionId
-        # mnos_order.transactionId = 3
         # mnos_order.order_statusId = 33
         # mnos_order.order_execution_count = 1
         # mnos_order.order_input_typeId = 44
         # mnos_order.impact_typeId = 34
-        # mnos_order.userId = 2711 #backup user
-        # mnos_order.errorId = 0
         # mnos_order.bkp = 1
         # mnos_order.status = 1
         # mnos_order.save()
