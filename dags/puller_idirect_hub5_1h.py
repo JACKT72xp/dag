@@ -473,53 +473,43 @@ def puller_idirect_hub5_1h():
         if len(data)==0:
             return []
             
-        data_insert_send = pd.DataFrame(data)
-        json_template= json.loads(template_orders)[0]
-        input_template = json_template['input']
-        print(json_template,' json_templatejson_templatejson_template')
-        print(input_template,' input_templateinput_templateinput_templateinput_template')
-        data_insert_send['input_message'] = input_template
-        data_insert_send['output_message'] = "output"
-        data_insert_send['functionId'] =  json_template['functionId']
-        data_insert_send['userId_order'] = json_template['userId']
-        data_insert_send['error_id_order'] = json_template['errorId']
-        data_insert_send['transaction_id_order'] = json_template['transactionId']
-        data_insert_send['created_at_order'] = time_send_now
-        data_insert_send['order_statusId'] = 33
-        data_insert_send['order_execution_count'] = 1
-        data_insert_send['order_input_typeId'] = 44
-        data_insert_send['impact_typeId'] = 34
-        data_insert_send['status_order'] = 1
-        data_insert_send['bkp'] = 3
+        # data_insert_send = pd.DataFrame(data)
+        # json_template= json.loads(template_orders)[0]
+        # input_template = json_template['input']
+        # print(json_template,' json_templatejson_templatejson_template')
+        # print(input_template,' input_templateinput_templateinput_templateinput_template')
+        # data_insert_send['input_message'] = input_template
+        # data_insert_send['output_message'] = "output"
+        # data_insert_send['functionId'] =  json_template['functionId']
+        # data_insert_send['userId_order'] = json_template['userId']
+        # data_insert_send['error_id_order'] = json_template['errorId']
+        # data_insert_send['transaction_id_order'] = json_template['transactionId']
+        # data_insert_send['created_at_order'] = time_send_now
+        # data_insert_send['order_statusId'] = 33
+        # data_insert_send['order_execution_count'] = 1
+        # data_insert_send['order_input_typeId'] = 44
+        # data_insert_send['impact_typeId'] = 34
+        # data_insert_send['status_order'] = 1
+        # data_insert_send['bkp'] = 3
         
-        data_insert_send['btId_get'] = data_insert_send['platform_'+config['primary_join_cols']['platform']].map(
-                        lambda eve: getDataMysqlByPrincipalKey(eve)['btId']
-                    )
+        # data_insert_send['btId_get'] = data_insert_send['platform_'+config['primary_join_cols']['platform']].map(
+        #                 lambda eve: getDataMysqlByPrincipalKey(eve)['btId']
+        #             )
         
         
-        cols_insert_order = ['btId_get','input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
-        data_insert_send = data_insert_send[cols_insert_order]
-        # data_insert_send.rename(columns={"input_message": "input_message"}, inplace = True)
-        # data_insert_send.rename(columns={"output_message": "output_message"}, inplace = True)
-        # data_insert_send.rename(columns={"functionId": "functionId"}, inplace = True)
-        # data_insert_send.rename(columns={"userId_order": "userId_order"}, inplace = True)
-        # data_insert_send.rename(columns={"error_id_order": "error_id_order"}, inplace = True)
-        # data_insert_send.rename(columns={"transaction_id_order": "transaction_id_order"}, inplace = True)
-        # data_insert_send.rename(columns={"created_at_order": "created_at_order"}, inplace = True)
-        # data_insert_send.rename(columns={"order_statusId": "order_statusId"}, inplace = True)
-        # data_insert_send.rename(columns={"order_execution_count": "order_execution_count"}, inplace = True)
-        # data_insert_send.rename(columns={"order_input_typeId": "order_input_typeId"}, inplace = True)
-        # data_insert_send.rename(columns={"impact_typeId": "impact_typeId"}, inplace = True)
-        # data_insert_send.rename(columns={"status_order": "status_order"}, inplace = True)
-        # data_insert_send.rename(columns={"bkp": "bkp"}, inplace = True)
-        # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
+        # cols_insert_order = ['btId_get','input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
+        # # data_insert_send.rename(columns={"platform_terminalStatus": "statusTerminal"}, inplace = True)
+        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
+        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
+        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
+        # # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
         
         
         
-        json_data_insert = json.loads(data_insert_send.to_json(orient="records"))
-        print(json_data_insert)
-        for jdt in json_data_insert:
-            print(jdt,'jdtjdtjdtjdtjdtjdt')
+        # json_data_insert = json.loads(data_insert_send[cols_insert_order].to_json(orient="records"))
+        # print(json_data_insert)
+        # for jdt in json_data_insert:
+        #     print(jdt,'jdtjdtjdtjdtjdtjdt')
         
         #mnos_order=MnosOrder()
         # mnos_order.btId = btId
