@@ -38,6 +38,7 @@ from sqlalchemy import create_engine, text
 import numpy as np
 from sqlalchemy.sql.expression import exists, null
 from pymongo import MongoClient
+import xmltodict, json
 
 uri = "mongodb://bifrostProdUser:Maniac321.@cluster0-shard-00-00.bvdlk.mongodb.net:27017,cluster0-shard-00-01.bvdlk.mongodb.net:27017,cluster0-shard-00-02.bvdlk.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-nn38a4-shard-0&authSource=admin&retryWrites=true&w=majority"
 conection = MongoClient(uri, connect=False)
@@ -805,8 +806,9 @@ def puller_gilat_tasa_10min():
        
             else:
                 response = requests.request("POST", config["url"], headers=config["headers"], data = config["payload"], verify=config["verify"],)
-                response = response.text
-                response = json.loads(response)
+                o = xmltodict.parse(response.text)
+                response=json.dumps(o)
+                response=json.loads(response)
 
             if config["route_trunk"] == "":
                 response = pd.DataFrame(response).astype(str)
