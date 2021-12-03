@@ -1021,16 +1021,17 @@ def puller_hughes():
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
         not_exist_mysql_s_com = both[both['exist_mysql_secondary']==0]
-        print(exist_mysql_s[exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'exist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_s')
         if exist_mysql_s.empty:
             exist_mysql_s = []
         else:
+            # print(exist_mysql_s[exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'exist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_s')
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-        print(not_exist_mysql_s[not_exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
         else:
+            print(not_exist_mysql_s_com[not_exist_mysql_s_com['platform_deviceID'=='ORBITHB600301']],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+            
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             # print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
