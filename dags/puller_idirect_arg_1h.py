@@ -165,7 +165,7 @@ def puller_idirect_arg_1h():
             "url": "http://192.168.36.50:82/api/v1/evo/config/obj/remote",
             "user": "systemapi",
             "password": "tiws2019",
-            "timeout": 40,
+            "timeout": 120,
             "verify": "False",
             "platform_id": platform_id_puller,
             "mysql_table": table_mysql_puller,
@@ -886,17 +886,22 @@ def puller_idirect_arg_1h():
                 # for item in response[0:20]:
                 for item in response:
                     # print(item,"ITEM")
-                    response_terminal = requests.get(
-                        config["url"]+"/"+str(item['ID']),
-                        auth=HTTPBasicAuth(config["user"], config["password"]),
-                        verify=config["verify"],
-                        timeout=config["timeout"],
-                    )
-                    response_terminal = response_terminal.text
-                    response_terminal = json.loads(response_terminal)
-                    # print(response_terminal)
-                    data_send.append(response_terminal['data'])
-                    cc+=1
+                    try:
+                        response_terminal = requests.get(
+                            config["url"]+"/"+str(item['ID']),
+                            auth=HTTPBasicAuth(config["user"], config["password"]),
+                            verify=config["verify"],
+                            timeout=config["timeout"],
+                        )
+                        response_terminal = response_terminal.text
+                        response_terminal = json.loads(response_terminal)
+                        # print(response_terminal)
+                        data_send.append(response_terminal['data'])
+                        cc+=1
+                        
+                    except:
+                        cc+=1
+                        
                     print(cc,'/',tt)
                 response = data_send
                 

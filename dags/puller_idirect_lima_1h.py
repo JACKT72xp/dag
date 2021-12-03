@@ -887,17 +887,21 @@ def puller_idirect_lima_1h():
                 # for item in response[0:20]:
                 for item in response:
                     # print(item,"ITEM")
-                    response_terminal = requests.get(
-                        config["url"]+"/"+str(item['ID']),
-                        auth=HTTPBasicAuth(config["user"], config["password"]),
-                        verify=config["verify"],
-                        timeout=config["timeout"],
-                    )
-                    response_terminal = response_terminal.text
-                    response_terminal = json.loads(response_terminal)
-                    # print(response_terminal)
-                    data_send.append(response_terminal['data'])
-                    cc+=1
+                    try:
+                        response_terminal = requests.get(
+                            config["url"]+"/"+str(item['ID']),
+                            auth=HTTPBasicAuth(config["user"], config["password"]),
+                            verify=config["verify"],
+                            timeout=config["timeout"],
+                        )
+                        response_terminal = response_terminal.text
+                        response_terminal = json.loads(response_terminal)
+                        # print(response_terminal)
+                        data_send.append(response_terminal['data'])
+                        cc+=1
+                    except:
+                        cc+=1
+                        
                     print(cc,'/',tt)
                 response = data_send
                 
