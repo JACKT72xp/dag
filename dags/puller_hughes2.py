@@ -1216,7 +1216,10 @@ def puller_hughes_2():
         data_insert_send['platformId'] = 39
         data_insert_send['status'] = 1
         data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
-        # dateSaveHistoryInsert(data)
+        try:
+            dateSaveHistoryInsert(data)
+        except:
+            print("error in save History Insert mysql")
         return "ok"
 
     @task()
