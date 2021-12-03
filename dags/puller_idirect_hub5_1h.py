@@ -479,7 +479,13 @@ def puller_idirect_hub5_1h():
         data_insert_send['impact_typeId'] = 34
         data_insert_send['status_order'] = 1
         data_insert_send['bkp'] = 3
-        cols_insert_order = ['input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
+        
+        data_insert_send['btId_get'] = data_insert_send[config['primary_join_cols']['platform']].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+        
+        
+        cols_insert_order = ['btId_get','input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
         json_data_insert = json.loads(data_insert_send[cols_insert_order].to_json(orient="records"))
         # mnos_order.transactionId = 3
         print(json_data_insert)
