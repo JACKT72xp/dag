@@ -115,7 +115,7 @@ def puller_gilat_tasa_10min():
         {
             
             "concat_columns_api": [],
-            "route_trunk": "data",
+            "route_trunk": "soap:Envelope",
             "url": "http://192.168.36.50:8082/ws/cpeService?wsdl",
             "headers":{
             'Content-Type': 'text/xml',
