@@ -1014,9 +1014,10 @@ def puller_hughes():
         both = comparate
 
         try:
-            both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
+            both['exist_mysql_secondary'] = np.where(both['both'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'exist_mysql_secondary':[],'not_exist_mysql_secondary':[]}
+        print(both[both['exist_mysql_secondary']==0],'bothbothbothbothboth')
 
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
@@ -1031,7 +1032,7 @@ def puller_hughes():
             data_mysql_not_exist_s = []
         else:
             
-            print(not_exist_mysql_s_com[not_exist_mysql_s_com['platform_deviceID']=='ORBITHB600301'],'not_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_com')
+            print(not_exist_mysql_s[not_exist_mysql_s['platform_deviceID']=='ORBITHB600301'],'not_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_comnot_exist_mysql_s_com')
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
             # print(not_exist_mysql_s_com[not_exist_mysql_s_com['platform_deviceID']=='ORBITHB600301'],'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
             
