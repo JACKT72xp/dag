@@ -1620,7 +1620,7 @@ def puller_idirect_arg_1h():
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
         )
-        dateSaveHistoryInsert(data)
+        # dateSaveHistoryInsert(data)
         return "ok"
 
     @task()
@@ -1882,7 +1882,7 @@ def puller_idirect_arg_1h():
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
-                "UPDATE "+table_mysql_puller+" SET status =0, fromPuller=1 WHERE "
+                "UPDATE "+table_mysql_puller+" SET status =0 WHERE "
                 # + str(x["old_Name"]) + "and
                 +"id_nms="+ str(x["old_ID"])
                 + " and platformId="+str(platform_id_puller)+" and status!=0"
