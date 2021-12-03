@@ -464,7 +464,7 @@ def puller_idirect_hub5_1h():
         data_insert_send = pd.DataFrame(data)
         # print(data_insert_send,' data_insert_senddata_insert_senddata_insert_senddata_insert_send')
         # print(keys,' keyskeyskeyskeyskeys')
-        print(template_orders['input'],' inputinputinputinput')
+        print(template_orders[0]['input'],' inputinputinputinput')
         # data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
         # data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
         # data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace = True)
