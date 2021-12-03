@@ -1012,13 +1012,13 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
-        print(both['concat_key_generate_secondary'])
-        print(both[both['platform_deviceID']=='ORBITHB600301'],'bothbothbothbothboth')
-
+  
         try:
             both['exist_mysql_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mysql['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mysql':[],'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
+        print(both['exist_mysql_secondary'])
+        print(both[both['platform_deviceID']=='ORBITHB600301']['exist_mysql_secondary'],'bothbothbothbothboth')
 
         exist_mysql_s = both[both['exist_mysql_secondary']==1]
         not_exist_mysql_s = both[both['exist_mysql_secondary']==0]
