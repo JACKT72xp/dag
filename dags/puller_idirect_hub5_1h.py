@@ -480,7 +480,7 @@ def puller_idirect_hub5_1h():
         data_insert_send['status_order'] = 1
         data_insert_send['bkp'] = 3
         
-        data_insert_send['btId_get'] = data_insert_send[config['primary_join_cols']['platform']].map(
+        data_insert_send['btId_get'] = data_insert_send['platform_'+config['primary_join_cols']['platform']].map(
                         lambda eve: eve.replace(".0", "")
                     )
         
