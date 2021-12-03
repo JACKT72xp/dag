@@ -1025,8 +1025,8 @@ def puller_hughes():
             exist_mysql_s = []
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-        print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
-        print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        print(exist_mysql_s[exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'exist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_sexist_mysql_s')
+        print(not_exist_mysql_s[not_exist_mysql_s['platform_deviceID'=='ORBITHB600301']],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
@@ -1198,6 +1198,7 @@ def puller_hughes():
         query_update = text("""             UPDATE bifrost_terminal            SET statusTerminal=:platform_terminalStatus , esn=:platform_esn, latitud=:platform_latitude, longitud=:platform_longitude,updated_at=:updated_at_send,fromPuller=1 WHERE siteId =:platform_deviceID and status IN (1,3) """)             
         connection_engi.execute(query_update, args)
         print(args,'argsargsargs')
+        print(query_update,'query_updatequery_updatequery_update')
         dateSaveHistoryUpdate(args_send)
         return ['ok']
     @task()
