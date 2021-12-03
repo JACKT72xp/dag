@@ -221,26 +221,29 @@ def puller_hughes():
         coltn_history_changes = db_2['history_changes']
         # data_old = getDataOld(data_global['principal_key'])
         for data in data_global:
-            element = {
-                "data":[],
-                "data_old":{
-                    "latitude":data['mongo_latitude'],
-                    "longitude":data['mongo_longitude'],
-                    "terminalStatus":data['mongo_terminalStatus'],
-                    "esn":data['mongo_esn']
-                },
-                "changes":{
-                    "latitude":data['latitude'],
-                    "longitude":data['longitude'],
-                    "terminalStatus":data['terminalStatus'],
-                    "esn":data['esn']
-                },
-                "type":'update_mongo',
-                "date_p":time_send_now,
-                "platform_id":1,
-                "principalKey":data['deviceID']
-            }
-            coltn_history_changes.insert(element)
+            try:
+                element = {
+                    "data":[],
+                    "data_old":{
+                        "latitude":data['mongo_latitude'],
+                        "longitude":data['mongo_longitude'],
+                        "terminalStatus":data['mongo_terminalStatus'],
+                        "esn":data['mongo_esn']
+                    },
+                    "changes":{
+                        "latitude":data['latitude'],
+                        "longitude":data['longitude'],
+                        "terminalStatus":data['terminalStatus'],
+                        "esn":data['esn']
+                    },
+                    "type":'update_mongo',
+                    "date_p":time_send_now,
+                    "platform_id":1,
+                    "principalKey":data['deviceID']
+                }
+                coltn_history_changes.insert(element)
+            except:
+                print("error",data)
         return ['ok']
 
     def generateConcatKeySecondary(df,cols):
@@ -1267,6 +1270,8 @@ def puller_hughes():
         
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
+        df2 = pd.DataFrame(data)
+        df2.columns = df2.columns.str.replace("platform_", "")
         
         try:
             df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
@@ -1278,6 +1283,8 @@ def puller_hughes():
             
         data = df.to_json(orient="records")
         data = json.loads(data)
+        datax = df2.to_json(orient="records")
+        datax = json.loads(datax)
      
         
         for x in data:
@@ -1287,7 +1294,7 @@ def puller_hughes():
             except:
                 print("error UPDATE MONGO",x)
         bulk.execute()
-        dateSaveHistoryUpdateMongo(data)
+        dateSaveHistoryUpdateMongo(datax)
         return [keys]
     @task()
     def processDataDeleteMongo(keys):
