@@ -807,7 +807,9 @@ def puller_gilat_tasa_10min():
             else:
                 response = requests.request("POST", config["url"], headers=config["headers"], data = config["payload"], verify=config["verify"],)
                 o = xmltodict.parse(response.text)
+                print(o,'OOOOOOOOOO')
                 response=json.dumps(o)
+                print(response,'responseresponseresponseresponse')
                 response=json.loads(response)
 
             if config["route_trunk"] == "":
@@ -840,35 +842,12 @@ def puller_gilat_tasa_10min():
 
                 # print(response,'responseresponseresponseresponse')
                 data_send = []
-                tt=len(response)
-                print(tt,' LEN')
-                cc=0
-                # for item in response[0:20]:
-                for item in response:
-                    # print(item,"ITEM")
-                    try:
-                        response_terminal = requests.get(
-                            config["url"]+"/"+str(item['ID']),
-                            auth=HTTPBasicAuth(config["user"], config["password"]),
-                            verify=config["verify"],
-                            timeout=config["timeout"],
-                        )
-                        response_terminal = response_terminal.text
-                        response_terminal = json.loads(response_terminal)
-                        # print(response_terminal)
-                        data_send.append(response_terminal['data'])
-                        cc+=1
-                    except:
-                        cc+=1
-                    print(cc,'/',tt)
-                response = data_send
-                
-                
+
 
                 response = pd.DataFrame(response)
-                response['Lat'] = response['Lat'].astype(str)
-                response['Lon'] = response['Lon'].astype(str)
-                response = generateColumns(response,config)
+                # response['Lat'] = response['Lat'].astype(str)
+                # response['Lon'] = response['Lon'].astype(str)
+                # response = generateColumns(response,config)
                 print(response,' generateColumnsresponsegenerateColumnsresponse')
                 # response = response.astype(str)
                 response = response[response.columns].add_prefix("platform_")
