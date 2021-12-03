@@ -1025,8 +1025,8 @@ def puller_hughes():
             exist_mysql_s = []
         else:
             exist_mysql_s = json.loads(exist_mysql_s.to_json(orient="records"))
-        # print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
-        # print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+        print(exist_mysql_s,'exist_mysql_sexist_mysql_sexist_mysql_s')
+        print(not_exist_mysql_s,'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
         if not_exist_mysql_s.empty:
             not_exist_mysql_s = []
             data_mysql_not_exist_s = []
@@ -1038,6 +1038,7 @@ def puller_hughes():
         
         # print(data_mysql_not_exist_s.columns,'hereeeeeee')
         # print(data_mysql_not_exist_s[['concat_key_generate_secondary','platform_deviceID']],'hereeeeeee')
+        print(data_mysql_not_exist_s,'  -asdasdasdasdasd')
         print(len(data_mysql_not_exist_s),'  -total')
         return {'update_mysql':data_mysql_not_exist_s,'insert_mysql':glob_comparate['not_exist_mysql'],'delete_mysql':old['only_old']}
         # return ['ok'] 
