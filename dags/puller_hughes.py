@@ -1108,7 +1108,7 @@ def puller_hughes():
         
             print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
-            print(data_mongo_not_exist_s[data_mongo_not_exist_s['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+            print(data_mongo_not_exist_s[data_mongo_not_exist_s['platform_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
 
             try:
                 del data_mongo_not_exist_s['concat_key_generate_secondary']
