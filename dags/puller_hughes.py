@@ -1032,8 +1032,8 @@ def puller_hughes():
         else:
             
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
-            print(data_mysql_not_exist_s,'  -asdasdasdasdasd')
-            print(not_exist_mysql_s_com[not_exist_mysql_s_com['concat_key_generate']=='ORBITHB600301'],'not_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_snot_exist_mysql_s')
+            print(not_exist_mysql_s_com['concat_key_generate'],'  -asdasdasdasdasd')
+            print(data_mysql_not_exist_s[data_mysql_not_exist_s['concat_key_generate']=='ORBITHB600301'],'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
             data_mysql_not_exist_s = pd.merge(not_exist_mysql_s_com, data_mysql_not_exist_s, on="concat_key_generate")
             # print(data_mysql_not_exist_s[['concat_key_generate_secondary_x','concat_key_generate_secondary_y','platform_deviceID']],'hereeeeeee')
             data_mysql_not_exist_s = json.loads(data_mysql_not_exist_s.to_json(orient="records"))
