@@ -810,9 +810,9 @@ def puller_gilat_tasa_10min():
                 o = xmltodict.parse(response.text)
                 print(o,'OOOOOOOOOO')
                 response=json.dumps(o)
-                print(response,'responseresponseresponseresponse')
                 response=json.loads(response)
                 response=response['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
+                print(response,'responseresponseresponseresponse')
 
             if config["route_trunk"] == "":
                 response = pd.DataFrame(response).astype(str)
