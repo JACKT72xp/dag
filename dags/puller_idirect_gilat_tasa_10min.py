@@ -121,7 +121,7 @@ def puller_gilat_tasa_10min():
             'Content-Type': 'text/xml',
             'Authorization': 'Basic YXBpczphcGlzMjAyMA=='
             },
-            "payload":"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"com.gilat.ngnms.server.services.ws.cfg.face\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <com:getCPEsByManagedGroup>\r\n            <managedGroupId>2</managedGroupId>\r\n            <lastIndex>50000</lastIndex>\r\n        </com:getCPEsByManagedGroup>\r\n    </soapenv:Body>",
+            "payload":"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"com.gilat.ngnms.server.services.ws.cfg.face\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <com:getCPEsByManagedGroup>\r\n            <managedGroupId>2</managedGroupId>\r\n            <lastIndex>50</lastIndex>\r\n        </com:getCPEsByManagedGroup>\r\n    </soapenv:Body>",
             "user": "",
             "password": "",
             "timeout": 120,
