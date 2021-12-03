@@ -1032,7 +1032,7 @@ def puller_hughes():
         else:
             
             data_mysql_not_exist_s = df_mysql[df_mysql['concat_key_generate'].isin(list(not_exist_mysql_s_com['concat_key_generate']))]
-            # print(df_mysql[df_mysql['concat_key_generate']=='ORBITHB600301'],'df_mysqldf_mysqldf_mysqldf_mysqldf_mysql')
+            print(df_mysql[df_mysql['platform_deviceID']=='ORBITHB600301'],'df_mysqldf_mysqldf_mysqldf_mysqldf_mysql')
             # print(data_mysql_not_exist_s[data_mysql_not_exist_s['platform_deviceID']=='ORBITHB600301'],'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
             # print(not_exist_mysql_s_com[not_exist_mysql_s_com['platform_deviceID']=='ORBITHB600301'],'data_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_sdata_mysql_not_exist_s')
             
