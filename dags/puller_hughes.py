@@ -1087,7 +1087,7 @@ def puller_hughes():
             return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
         # print(both[both['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'platform_deviceIDplatform_deviceIDplatform_deviceIDplatform_deviceIDconcat_key_generate_secondarytry')
         
-        # print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+        # print(data_mongo_not_exist_s[data_mongo_not_exist_s['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
         
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
@@ -1106,8 +1106,10 @@ def puller_hughes():
             # del not_exist_mongo_s['concat_key_generate_secondary']
             # not_exist_mongo_s = json.loads(not_exist_mongo_s.to_json(orient="records"))
         
-
+            print(df_mongo[df_mongo['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
             data_mongo_not_exist_s = df_mongo[df_mongo['concat_key_generate'].isin(list(not_exist_mongo_s_com['concat_key_generate']))]
+            print(data_mongo_not_exist_s[data_mongo_not_exist_s['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+
             try:
                 del data_mongo_not_exist_s['concat_key_generate_secondary']
             except:
