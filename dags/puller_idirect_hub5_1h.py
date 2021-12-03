@@ -467,7 +467,40 @@ def puller_idirect_hub5_1h():
         print(json_template,' json_templatejson_templatejson_template')
         print(input_template,' input_templateinput_templateinput_templateinput_template')
         data_insert_send['input_template'] = input_template
+        data_insert_send['functionId'] =  json_template['functionId']
+        data_insert_send['userId_order'] = json_template['userId']
+        data_insert_send['type_order'] = json_template['type']
+        data_insert_send['error_id_order'] = json_template['errorId']
         print(data_insert_send)
+        
+        
+        #mnos_order=MnosOrder()
+        # mnos_order.created_at = created_at
+        # mnos_order.btId = btId
+        # mnos_order.vnoId = vnoId
+        # mnos_order.functionId = functionId
+        # mnos_order.transactionId = 3
+        # mnos_order.order_statusId = 33
+        # mnos_order.order_execution_count = 1
+        # mnos_order.order_input_typeId = 44
+        # mnos_order.impact_typeId = 34
+        # mnos_order.userId = 2711 #backup user
+        # mnos_order.errorId = 0
+        # mnos_order.bkp = 1
+        # mnos_order.status = 1
+        # mnos_order.save()
+
+        # mnos_order_detail=MnosOrderDetail()
+        # mnos_order_detail.created_at = created_at
+        # mnos_order_detail.status = 1
+        # mnos_order_detail.orderId = mnos_order.id
+        # mnos_order_detail.detail = "RECOVERY"
+        # mnos_order_detail.output_message = "RECOVERY"
+        # mnos_order_detail.input_message ="RECOVERY"
+        # mnos_order_detail.input_date = created_at
+        # mnos_order_detail.save()
+        
+        
         # data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
         # data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
         # data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace = True)
