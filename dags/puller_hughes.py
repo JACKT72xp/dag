@@ -1085,9 +1085,9 @@ def puller_hughes():
             both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
         except:
             return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
-        print(both[both['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'platform_deviceIDplatform_deviceIDplatform_deviceIDplatform_deviceIDconcat_key_generate_secondarytry')
+        # print(both[both['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'platform_deviceIDplatform_deviceIDplatform_deviceIDplatform_deviceIDconcat_key_generate_secondarytry')
         
-        print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
+        # print(df_mongo[df_mongo['mongo_deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'mysql_siteIdconcat_key_generate_secondary')
         
         exist_mongo_s = both[both['exist_mongo_secondary']==1]
         not_exist_mongo_s = both[both['exist_mongo_secondary']==0]
