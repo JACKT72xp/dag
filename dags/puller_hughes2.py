@@ -310,7 +310,9 @@ def puller_hughes_2():
     
     @task()
     def create_orders_of_alta(result,keys,template_orders):
-        
+        print(result,'resultresult')
+        print(keys,'keyskeys')
+        print(template_orders,'template_orderstemplate_orders')
         key = keys['key_insert']
         try:
             data = getDataRedisByKey(key)
