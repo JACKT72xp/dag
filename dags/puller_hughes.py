@@ -1012,7 +1012,7 @@ def puller_hughes():
             df_mysql = pd.DataFrame(columns=['concat_key_generate_secondary'])
 
         both = comparate
-        print(both['both'])
+        print(both['concat_key_generate_secondary'])
         print(both[both['platform_deviceID']=='ORBITHB600301'],'bothbothbothbothboth')
 
         try:
