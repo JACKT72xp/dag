@@ -1254,14 +1254,17 @@ def puller_hughes():
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            data_mysql = getDataMysqlBySiteId(x['deviceID'])
+            # data_mysql = getDataMysqlBySiteId(x['deviceID'])
+            # data_mysql = getDataMysqlBySiteId(x['deviceID'])
             element =   {
                 "puller":x,
                 "status": x['terminalStatus'],
                 "timeC": formatted_date,
                 "timeCO": "",
-                "btId":data_mysql['btId'],
-                "mysqlFlag": data_mysql['mysqlFlag'],
+                "btId":0,
+                # "btId":data_mysql['btId'],
+                "mysqlFlag": 0,
+                # "mysqlFlag": data_mysql['mysqlFlag'],
                 "comisioningFlag": 1 if x['terminalStatus']  == 'normal' else  0,
                 "platform": 1,
                 "active":1,
