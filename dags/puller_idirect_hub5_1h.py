@@ -89,7 +89,7 @@ default_args = {
     'trigger_rule': 'all_done',
     
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 0,
+    "retries": 1,
 }
 # [END default_args]
 # start_date=days_ago(2)
