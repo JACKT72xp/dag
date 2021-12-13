@@ -80,7 +80,7 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": True,
     "retry_delay": timedelta(seconds=20),
-    # "start_date": datetime(2021, 12, 14, 0, 0),
+    "start_date": datetime(2021, 12, 13, 19, 50),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
@@ -95,8 +95,8 @@ default_args = {
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
-# @dag(default_args=default_args, schedule_interval="*/15 * * * *", tags=[tag_airflow])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval="*/15 * * * *", tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=["hughes"])
 def puller_idirect_lima_1h():
 
