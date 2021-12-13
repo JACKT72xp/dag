@@ -72,7 +72,7 @@ default_args = {
     # 'max_active_runs':2,
     'depends_on_past': True,
     'max_active_tis_per_dag':2,
-    # 'concurrency':5,
+    'concurrency':5,
     # 'schedule_interval':timedelta(minutes=10),
     'retries': 2,
     # 'trigger_rule': 'all_done'
