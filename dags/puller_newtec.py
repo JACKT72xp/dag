@@ -78,18 +78,17 @@ r = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
+    "depends_on_past": True,
     "retry_delay": timedelta(seconds=20),
-    # "depends_on_past": True,
-    "start_date": datetime(2021, 12, 2, 20, 0),
+    "start_date": datetime(2021, 12, 13, 21, 40),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
-    # "max_active_runs": 1,
-    # "concurrency": 4,
+    "max_active_runs": 1,
+    "concurrency": 5,
     'trigger_rule': 'all_done',
-
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 5,
+    "retries": 2,
 }
 # [END default_args]
 # start_date=days_ago(2)
