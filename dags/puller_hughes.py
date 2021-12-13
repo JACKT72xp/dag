@@ -70,6 +70,7 @@ default_args = {
     # 'email_on_retry': True,
     'max_active_runs':2,
     'depends_on_past': True,
+    'max_active_tis_per_dag':1,
     # 'concurrency':5,
     'schedule_interval':timedelta(minutes=10),
     'retries': 2,
