@@ -85,10 +85,10 @@ default_args = {
     # 'email_on_failure': True,
     # 'email_on_retry': True,
     "max_active_runs": 1,
-    "concurrency": 5,
+    "concurrency": 2,
     'trigger_rule': 'all_done',
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 1,
+    "retries": 2,
 }
 # [END default_args]
 # start_date=days_ago(2)
