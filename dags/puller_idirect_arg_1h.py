@@ -84,11 +84,11 @@ default_args = {
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
-    "max_active_runs": 1,
+    "max_active_runs": 2,
     "concurrency": 5,
     'trigger_rule': 'all_done',
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 5,
+    "retries": 1,
 }
 # [END default_args]
 # start_date=days_ago(2)
