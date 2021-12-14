@@ -96,7 +96,7 @@ time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
 # @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
-@dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval="*/20 * * * *", tags=[tag_airflow])
 def puller_newtec():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
