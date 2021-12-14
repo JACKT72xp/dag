@@ -45,7 +45,7 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 db_2 = conection_2["bifrost"]
 
-r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+r = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
 
 # import confluent_kafka
 # from confluent_kafka import Producer
