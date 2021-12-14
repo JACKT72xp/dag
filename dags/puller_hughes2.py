@@ -45,7 +45,7 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 db_2 = conection_2["bifrost"]
 
-r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+r = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
 
 # import confluent_kafka
 # from confluent_kafka import Producer
@@ -64,7 +64,7 @@ r = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv"
 default_args = {
     'owner': 'airflow',
     'retry_delay': timedelta(seconds=30),
-    "start_date": datetime(2021, 12, 2, 20, 0),
+    "start_date": datetime(2021, 12, 14, 16, 30),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
@@ -350,14 +350,14 @@ def puller_hughes_2():
         del df['concat_key_generate']
         del df['concat_key_generate_secondary']
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         redis_cn.set('39-hughes',data)
         return {"status":True,"data":""}
 
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         try:
             data_send = json.dumps(data)
         except:
@@ -369,7 +369,7 @@ def puller_hughes_2():
     #------------------------------------------------------------------------
     def save_in_redis_data_equals_api(config,data,keyname):
 
-        # redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        # redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         key_insert = keyname+'-insert'
         key_update = keyname+'-update'
         key_delete = keyname+'-delete'
@@ -408,7 +408,7 @@ def puller_hughes_2():
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_only_platform_api(config,data,keyname):
-        # redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        # redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         key_insert = keyname+'-onlyplat-insert'
         key_update = keyname+'-onlyplat-update'
         key_delete = keyname+'-onlyplat-delete'
@@ -485,7 +485,7 @@ def puller_hughes_2():
         if valid_puller_runing is None:
             return []
         try:
-            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+            redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
             response = redis_cn.get('39-hughes')
             response = json.loads(response)
             df_old = pd.DataFrame(response)
