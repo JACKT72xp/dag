@@ -65,7 +65,7 @@ default_args = {
     "owner": "airflow",
     "depends_on_past": False,
     "retry_delay": timedelta(seconds=15),
-    #"start_date": datetime(2021, 12, 15, 1, 0),
+    "start_date": datetime(2021, 12, 14, 16, 10),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
@@ -79,8 +79,8 @@ default_args = {
 time_send_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
-#@dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes'])
+#@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes'])
+@dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes'])
 def puller_hughes():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
