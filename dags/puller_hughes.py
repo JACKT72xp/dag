@@ -303,14 +303,14 @@ def puller_hughes():
         del df['concat_key_generate']
         del df['concat_key_generate_secondary']
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         redis_cn.set('1-hughes',data)
         return {"status":True,"data":""}
 
     @task()
     #------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
         try:
             data_send = json.dumps(data)
         except:
@@ -438,7 +438,7 @@ def puller_hughes():
         if valid_puller_runing is None:
             return []
         try:
-            redis_cn = redis.Redis(host= '192.168.29.20',    port= '6379',    password="bCL3IIuAwv")
+            redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
             response = redis_cn.get('1-hughes')
             response = json.loads(response)
             df_old = pd.DataFrame(response)
