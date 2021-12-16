@@ -439,19 +439,19 @@ def idirect_arg_test_1h():
         del df["concat_key_generate"]
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
-        redis_cn.set("1-"+platform_name, data)
+        # redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        r.set("1-"+platform_name, data)
         return {"status": True, "data": ""}
 
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        # redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
         try:
             data_send = json.dumps(data)
         except:
             data_send = data
-        redis_cn.set("puller_"+platform_name, data_send)
+        r.set("puller_"+platform_name, data_send)
         return {"status": True, "data": ""}
 
     @task()
@@ -582,10 +582,10 @@ def idirect_arg_test_1h():
         if valid_puller_runing is None:
             return []
         try:
-            redis_cn = redis.Redis(
-                host="10.152.183.45", port="6379", password="l2TCrRgvtX"
-            )
-            response = redis_cn.get("1-"+platform_name)
+            # redis_cn = redis.Redis(
+            #     host="10.152.183.45", port="6379", password="l2TCrRgvtX"
+            # )
+            response = r.get("1-"+platform_name)
             response = json.loads(response)
             df_old = pd.DataFrame(response)
 
@@ -1920,7 +1920,8 @@ def idirect_arg_test_1h():
         # dag=dag
     )
     rs = start()
-    key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
+    # key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
+    key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])+ str(config["mongo_collection"])
     old_data = extract_old(key_process, config, valid_puller_runing)
     platform_data = extract_platform(config, valid_puller_runing)
     save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
