@@ -970,7 +970,7 @@ def idirect_arg_test_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  vbsp.servicePlanId as 'servicePlanIdTable',code as 'crmId' FROM "+table_mysql_serviceplan + " inner join mnos_vno_beam_sp vbsp on "+table_mysql_serviceplan + ".id = vbsp.servicePlanId inner join gen_vno gv ON vbsp.vnoId =gv.id inner join mnos_vlan mv on gv.id=mv.vnoId     where  "+table_mysql_serviceplan + ".status = 1 and  platformId = "+ str(config["platform_id"])
+            "SELECT  vbsp.servicePlanId as 'servicePlanIdTable',code as 'crmId' FROM "+table_mysql_serviceplan + " inner join mnos_vno_beam_sp vbsp on "+table_mysql_serviceplan + ".id = vbsp.servicePlanId inner join gen_vno gv ON vbsp.vnoId =gv.id inner join mnos_vlan mv on gv.id=mv.vnoId     where  "+table_mysql_serviceplan + ".status = 1 and  "+table_mysql_serviceplan + ".platformId = "+ str(config["platform_id"])
         )
         print(query)
         df_mysql = pd.read_sql_query(query, engine)
