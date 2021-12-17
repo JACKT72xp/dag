@@ -1750,7 +1750,7 @@ def idirect_arg_test_1h():
         # data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
         data.loc[data.servicePlanIdTable == "0" , ['servicePlanIdTable', 'platform_status']] = '0', 3
-        data.loc[data.nroVlans>=3, ['servicePlanIdTable', 'platform_status']] = '1111', 3
+        data.loc[data.nroVlans==1, ['servicePlanIdTable', 'platform_status']] = '1171', 3
         data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna('0')
         print(data,'daaaaaaaaaaaaaaaa')
         del data['nroVlans']
