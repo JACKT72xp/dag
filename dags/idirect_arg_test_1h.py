@@ -970,7 +970,7 @@ def idirect_arg_test_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  vbsp.servicePlanId as 'servicePlanIdTable',code as 'crmId' FROM "+table_mysql_serviceplan + " inner join mnos_vno_beam_sp vbsp on "+table_mysql_serviceplan + ".id = vbsp.servicePlanId inner join gen_vno gv ON vbsp.vnoId =gv.id inner join mnos_vlan mv on gv.id=mv.vnoId     where  "+table_mysql_serviceplan + ".status = 1 and  "+table_mysql_serviceplan + ".platformId = "+ str(config["platform_id"])
+            "SELECT  vbsp.servicePlanId as 'servicePlanIdTable',code as 'crmId',mv.plattformVlanId as 'vlanIdGet' FROM "+table_mysql_serviceplan + " inner join mnos_vno_beam_sp vbsp on "+table_mysql_serviceplan + ".id = vbsp.servicePlanId inner join gen_vno gv ON vbsp.vnoId =gv.id inner join mnos_vlan mv on gv.id=mv.vnoId     where  "+table_mysql_serviceplan + ".status = 1 and  "+table_mysql_serviceplan + ".platformId = "+ str(config["platform_id"])
         )
         print(query)
         df_mysql = pd.read_sql_query(query, engine)
@@ -1572,6 +1572,7 @@ def idirect_arg_test_1h():
             return []
 
         data_insert_send = pd.DataFrame(data)
+        data_insert_send_g = pd.DataFrame(data)
         data_insert_send = data_insert_send[
             [
                 "platform_SN",
@@ -1610,6 +1611,8 @@ def idirect_arg_test_1h():
         
         data_insert_send.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
+        print(data_insert_send_g ,'data_insert_send_gdata_insert_send_g')
+        print(data_insert_send_g.columns() ,'columns data_insert_send_gdata_insert_send_gdata_insert_send_g')
         
         
         data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
@@ -1640,6 +1643,10 @@ def idirect_arg_test_1h():
             return []
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
+        data['nroVlans'] = data['platform_VLans'].apply(lambda x : len(x)).astype(int)
+        data['vlanIdGet'] = data['platform_VLans'].apply(lambda x : x[1]['VLanID']).astype(str)
+        # print(data[['nroVlans','vlanIdGet']],' XXXXX')
+        # return 'OK'
         data["updated_at_send"] = time_send_now
         data["platform_Active"] = data["platform_Active"].astype(str)
         data["platform_status"] = 1
@@ -1672,7 +1679,7 @@ def idirect_arg_test_1h():
                     "mysql_latitud",
                     "mysql_longitud",
 
-                    "mysql_id_nms",
+                    "mysql_id_nms"
                     
                     
                 ]
@@ -1680,7 +1687,6 @@ def idirect_arg_test_1h():
             .iloc[0:]
             .to_dict("record")
         )
-        print(data.columns,'colls')
         
         datax = data[
                 [
@@ -1720,31 +1726,46 @@ def idirect_arg_test_1h():
                     "platform_status",
                     "platform_Name",
                     "platform_ID",
+                    "nroVlans",
+                    "vlanIdGet"
                 ]
             ]
-        
         
         #1/SACAR EL DATO DE LA COLUMNA CODE, PLATAFORMA GENERA BIEN - CAMBIAR EL EXTRACT-SERVICEPLAN Y EN MYSQL AGREGAR LA RELACION CON LA INTERMEDIA PARA LAS VLAN Y VNOIDA
         
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
-        
+        list_sp['vlanIdGet'] =list_sp['vlanIdGet'].astype(str)
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace("nan", "0") #DEFECTO
+                    )
         data.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
-        
-        data = data.join(list_sp.set_index('crmId'), on='crmId')
-        data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
+        print(data, 'dataaa ok ok ')
+        print(list_sp.set_index(['crmId','vlanIdGet']),'xxxxxxxxxx')
+        data = data.join(list_sp.set_index(['crmId','vlanIdGet']), on=['crmId','vlanIdGet'])
+        print(data, 'data joinn')
+        # data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'platform_status']] = '', 3
-
-        print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
+        data.loc[data.servicePlanIdTable == "0" , ['servicePlanIdTable', 'platform_status']] = '0', 3
+        data.loc[data.nroVlans>=3, ['servicePlanIdTable', 'platform_status']] = '1111', 3
+        data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna('0')
+        print(data,'daaaaaaaaaaaaaaaa')
+        del data['nroVlans']
+        del data['vlanIdGet']
+        # print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
+        print(args,'arggggg')
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
+        # return ['xxO']
         qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
-        # dateSaveHistoryUpdate(args_send)
+        dateSaveHistoryUpdate(args_send)
         return ["ok"]
 
     @task()
