@@ -1571,8 +1571,8 @@ def idirect_arg_test_1h():
         if len(data) == 0:
             return []
 
-        data_insert_send = pd.DataFrame(data['insert_mysql'])
-        data_insert_send_g = pd.DataFrame(data['insert_mysql'])
+        data_insert_send = pd.DataFrame(data)
+        data_insert_send_g = pd.DataFrame(data)
         
         data_insert_send['nroVlans'] = data_insert_send['platform_VLans'].apply(lambda x : len(x)).astype(int)
         data_insert_send['vlanIdGet'] = data_insert_send['platform_VLans'].apply(lambda x : x[0]['VLanID'] if len(x)==1 else x[1]['VLanID']).astype(str)
