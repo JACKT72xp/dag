@@ -1617,8 +1617,9 @@ def idirect_arg_test_1h():
         data_insert_send.rename(columns={"platform_NetworkID": "networkId"}, inplace=True)
         data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
         data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
-        
-        
+        data_insert_send['technologyId'] = 2
+        data_insert_send['forecastId'] = 29
+        data_insert_send['hubId'] = 44
         
         ###########
         
