@@ -45,13 +45,13 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 
 
-collection_puller = "idirect_test"
-table_mysql_puller = "bifrost_terminal_full"
+collection_puller = "idirect"
+table_mysql_puller = "bifrost_terminal"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "idirect"
 platform_name = "idirect_arg_tests_1h"
 platform_id_puller = 38
-history_collection_mongo="history_changes_test_idirect"
+history_collection_mongo="history_changes"
 
 
 
@@ -98,7 +98,7 @@ time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # [START instantiate_dag]
 # @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
 @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
-def idirect_arg_test_1h():
+def idirect_arg_full_1h():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
 
@@ -2067,6 +2067,6 @@ def idirect_arg_test_1h():
 
 
 # [START dag_invocation]
-puller_idirect_arge_test_1h = idirect_arg_test_1h()
+puller_idirect_arge_1h_full = idirect_arg_full_1h()
 # [END dag_invocation]
                     
