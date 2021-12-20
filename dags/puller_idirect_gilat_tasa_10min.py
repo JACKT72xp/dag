@@ -1839,7 +1839,6 @@ def puller_gilat_tasa_10min():
     )
     rs = start()
     key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
-    mongo_data = extract_mongo(config, valid_puller_runing)
     old_data = extract_old(key_process, config, valid_puller_runing)
     platform_data = extract_platform(config, valid_puller_runing)
     save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
