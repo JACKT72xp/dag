@@ -52,7 +52,7 @@ table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "gilat"
 platform_name = "gilat_tasa_10min"
 platform_id_puller = 52
-history_collection_mongo="history_changes_test"
+history_collection_mongo="history_changes_test_gilat"
 
 
 
@@ -139,10 +139,10 @@ def puller_gilat_tasa_10min():
                 "old": "description",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_statusTerminal"],
-                "mongo": ["mongo_operationalState"],
-                "platform": ["platform_operationalState"],
-                "old": ["old_operationalState"],
+                "mysql": ["mysql_statusTerminal","mysql_suscriberId","mysql_serviceplanName"],
+                "mongo": ["mongo_operationalState","mongo_cpeId.subscriberId"],
+                "platform": ["platform_operationalState","platform_cpeId.subscriberId","platform_slaName"],
+                "old": ["old_operationalState","old_cpeId.subscriberId","old_slaName"],
           
                 # "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId","mysql_statusTerminal"],
                 # "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID","mongo_Active"],
@@ -152,6 +152,7 @@ def puller_gilat_tasa_10min():
             "platform_name": platform_name,
         }
     ]
+    
     
 
     config = config[0]
@@ -1556,9 +1557,9 @@ def puller_gilat_tasa_10min():
         del data_insert_send['crmId']
         
         print(data_insert_send,'data_insert_senddata_insert_send')
-        data_insert_send.to_sql(
-            table_mysql_puller, engine, if_exists="append", index=False
-        )
+        # data_insert_send.to_sql(
+        #     table_mysql_puller, engine, if_exists="append", index=False
+        # )
         
         # dateSaveHistoryInsert(data)
         return "ok"
@@ -1676,9 +1677,9 @@ def puller_gilat_tasa_10min():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
-        query_update = text(qry)
-        connection_engi.execute(query_update, args)
+        # qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
+        # query_update = text(qry)
+        # connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
         return ["ok"]
 
@@ -1726,7 +1727,7 @@ def puller_gilat_tasa_10min():
                 "siteId": x["Name"],
             }
             elements.append(element)
-        coltn_mdb.insert_many(elements)
+        # coltn_mdb.insert_many(elements)
         dateSaveHistoryInsertMongo(elements)
 
         return [keys]
@@ -1769,7 +1770,7 @@ def puller_gilat_tasa_10min():
             #     {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
             # )
 
-        bulk.execute()
+        # bulk.execute()
         dateSaveHistoryUpdateMongo(datax)
         return [keys]
 
@@ -1800,7 +1801,7 @@ def puller_gilat_tasa_10min():
             )
 
             # bulk.find({"active":1,"siteId": x['old_deviceID']}).update({'$set':{"active":0}})
-        bulk.execute()
+        # bulk.execute()
         return [keys]
 
     @task()
@@ -1828,7 +1829,7 @@ def puller_gilat_tasa_10min():
                 + " and platformId="+str(platform_id_puller)+" and status!=0"
             )
             print(sqlesn,'sqlesnsqlesnsqlesnsqlesn')
-            connection_engi.execute(sqlesn)
+            # connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ["ok"]
 
