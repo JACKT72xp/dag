@@ -91,7 +91,7 @@ default_args = {
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/15 * * * *", tags=[tag_airflow])
 def puller_gilat_tasa_10min():
 
@@ -133,16 +133,16 @@ def puller_gilat_tasa_10min():
             "mongo_limit_time": 55,
             "mongo_collection": collection_puller,
             "primary_join_cols": {
-                "mysql": "id_siteId",
+                "mysql": "siteId",
                 "mongo": "description",
                 "platform": "description",
                 "old": "description",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_statusTerminal","mysql_suscriberId","mysql_serviceplanName"],
-                "mongo": ["mongo_operationalState","mongo_cpeId.subscriberId"],
-                "platform": ["platform_operationalState","platform_cpeId.subscriberId","platform_slaName"],
-                "old": ["old_operationalState","old_cpeId.subscriberId","old_slaName"],
+                "mysql": ["mysql_statusTerminal","mysql_suscriberId","mysql_crmId"],
+                "mongo": ["mongo_operationalState","mongo_cpeId-subscriberId","mongo_slaName"],
+                "platform": ["platform_operationalState","platform_cpeId-subscriberId","platform_slaName"],
+                "old": ["old_operationalState","old_cpeId-subscriberId","old_slaName"],
           
                 # "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId","mysql_statusTerminal"],
                 # "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID","mongo_Active"],
@@ -270,31 +270,31 @@ def puller_gilat_tasa_10min():
         return ["ok"]
 
     def generateConcatKeySecondary(df, cols):
-        try:
-            df_stnd_key = df[cols].astype(str)
-            for col in cols:
-                if col == "platform_SN":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
-                if col == "mongo_SN":
-                    df_stnd_key[col] = df_stnd_key[col].map(
-                        lambda eve: eve.replace(".0", "")
-                    )
-                    df[col] = df_stnd_key[col]
+        # try:
+        df_stnd_key = df[cols].astype(str)
+        for col in cols:
+            if col == "platform_SN":
                 df_stnd_key[col] = df_stnd_key[col].map(
-                    lambda eve: eve.replace("0.0000000000000000", " ")
+                    lambda eve: eve.replace(".0", "")
                 )
-            df_stnd_key["concat_key_generate_secondary"] = df_stnd_key[cols].agg(
-                "-".join, axis=1
+                df[col] = df_stnd_key[col]
+            if col == "mongo_SN":
+                df_stnd_key[col] = df_stnd_key[col].map(
+                    lambda eve: eve.replace(".0", "")
+                )
+                df[col] = df_stnd_key[col]
+            df_stnd_key[col] = df_stnd_key[col].map(
+                lambda eve: eve.replace("0.0000000000000000", " ")
             )
-            df["concat_key_generate_secondary"] = df_stnd_key[
-                "concat_key_generate_secondary"
-            ]
-            return df
-        except:
-            print("ERROR IN COLUMNS")
+        df_stnd_key["concat_key_generate_secondary"] = df_stnd_key[cols].agg(
+            "-".join, axis=1
+        )
+        df["concat_key_generate_secondary"] = df_stnd_key[
+            "concat_key_generate_secondary"
+        ]
+        return df
+        # except:
+            # print("ERROR IN COLUMNS")
 
     def generateConcatKey(df, cols):
         try:
@@ -705,24 +705,14 @@ def puller_gilat_tasa_10min():
             {
                 "_id": True,
                 "siteId": True,
-                "puller.ID": True,
-                "puller.SN": True,
-                "puller.DID": True,
-                "puller.Name": True,
-                "puller.Active": True,
-                "puller.ModelType": True,
-                "puller.InrouteGroupID": True,
-                "puller.NetworkID": True,
-                "puller.Lat": True,
-                "puller.Lon": True,
-                
-                "puller.DownMIR": True,
-                "puller.UpMIR": True,
-                "puller.DownCIR": True,
-                "puller.DownMIR": True
-                
+                "puller.operationalState": True,
+                "puller.description": True,
+                "puller.cpeId": True,
+                "puller.slaName": True,
+                "status": True
             },
         )
+        
         list_cur = list(data_mdb)
         if len(list_cur) == 0:
             return []
@@ -732,6 +722,7 @@ def puller_gilat_tasa_10min():
         # df_datamongo_origin = pd.DataFrame(data_mdb)
         # json_data = dumps(list_cur, indent = 2)
         df_datamongo = pd.DataFrame(loads(json_data))
+        
         # df_datamongo_origin = pd.DataFrame(
         # df_datamongo_origin = pd.DataFrame(json_data)
         # print(df_datamongo)
@@ -740,13 +731,19 @@ def puller_gilat_tasa_10min():
         df_datamongo[df_datamongo_origin.columns] = df_datamongo_origin
         del df_datamongo[config["mongo_normalization"]]
         del df_datamongo["_id"]
+        print(df_datamongo.columns)
+        df_datamongo['cpeId-subscriberId'] =  df_datamongo["cpeId"].map(
+                        lambda eve: json.loads(eve['subscriberId'])
+                    )
+        print(df_datamongo['cpeId-subscriberId'], 'mongo')
+        
         # try:
         # del df_datamongo['concat_key_generate']
         # del df_datamongo['concat_key_generate_secondary']
         # except:
         # print("error delete")
-        df_datamongo['Lat'] = df_datamongo['Lat'].astype(str)
-        df_datamongo['Lon'] = df_datamongo['Lon'].astype(str)
+        # df_datamongo['Lat'] = df_datamongo['Lat'].astype(str)
+        # df_datamongo['Lon'] = df_datamongo['Lon'].astype(str)
         df_datamongo = generateColumns(df_datamongo,config)
         print(df_datamongo,' generateColumnsresponsegenerateColumnsresponse')
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix("mongo_")
@@ -809,14 +806,26 @@ def puller_gilat_tasa_10min():
             else:
                 response = requests.request("POST", config["url"], headers=config["headers"], data = config["payload"], verify=config["verify"],)
                 o = xmltodict.parse(response.text)
-                print(o,'OOOOOOOOOO')
                 response=json.dumps(o)
                 response=json.loads(response)
                 response=response['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
-                print(response,'responseresponseresponseresponse')
 
             if config["route_trunk"] == "":
-                response = pd.DataFrame(response).astype(str)
+                # response = pd.DataFrame(response).astype(str)
+                # print(response,'responseresponseresponseresponse')
+                # print(response.columns,'responseresponseresponseresponse')
+                response = dumps(response, indent=2)
+                response = pd.DataFrame(loads(response))
+                response['cpeId-subscriberId'] =  response["cpeId"].map(
+                        lambda eve: json.loads(eve['subscriberId'])
+                    )
+                # print(resp['cpeId-subscriberId'])
+                # resp['cpeId'] = resp['cpeId'].apply(lambda x: {} if pd.isna(x) else x)
+                # cpe = pd.json_normalize(json.loads(resp.to_json(orient="records")),record_path =['cpeId'],  meta=['description'], record_prefix='cpe.',errors="raise").astype(str)
+                # response = pd.merge(resp, cpe, on = 'description',how='outer')
+                # print(response, 'rrr')
+                # print(response.columns)
+
                 # response[['latitude','longitude']].astype(str)
                 # xaa=response[response['deviceID']=='1600032794']
                 # print(xaa[['latitude','longitude']],'aaa')
@@ -879,7 +888,7 @@ def puller_gilat_tasa_10min():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,suscriberId ,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
             + str(config["mysql_table"])
             + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
             + " where "+table_mysql_puller+".status != 0 and  "+table_mysql_puller+".platformId = "
@@ -892,9 +901,11 @@ def puller_gilat_tasa_10min():
         # df_mysql_total['id_nms'] = df_mysql_total['id_nms'].
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
+        print(df_mysql_total,'2232332')
         df_mysql_total = generateConcatKey(
             df_mysql_total, ["mysql_" + config["primary_join_cols"]["mysql"]]
         )
+        print(df_mysql_total,'---')
         df_mysql_total = generateConcatKeySecondary(
             df_mysql_total, config["secondary_join_cols"]["mysql"]
         )
@@ -906,7 +917,7 @@ def puller_gilat_tasa_10min():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  id as 'servicePlanIdTable',name as 'crmId' FROM "+table_mysql_serviceplan + " where status = 1 and  platformId = "+ str(config["platform_id"])
+            "SELECT  id as 'servicePlanIdTable',name as 'platform_slaName' FROM "+table_mysql_serviceplan + " where status = 1 and  platformId = "+ str(config["platform_id"])
         )
         print(query)
         df_mysql = pd.read_sql_query(query, engine)
@@ -1506,60 +1517,36 @@ def puller_gilat_tasa_10min():
             return []
         if len(data) == 0:
             return []
-
         data_insert_send = pd.DataFrame(data)
+        # data_insert_send = pd.DataFrame(keys['insert_mysql'])
+
         data_insert_send = data_insert_send[
             [
-                "platform_SN",
-                "platform_Name",
-                "platform_ID",
-                "platform_Active",
-                "platform_DID",
-                
-                "platform_ModelType",
-                "platform_InrouteGroupID",
-                "platform_NetworkID",
-                "platform_Lat",
-                "platform_Lon",
-                "platform_SERVICEPLANCRMID"
+                "platform_description",
+                "platform_operationalState",
+                "platform_cpeId-subscriberId",
+                "platform_slaName",
             ]
         ]
-        data_insert_send.rename(columns={"platform_Name": "siteId"}, inplace=True)
-        data_insert_send.rename(columns={"platform_ID": "id_nms"}, inplace=True)
-        data_insert_send.rename(
-            columns={"platform_DID": "did"}, inplace=True
-        )
-        data_insert_send['platform_Active'] = data_insert_send['platform_Active'].astype(str)
-        data_insert_send.rename(
-            columns={"platform_Active": "statusTerminal"}, inplace=True
-        )
-        data_insert_send.rename(columns={"platform_SN": "esn"}, inplace=True)
         data_insert_send["platformId"] = platform_id_puller
         data_insert_send["status"] = 1
         data_insert_send["fromPuller"] = 1
         
-        data_insert_send.rename(columns={"platform_ModelType": "modeltype"}, inplace=True)
-        data_insert_send.rename(columns={"platform_InrouteGroupID": "inroutegroupId"}, inplace=True)
-        data_insert_send.rename(columns={"platform_NetworkID": "networkId"}, inplace=True)
-        data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
-        data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
-        
-        data_insert_send.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_description": "siteId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_operationalState": "statusTerminal"}, inplace=True)
+        data_insert_send.rename(columns={"platform_cpeId-subscriberId": "suscriberId"}, inplace=True)
+        # data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
+        # data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
-        
-        
-        data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
+        data_insert_send = data_insert_send.join(list_sp.set_index('platform_slaName'), on='platform_slaName')
         data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
         data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
-
-
         data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
-        del data_insert_send['crmId']
-        
+        del data_insert_send['platform_slaName']
         print(data_insert_send,'data_insert_senddata_insert_send')
-        # data_insert_send.to_sql(
-        #     table_mysql_puller, engine, if_exists="append", index=False
-        # )
+        data_insert_send.to_sql(
+            table_mysql_puller, engine, if_exists="append", index=False
+        )
         
         # dateSaveHistoryInsert(data)
         return "ok"
@@ -1576,110 +1563,104 @@ def puller_gilat_tasa_10min():
         if len(data) == 0:
             return []
         connection_engi = engine.connect()
+        # data = pd.DataFrame(keys['update_mysql'])
         data = pd.DataFrame(data)
         data["updated_at_send"] = time_send_now
-        data["platform_Active"] = data["platform_Active"].astype(str)
+        # data["platform_Active"] = data["platform_Active"].astype(str)
         data["platform_status"] = 1
         
 
         
-        args_send = (
-            data[
-                [
-                    "platform_Active",
-                    "platform_SN",
-                    "platform_Name",
-                    "platform_DID",
-                    "updated_at_send",
-                    "platform_ID",
-                    "platform_ModelType",
-                    "platform_InrouteGroupID",
-                    "platform_NetworkID",
-                    "platform_Lat",
-                    "platform_Lon",
+        # args_send = (
+        #     data[
+        #         [
+        #             "platform_Active",
+        #             "platform_SN",
+        #             "platform_Name",
+        #             "platform_DID",
+        #             "updated_at_send",
+        #             "platform_ID",
+        #             "platform_ModelType",
+        #             "platform_InrouteGroupID",
+        #             "platform_NetworkID",
+        #             "platform_Lat",
+        #             "platform_Lon",
                     
                     
-                    "mysql_statusTerminal",
-                    "mysql_esn",
-                    "mysql_did",
+        #             "mysql_statusTerminal",
+        #             "mysql_esn",
+        #             "mysql_did",
                     
-                    "mysql_modeltype",
-                    "mysql_inroutegroupId",
-                    "mysql_networkId",
-                    "mysql_latitud",
-                    "mysql_longitud",
+        #             "mysql_modeltype",
+        #             "mysql_inroutegroupId",
+        #             "mysql_networkId",
+        #             "mysql_latitud",
+        #             "mysql_longitud",
 
-                    "mysql_id_nms",
+        #             "mysql_id_nms",
                     
                     
-                ]
-            ]
-            .iloc[0:]
-            .to_dict("record")
-        )
-        print(data.columns,'colls')
+        #         ]
+        #     ]
+        #     .iloc[0:]
+        #     .to_dict("record")
+        # )
+        # print(data.columns,'colls')
         
-        datax = data[
-                [
-                    "platform_Active",
-                    "platform_SN",
-                    "platform_DID",
-                    "updated_at_send",
+        # datax = data[
+        #         [
+        #             "platform_Active",
+        #             "platform_SN",
+        #             "platform_DID",
+        #             "updated_at_send",
                     
-                    "platform_ModelType",
-                    "platform_InrouteGroupID",
-                    "platform_NetworkID",
-                    "platform_Lat",
-                    "platform_Lon",
+        #             "platform_ModelType",
+        #             "platform_InrouteGroupID",
+        #             "platform_NetworkID",
+        #             "platform_Lat",
+        #             "platform_Lon",
                     
                     
-                    "platform_Name",
-                    "platform_ID",
-                    "platform_SERVICEPLANCRMID",
-                    "concat_key_generate_secondary_x",
-                    "concat_key_generate_secondary_y"
-                ]
-            ]
+        #             "platform_Name",
+        #             "platform_ID",
+        #             "platform_SERVICEPLANCRMID",
+        #             "concat_key_generate_secondary_x",
+        #             "concat_key_generate_secondary_y"
+        #         ]
+        #     ]
+        print(data,'xx')
+        print(data.columns,'xdd')
         data = data[
                 [
-                    "platform_Active",
-                    "platform_SN",
-                    "platform_DID",
-                    "updated_at_send",
-                    
-                    "platform_ModelType",
-                    "platform_InrouteGroupID",
-                    "platform_NetworkID",
-                    "platform_Lat",
-                    "platform_Lon",
-                    
-                    "platform_SERVICEPLANCRMID",
+                    "platform_description",
+                    "platform_operationalState",
+                    "platform_cpeId-subscriberId",
+                    "platform_slaName",
                     "platform_status",
-                    "platform_Name",
-                    "platform_ID",
+                    "updated_at_send",
                 ]
             ]
         
+        data.rename(columns={"platform_cpeId-subscriberId": "platform_subscriberId"}, inplace=True)
         
         
-        datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        # datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
         
-        data.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        # data.rename(columns={"platform_SERVICEPLANCRMID": "platform_slaName"}, inplace=True)
         
-        data = data.join(list_sp.set_index('crmId'), on='crmId')
+        data = data.join(list_sp.set_index('platform_slaName'), on='platform_slaName')
         data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
         data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'platform_status']] = '', 3
-
-        print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
+        print(data,'data update')
         args = (data.iloc[0:].to_dict("record"))
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        # qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
-        # query_update = text(qry)
-        # connection_engi.execute(query_update, args)
+        qry=f"             UPDATE {table_mysql_puller}    SET statusTerminal=:platform_operationalState,updated_at=:updated_at_send, fromPuller=1, servicesPlanId=:servicePlanIdTable , suscriberId=:platform_subscriberId,status=:platform_status WHERE siteId=:platform_description and platformId={platform_id_puller}"
+        query_update = text(qry)
+        connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
         return ["ok"]
 
@@ -1693,6 +1674,7 @@ def puller_gilat_tasa_10min():
             return []
         if len(data) == 0:
             return []
+        # df = pd.DataFrame(keys['insert_mongo'])
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
         
@@ -1713,10 +1695,10 @@ def puller_gilat_tasa_10min():
         formatted_date = str(time_send)
         elements = []
         for x in data:
-            data_mysql = getDataMysqlBySiteId(x["Name"])
+            data_mysql = getDataMysqlBySiteId(x["description"])
             element = {
                 "puller": x,
-                "status": str(x["Active"]),
+                "status": str(x["operationalState"]),
                 "timeC": formatted_date,
                 "timeCO": "",
                 "btId": data_mysql["btId"],
@@ -1724,11 +1706,11 @@ def puller_gilat_tasa_10min():
                 # "comisioningFlag": 1 if x["terminalStatus"] == "normal" else 0,
                 "platform": platform_id_puller,
                 "active": 1,
-                "siteId": x["Name"],
+                "siteId": x["description"],
             }
             elements.append(element)
-        # coltn_mdb.insert_many(elements)
-        dateSaveHistoryInsertMongo(elements)
+        coltn_mdb.insert_many(elements)
+        # dateSaveHistoryInsertMongo(elements)
 
         return [keys]
 
@@ -1741,7 +1723,8 @@ def puller_gilat_tasa_10min():
             return []
         if len(data) == 0:
             return []
-        bulk = coltn_mdb.initialize_unordered_bulk_op()
+        # data = keys['update_mongo']
+
         
         df = pd.DataFrame(data)
         df.columns = df.columns.str.replace("platform_", "")
@@ -1750,22 +1733,20 @@ def puller_gilat_tasa_10min():
         df2.columns = df2.columns.str.replace("platform_", "")
         try:
             df = df[df.columns.difference(list(df.filter(regex='mongo_').columns))]
-            print(df,'dfdfdfdf')
+            print(df,'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         except:
             print("error")
             
-            
-            
+        # bulk = coltn_mdb.initialize_unordered_bulk_op
+        
         data = df.to_json(orient="records")
         data = json.loads(data)
         datax = df2.to_json(orient="records")
         datax = json.loads(datax)
         for x in data:
             print(x,'DATAAAAAAAA')
-            x["Active"] = str(x["Active"])
-            bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
-                {"$set": {"puller": x, "status": str(x["Active"]), "active": 1}}
-            )
+            # x["Active"] = str(x["Active"])
+            coltn_mdb.update_one({"siteId": x["description"],"platform":platform_id_puller},{"$set": {"puller": x, "status": str(x["operationalState"]), "active": 1}})
             # bulk.find({"siteId": x["Name"],"platform":platform_id_puller}).update(
             #     {"$set": {"puller.DID": x["DID"],"puller.SN": x["SN"],"puller.Active": str(x["Active"]), "status": str(x["Active"]), "active": 1}}
             # )
@@ -1789,13 +1770,13 @@ def puller_gilat_tasa_10min():
             #     {"$set": {"active": 0}}
             # )
             
-            bulk.find({"siteId": x["old_Name"],"platform":platform_id_puller}).update(
+            bulk.find({"siteId": x["old_description"],"platform":platform_id_puller}).update(
                 {"$set": {"active": 0}}
             )
             dateSaveHistory(
                 {
                     "type": "delete_mongo",
-                    "principal_key": x["old_ID"],
+                    "principal_key": x["old_description"],
                     "changes": {"status": 0},
                 }
             )
@@ -1818,18 +1799,19 @@ def puller_gilat_tasa_10min():
             return []
 
         connection_engi = engine.connect()
-
+        # data = keys['delete_mysql']
+        # return 'ok'
         # time_send = time_send_now
         # formatted_date = str(time_send)
         for x in json.loads(data):
             sqlesn = (
                 "UPDATE "+table_mysql_puller+" SET status =0 WHERE "
                 # + str(x["old_Name"]) + "and
-                +"id_nms="+ str(x["old_ID"])
+                +"siteId="+ str(x["old_description"])
                 + " and platformId="+str(platform_id_puller)+" and status!=0"
             )
             print(sqlesn,'sqlesnsqlesnsqlesnsqlesn')
-            # connection_engi.execute(sqlesn)
+            connection_engi.execute(sqlesn)
             # dateSaveHistory({"type":"delete_mysql","principal_key":x['old_deviceID'],"changes":{'status':0}})
         return ["ok"]
 
@@ -1857,10 +1839,10 @@ def puller_gilat_tasa_10min():
     )
     rs = start()
     key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
+    mongo_data = extract_mongo(config, valid_puller_runing)
     old_data = extract_old(key_process, config, valid_puller_runing)
     platform_data = extract_platform(config, valid_puller_runing)
     save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
-
     comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
@@ -1872,11 +1854,15 @@ def puller_gilat_tasa_10min():
     key_redis_mongo = key_process+'-mongo-'+formatted_date
 
     primary_vs_mysql_equals = comparate_primary_mysql_equals(mysql_data,comp)
+    print("10")
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
+    print("11")
+
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
     insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals,extract_servicesplan_data)
     update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals,extract_servicesplan_data)
     delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
+    # return 'ok'
 
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
@@ -1891,13 +1877,16 @@ def puller_gilat_tasa_10min():
     delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
 
     # ##COMPARATE MONGODB
+    print("12")
 
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
+    print("13")
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
     save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
     insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
     update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
     delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
+    # delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
