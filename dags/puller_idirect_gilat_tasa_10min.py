@@ -122,7 +122,7 @@ def puller_gilat_tasa_10min():
             'Content-Type': 'text/xml',
             'Authorization': 'Basic YXBpczphcGlzMjAyMA=='
             },
-            "payload":"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"com.gilat.ngnms.server.services.ws.cfg.face\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <com:getCPEsByManagedGroup>\r\n            <managedGroupId>2</managedGroupId>\r\n            <lastIndex>50</lastIndex>\r\n        </com:getCPEsByManagedGroup>\r\n    </soapenv:Body>",
+            "payload":"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"com.gilat.ngnms.server.services.ws.cfg.face\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <com:getCPEsByManagedGroup>\r\n            <managedGroupId>2</managedGroupId>\r\n            <lastIndex>0</lastIndex>\r\n        </com:getCPEsByManagedGroup>\r\n    </soapenv:Body>",
             "user": "",
             "password": "",
             "timeout": 120,
@@ -804,11 +804,44 @@ def puller_gilat_tasa_10min():
                 response = json.loads(response)
        
             else:
-                response = requests.request("POST", config["url"], headers=config["headers"], data = config["payload"], verify=config["verify"],)
-                o = xmltodict.parse(response.text)
-                response=json.dumps(o)
-                response=json.loads(response)
-                response=response['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
+                
+                last_index = 0
+                has_mode = True
+                json_total = []
+                while has_mode:
+                    url = "http://192.168.36.50:8082/ws/cpeService?wsdl"
+
+                    payload = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"com.gilat.ngnms.server.services.ws.cfg.face\">\r\n    <soapenv:Header/>\r\n    <soapenv:Body>\r\n        <com:getCPEsByManagedGroup>\r\n            <managedGroupId>2</managedGroupId>\r\n            <lastIndex>"+str(last_index)+"</lastIndex>\r\n        </com:getCPEsByManagedGroup>\r\n    </soapenv:Body>"
+                    headers = {
+                    'Content-Type': 'text/xml',
+                    'Authorization': 'Basic YXBpczphcGlzMjAyMA=='
+                    }
+
+                    response = requests.request("POST", url, headers=headers, data = payload, verify=False)
+                    o = xmltodict.parse(response.text)
+                    json_data=json.dumps(o)
+                    json_data=json.loads(json_data)
+                    has_mode = json_data['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['hasMore']
+                    tt = json_data['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['totalNumber']
+                    print(tt,'has_modehas_modehas_mode')
+                    if(has_mode == 'true'):
+                        json_data=json_data['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
+                        json_total += json_data
+                        last_index += len(json_data) 
+                        print("while", last_index)
+                    else:
+                        json_data=json_data['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
+                        json_total += json_data
+                        last_index += len(json_data) 
+                        print("last while", last_index)
+                        has_mode = False
+                response = json_total
+  
+                # response = requests.request("POST", config["url"], headers=config["headers"], data = config["payload"], verify=config["verify"],)
+                # o = xmltodict.parse(response.text)
+                # response=json.dumps(o)
+                # response=json.loads(response)
+                # response=response['soap:Envelope']['soap:Body']['ns2:getCPEsByManagedGroupResponse']['return']['cpes']['ns3:CPE']
 
             if config["route_trunk"] == "":
                 # response = pd.DataFrame(response).astype(str)
