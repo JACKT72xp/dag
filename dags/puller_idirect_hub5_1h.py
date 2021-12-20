@@ -45,13 +45,13 @@ uri_2 = "mongodb://bifrostProdUser:Manaic321.@192.168.36.24:27017/bifrost"
 conection_2 = MongoClient(uri_2, connect=False)
 
 
-collection_puller = "idirect"
-table_mysql_puller = "bifrost_terminal"
+collection_puller = "idirect_test"
+table_mysql_puller = "bifrost_terminal_full"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "idirect"
-platform_name = "idirect_hub5_test_1h"
+platform_name = "idirect_hub5_1h_full"
 platform_id_puller = 108
-history_collection_mongo="history_changes"
+history_collection_mongo="history_changes_hub5"
 
 
 
@@ -78,9 +78,9 @@ r = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
-    "depends_on_past": True,
+    # "depends_on_past": True,
     "retry_delay": timedelta(seconds=20),
-    "start_date": datetime(2021, 12, 14, 16, 30),
+    # "start_date": datetime(2021, 12, 20, 18, 30),
     # "start_date": datetime(2021, 12, 14, 0, 0),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
@@ -88,7 +88,6 @@ default_args = {
     "max_active_runs": 1,
     "concurrency": 5,
     'trigger_rule': 'all_done',
-    
     # "schedule_interval": timedelta(minutes=10),
     "retries": 2,
 }
@@ -97,8 +96,8 @@ default_args = {
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
-@dag(default_args=default_args, schedule_interval="*/25 * * * *", tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+# @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
 def puller_idirect_hub5_1h():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
@@ -371,18 +370,6 @@ def puller_idirect_hub5_1h():
             return {"btId": str(id_response), "mysqlFlag": 1}
         except:
             return {"btId": 0, "mysqlFlag": 0}
-        
-        
-    def getDataMysqlByPrincipalKey(value):
-        # engine = create_engine("mysql://admin:Maniac321.@bifrosttiws-instance-1.cn4dord7rrni.us-west-2.rds.amazonaws.com/bifrostprod10dev")
-        query = f"select * from {table_mysql_puller} where id_nms ='{value}' and status != 0 and platformId = {platform_id_puller}"
-        df = pd.read_sql_query(query, engine)
-        try:
-            id_response = json.loads(df.to_json(orient="records"))[0]["id"]
-            return {"btId": str(id_response), "mysqlFlag": 1}
-        except:
-            return {"btId": 0, "mysqlFlag": 0}
-        
     # def getAllDataFromTerminals(data):
 
 
@@ -444,112 +431,6 @@ def puller_idirect_hub5_1h():
                 
         return data
 
-
-       
-    
-    @task()
-    def extract_template_orders(engine,config,valid_puller_runing):
-        if valid_puller_runing is None:
-            return []
-        query = "SELECT  * from template_order where platformId = "+str(config['platform_id'])
-        df_mysql_total = pd.read_sql_query(query, engine)
-        if df_mysql_total.empty:
-            return '[{}]'
-        # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
-        return df_mysql_total.to_json(orient="records")
-    
-    
-    @task()
-    def create_orders_of_alta(result,keys,template_orders):
-        key = keys['key_insert']
-        print(result,'resultresult')
-        print(key,'keykeykey')
-        print(template_orders,'template_orderstemplate_orders')
-        try:
-            data = getDataRedisByKey(key)
-            print(data,'datatatatata')
-        except:
-        # if len(data)==0:
-            return []
-        if len(data)==0:
-            return []
-            
-        # data_insert_send = pd.DataFrame(data)
-        # json_template= json.loads(template_orders)[0]
-        # input_template = json_template['input']
-        # print(json_template,' json_templatejson_templatejson_template')
-        # print(input_template,' input_templateinput_templateinput_templateinput_template')
-        # data_insert_send['input_message'] = input_template
-        # data_insert_send['output_message'] = "output"
-        # data_insert_send['functionId'] =  json_template['functionId']
-        # data_insert_send['userId_order'] = json_template['userId']
-        # data_insert_send['error_id_order'] = json_template['errorId']
-        # data_insert_send['transaction_id_order'] = json_template['transactionId']
-        # data_insert_send['created_at_order'] = time_send_now
-        # data_insert_send['order_statusId'] = 33
-        # data_insert_send['order_execution_count'] = 1
-        # data_insert_send['order_input_typeId'] = 44
-        # data_insert_send['impact_typeId'] = 34
-        # data_insert_send['status_order'] = 1
-        # data_insert_send['bkp'] = 3
-        
-        # data_insert_send['btId_get'] = data_insert_send['platform_'+config['primary_join_cols']['platform']].map(
-        #                 lambda eve: getDataMysqlByPrincipalKey(eve)['btId']
-        #             )
-        
-        
-        # cols_insert_order = ['btId_get','input_message','output_message','functionId','userId_order','error_id_order','transaction_id_order','created_at_order','order_statusId','order_execution_count','order_input_typeId','impact_typeId','status_order','bkp']
-        # # data_insert_send.rename(columns={"platform_terminalStatus": "statusTerminal"}, inplace = True)
-        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
-        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
-        # # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
-        # # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
-        
-        
-        
-        # json_data_insert = json.loads(data_insert_send[cols_insert_order].to_json(orient="records"))
-        # print(json_data_insert)
-        # for jdt in json_data_insert:
-        #     print(jdt,'jdtjdtjdtjdtjdtjdt')
-        
-        #mnos_order=MnosOrder()
-        # mnos_order.btId = btId
-        # mnos_order.vnoId = vnoId
-        # mnos_order.order_statusId = 33
-        # mnos_order.order_execution_count = 1
-        # mnos_order.order_input_typeId = 44
-        # mnos_order.impact_typeId = 34
-        # mnos_order.bkp = 1
-        # mnos_order.status = 1
-        # mnos_order.save()
-
-        # mnos_order_detail=MnosOrderDetail()
-        # mnos_order_detail.created_at = created_at
-        # mnos_order_detail.status = 1
-        # mnos_order_detail.orderId = mnos_order.id
-        # mnos_order_detail.detail = "RECOVERY"
-        # mnos_order_detail.output_message = "RECOVERY"
-        # mnos_order_detail.input_message ="RECOVERY"
-        # mnos_order_detail.input_date = created_at
-        # mnos_order_detail.save()
-        
-        
-        # data_insert_send = data_insert_send[['platform_esn','platform_deviceID','platform_latitude','platform_longitude','platform_terminalStatus','platform_esn']]
-        # data_insert_send.rename(columns={"platform_deviceID": "siteId"}, inplace = True)
-        # data_insert_send.rename(columns={"platform_latitude": "latitud"}, inplace = True)
-        # data_insert_send.rename(columns={"platform_longitude": "longitud"}, inplace = True)
-        # data_insert_send.rename(columns={"platform_terminalStatus": "statusTerminal"}, inplace = True)
-        # data_insert_send.rename(columns={"platform_esn": "esn"}, inplace = True)
-        # data_insert_send['platformId'] = 1
-        # data_insert_send['status'] = 1
-        # data_insert_send.to_sql('bifrost_terminal', engine, if_exists='append', index=False)
-        
-        
-        return ['VALID ORDERS']
-
-
-
-
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_old(config, data, key_process):
@@ -558,19 +439,19 @@ def puller_idirect_hub5_1h():
         del df["concat_key_generate"]
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
-        redis_cn.set("1-"+platform_name, data)
+        # redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        r.set("1-"+platform_name, data)
         return {"status": True, "data": ""}
 
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        # redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
         try:
             data_send = json.dumps(data)
         except:
             data_send = data
-        redis_cn.set("puller_"+platform_name, data_send)
+        r.set("puller_"+platform_name, data_send)
         return {"status": True, "data": ""}
 
     @task()
@@ -701,10 +582,10 @@ def puller_idirect_hub5_1h():
         if valid_puller_runing is None:
             return []
         try:
-            redis_cn = redis.Redis(
-                host="10.152.183.45", port="6379", password="l2TCrRgvtX"
-            )
-            response = redis_cn.get("1-"+platform_name)
+            # redis_cn = redis.Redis(
+            #     host="10.152.183.45", port="6379", password="l2TCrRgvtX"
+            # )
+            response = r.get("1-"+platform_name)
             response = json.loads(response)
             df_old = pd.DataFrame(response)
 
@@ -1018,8 +899,10 @@ def puller_idirect_hub5_1h():
                         # print(response_terminal)
                         data_send.append(response_terminal['data'])
                         cc+=1
+                        
                     except:
                         cc+=1
+                        
                     print(cc,'/',tt)
                 response = data_send
                 
@@ -1057,9 +940,9 @@ def puller_idirect_hub5_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms',modeltype,inroutegroupId,networkId,ms.code as 'crmId'  FROM "
             + str(config["mysql_table"])
-            + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
+            + "  left join mnos_vno_beam_sp ms on "+table_mysql_puller+".servicesPlanId=ms.servicePlanId "
             + " where "+table_mysql_puller+".status != 0 and  "+table_mysql_puller+".platformId = "
             + str(config["platform_id"])
         )
@@ -1067,7 +950,10 @@ def puller_idirect_hub5_1h():
         df_mysql_total = pd.read_sql_query(query, engine)
         if df_mysql_total.empty:
             return "[{}]"
-        # df_mysql_total['id_nms'] = df_mysql_total['id_nms'].
+        
+        df_mysql_total['id_nms'] = df_mysql_total['id_nms'].astype(str)
+
+        #rd df_mysql_total = df_mysql_total.astype(str)
         df_mysql_total = df_mysql_total[df_mysql_total.columns].add_prefix("mysql_")
         # df_mysql_total = generateConcatKey(df_mysql_total,[config['primary_join_cols']['mysql']])
         df_mysql_total = generateConcatKey(
@@ -1084,7 +970,7 @@ def puller_idirect_hub5_1h():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  id as 'servicePlanIdTable',name as 'crmId' FROM "+table_mysql_serviceplan + " where status = 1 and  platformId = "+ str(config["platform_id"])
+            "SELECT  (select id from bifrost_customer bc where bc.vnoId=vbsp.vnoId limit 1)  as 'customerIdGetOk', vbsp.servicePlanId as 'servicePlanIdTable',code as 'crmId',mv.plattformVlanId as 'vlanIdGet',vbsp.vnoId as 'vnoIdGetOk', vbsp.beamId as 'beamIdGetOk' FROM "+table_mysql_serviceplan + " inner join mnos_vno_beam_sp vbsp on "+table_mysql_serviceplan + ".id = vbsp.servicePlanId inner join gen_vno gv ON vbsp.vnoId =gv.id inner join mnos_vlan mv on gv.id=mv.vnoId     where  "+table_mysql_serviceplan + ".status = 1 and  "+table_mysql_serviceplan + ".platformId = "+ str(config["platform_id"])
         )
         print(query)
         df_mysql = pd.read_sql_query(query, engine)
@@ -1686,6 +1572,14 @@ def puller_idirect_hub5_1h():
             return []
 
         data_insert_send = pd.DataFrame(data)
+        data_insert_send_g = pd.DataFrame(data)
+        
+        data_insert_send['nroVlans'] = data_insert_send['platform_VLans'].apply(lambda x : len(x)).astype(int)
+        data_insert_send['vlanIdGet'] = data_insert_send['platform_VLans'].apply(lambda x : x[0]['VLanID'] if len(x)==1 else x[1]['VLanID']).astype(str)
+    
+    
+        # data_insert_send = pd.DataFrame(data)
+        # data_insert_send_g = pd.DataFrame(data)
         data_insert_send = data_insert_send[
             [
                 "platform_SN",
@@ -1699,7 +1593,9 @@ def puller_idirect_hub5_1h():
                 "platform_NetworkID",
                 "platform_Lat",
                 "platform_Lon",
-                "platform_SERVICEPLANCRMID"
+                "platform_SERVICEPLANCRMID",
+                "nroVlans",
+                "vlanIdGet"
             ]
         ]
         data_insert_send.rename(columns={"platform_Name": "siteId"}, inplace=True)
@@ -1721,24 +1617,61 @@ def puller_idirect_hub5_1h():
         data_insert_send.rename(columns={"platform_NetworkID": "networkId"}, inplace=True)
         data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
         data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
+        data_insert_send['technologyId'] = 2
+        data_insert_send['forecastId'] = 29
+        data_insert_send['hubId'] = 44
+        
+        ###########
+        
         
         data_insert_send.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
+        print(data_insert_send_g ,'data_insert_send_gdata_insert_send_g')
+        print(data_insert_send_g.columns ,'columns data_insert_send_gdata_insert_send_gdata_insert_send_g')
         
+        #####################
         
-        data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
-        data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
-
-
+        list_sp['vlanIdGet'] =list_sp['vlanIdGet'].astype(str)
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace("nan", "0") #DEFECTO
+                    )
+        data_insert_send.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        print(data_insert_send, 'dataaa ok ok ')
+        print(list_sp.set_index(['crmId','vlanIdGet']),'xxxxxxxxxx')
+        data_insert_send = data_insert_send.join(list_sp.set_index(['crmId','vlanIdGet']), on=['crmId','vlanIdGet'])
+        print(data_insert_send, 'data joinn')
+        
+        # data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
+            #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
+        data_insert_send.loc[data_insert_send.servicePlanIdTable == "0" , ['servicePlanIdTable', 'status']] = '0', 3
+        # data.loc[data.nroVlans>=3, ['servicePlanIdTable', 'platform_status']] = '1111', 3
+        data_insert_send['vnoId'] = data_insert_send["vnoIdGetOk"].fillna('180')
+        data_insert_send['beamId'] = data_insert_send["beamIdGetOk"].fillna('0')
+        data_insert_send['customerId'] = data_insert_send["customerIdGetOk"].fillna('0')
+        # data['customerIdGetOk'] = data["beamIdGetOk"].fillna('0')
+        data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna('1171')
         data_insert_send.rename(columns={"servicePlanIdTable": "servicesPlanId"}, inplace=True)
+        del data_insert_send['nroVlans']
+        del data_insert_send['vlanIdGet']
+        del data_insert_send['vnoIdGetOk']
+        del data_insert_send['beamIdGetOk']
+        del data_insert_send['customerIdGetOk']
+        
+        
+        # data_insert_send = data_insert_send.join(list_sp.set_index('crmId'), on='crmId')
+        # data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
+        # data_insert_send.loc[data_insert_send.servicePlanIdTable == 1171, ['servicePlanIdTable', 'status']] = '', 3
+
+
         del data_insert_send['crmId']
         
         print(data_insert_send,'data_insert_senddata_insert_send')
         data_insert_send.to_sql(
             table_mysql_puller, engine, if_exists="append", index=False
         )
-        
         # dateSaveHistoryInsert(data)
         return "ok"
 
@@ -1755,6 +1688,10 @@ def puller_idirect_hub5_1h():
             return []
         connection_engi = engine.connect()
         data = pd.DataFrame(data)
+        data['nroVlans'] = data['platform_VLans'].apply(lambda x : len(x)).astype(int)
+        data['vlanIdGet'] = data['platform_VLans'].apply(lambda x : x[0]['VLanID'] if len(x)==1 else x[1]['VLanID']).astype(str)
+        # print(data[['nroVlans','vlanIdGet']],' XXXXX')
+        # return 'OK'
         data["updated_at_send"] = time_send_now
         data["platform_Active"] = data["platform_Active"].astype(str)
         data["platform_status"] = 1
@@ -1787,7 +1724,7 @@ def puller_idirect_hub5_1h():
                     "mysql_latitud",
                     "mysql_longitud",
 
-                    "mysql_id_nms",
+                    "mysql_id_nms"
                     
                     
                 ]
@@ -1795,7 +1732,6 @@ def puller_idirect_hub5_1h():
             .iloc[0:]
             .to_dict("record")
         )
-        print(data.columns,'colls')
         
         datax = data[
                 [
@@ -1835,30 +1771,52 @@ def puller_idirect_hub5_1h():
                     "platform_status",
                     "platform_Name",
                     "platform_ID",
+                    "nroVlans",
+                    "vlanIdGet"
                 ]
             ]
         
-        
+        #1/SACAR EL DATO DE LA COLUMNA CODE, PLATAFORMA GENERA BIEN - CAMBIAR EL EXTRACT-SERVICEPLAN Y EN MYSQL AGREGAR LA RELACION CON LA INTERMEDIA PARA LAS VLAN Y VNOIDA
         
         datax.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
-        
+        list_sp['vlanIdGet'] =list_sp['vlanIdGet'].astype(str)
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace(".0", "")
+                    )
+        list_sp['vlanIdGet'] = list_sp['vlanIdGet'].map(
+                        lambda eve: eve.replace("nan", "0") #DEFECTO
+                    )
         data.rename(columns={"platform_SERVICEPLANCRMID": "crmId"}, inplace=True)
+        print(data, 'dataaa ok ok ')
+        print(list_sp.set_index(['crmId','vlanIdGet']),'xxxxxxxxxx')
+        data = data.join(list_sp.set_index(['crmId','vlanIdGet']), on=['crmId','vlanIdGet'])
+        print(data, 'data joinn')
         
-        data = data.join(list_sp.set_index('crmId'), on='crmId')
-        data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
+        # data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna(1171)
             #   data_insert_send['servicePlanIdTable'] = data_insert_send["servicePlanIdTable"].fillna(1171)
-        data.loc[data.servicePlanIdTable == 1171, ['servicePlanIdTable', 'platform_status']] = '', 3
+        data.loc[data.servicePlanIdTable == "0" , ['servicePlanIdTable', 'platform_status']] = '0', 3
+        # data.loc[data.nroVlans>=3, ['servicePlanIdTable', 'platform_status']] = '1111', 3
+        data['vnoIdGetOk'] = data["vnoIdGetOk"].fillna('180')
+        data['beamIdGetOk'] = data["beamIdGetOk"].fillna('0')
+        data['customerIdGetOk'] = data["customerIdGetOk"].fillna('0')
+        # data['customerIdGetOk'] = data["beamIdGetOk"].fillna('0')
+        data['servicePlanIdTable'] = data["servicePlanIdTable"].fillna('1171')
+        del data['nroVlans']
+        del data['vlanIdGet']
+        # del data['vnoId']
+        print(data,'daaaaaaaaaaaaaaaa')
+        # print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
 
-        print(data['crmId'].drop_duplicates(),' dataxdataxdataxdataxdatax')
         args = (data.iloc[0:].to_dict("record"))
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}            SET statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
+        # return ['xxO']
+        qry=f"             UPDATE {table_mysql_puller}            SET technologyId=2,forecastId=29,hubId=44, statusTerminal=:platform_Active ,         esn=:platform_SN,         did=:platform_DID,         updated_at=:updated_at_send,modeltype=:platform_ModelType, inroutegroupId=:platform_InrouteGroupID, networkId=:platform_NetworkID, latitud=:platform_Lat, longitud=:platform_Lon, fromPuller=1, servicesPlanId=:servicePlanIdTable , status=:platform_status,siteId = :platform_Name ,vnoId = :vnoIdGetOk,beamId = :beamIdGetOk,customerId= :customerIdGetOk  WHERE id_nms=:platform_ID and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
-        # dateSaveHistoryUpdate(args_send)
+        dateSaveHistoryUpdate(args_send)
         return ["ok"]
 
     @task()
@@ -2034,7 +1992,8 @@ def puller_idirect_hub5_1h():
         # dag=dag
     )
     rs = start()
-    key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
+    # key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])
+    key_process = str(config["platform_id"]) + "-" + str(config["platform_name"])+ str(config["mongo_collection"])
     old_data = extract_old(key_process, config, valid_puller_runing)
     platform_data = extract_platform(config, valid_puller_runing)
     save_in_redis_data_platform_data = save_in_redis_data_platform(platform_data)
@@ -2042,7 +2001,6 @@ def puller_idirect_hub5_1h():
     comp = comparate_old_vs_new(platform_data, old_data)
     mysql_data = extract_mysql(engine, config, valid_puller_runing)
     mongo_data = extract_mongo(config, valid_puller_runing)
-    template_orders = extract_template_orders(engine,config,valid_puller_runing)
     extract_servicesplan_data = extract_servicesplan(engine,config, valid_puller_runing)
     #COMPARATE MYSQL
     time_send = datetime.now()
@@ -2054,32 +2012,26 @@ def puller_idirect_hub5_1h():
     secondary_vs_mysql_equals = comparate_secondary_mysql_equals(mysql_data,primary_vs_mysql_equals,comp)
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
     insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals,extract_servicesplan_data)
-    create_orders_of_alta_equals = create_orders_of_alta(insert_data_mysql_equals,save_in_redis_result_equals,template_orders)
     update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals,extract_servicesplan_data)
     delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
 
-    # # save_key_in_history_puller_cron_equals = save_key_in_history_puller_cron(key_redis_mysql+'-equals','mysql')
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
     save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
-    # # save_key_in_history_puller_cron_only_platform = save_key_in_history_puller_cron(key_redis_mysql+'-platform','mysql')
     insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform,extract_servicesplan_data)
-    create_orders_of_alta_only_platform = create_orders_of_alta(insert_data_mysql_only_platform,save_in_redis_result_only_platform,template_orders)
     update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform,extract_servicesplan_data)
     delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
     save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
     delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
-    # # save_key_in_history_puller_cron_only_old = save_key_in_history_puller_cron(key_redis_mysql+'-old','mysql')
 
     # ##COMPARATE MONGODB
 
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
     save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    # # save_key_in_history_puller_cron_equals_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
     insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
     update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
     delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
@@ -2087,14 +2039,12 @@ def puller_idirect_hub5_1h():
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
     save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
-    ## save_key_in_history_puller_cron_only_platform_mongo = save_key_in_history_puller_cron(key_redis_mongo+'-platform','mongo')
     insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
     update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
     delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
     save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
-    ## save_key_in_history_puller_cron_only_old_mongo = save_key_in_history_puller_cron(key_redis_mongo,'mongo')
     delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     save_in_history_mongo_puller = save_in_history_mongo(config)
@@ -2109,13 +2059,14 @@ def puller_idirect_hub5_1h():
     rs >>Label("Extrae la data de mysql") >> mysql_data
     rs >>Label("Extrae la data de mongodb") >> mongo_data
     rs >>Label("Extrae la data de la imagen anterior") >> old_data
-    rs >>Label("Extrae las plantillas para las ordenes") >> template_orders
     rs >>Label("Extrae la lista de servicesPlan para obtener su Id") >> extract_servicesplan_data
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals >> create_orders_of_alta_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform >> create_orders_of_alta_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
     rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
 
+
 # [START dag_invocation]
 puller_idirect_hub5_1h_ = puller_idirect_hub5_1h()
 # [END dag_invocation]
+                    
