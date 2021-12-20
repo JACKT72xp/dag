@@ -49,7 +49,7 @@ collection_puller = "idirect"
 table_mysql_puller = "bifrost_terminal"
 table_mysql_serviceplan = "mnos_serviceplan"
 tag_airflow = "idirect"
-platform_name = "idirect_arg_tests_1h"
+platform_name = "idirect_arg_1h_full"
 platform_id_puller = 38
 history_collection_mongo="history_changes"
 
