@@ -1508,7 +1508,7 @@ def puller_gilat_tasa_10min():
         return resp
 
     @task()
-    def processDataInsertMysql(keys,data_servicesplan):
+    def processDataInsertMysqlGilat(keys,data_servicesplan):
         key = keys["key_insert"]
         try:
             data = getDataRedisByKey(key)
@@ -1552,7 +1552,7 @@ def puller_gilat_tasa_10min():
         return "ok"
 
     @task()
-    def processDataUpdateMysql(engine, keys,data_servicesplan):
+    def processDataUpdateMysqlGilat(engine, keys,data_servicesplan):
         key = keys["key_update"]
         try:
             data = getDataRedisByKey(key)
@@ -1665,7 +1665,7 @@ def puller_gilat_tasa_10min():
         return ["ok"]
 
     @task()
-    def processDataInsertMongo(keys):
+    def processDataInsertMongoGilat(keys):
 
         key = keys["key_insert"]
         try:
@@ -1715,7 +1715,7 @@ def puller_gilat_tasa_10min():
         return [keys]
 
     @task()
-    def processDataUpdateMongo(keys):
+    def processDataUpdateMongoGilat(keys):
         key = keys["key_update"]
         try:
             data = getDataRedisByKey(key)
@@ -1756,7 +1756,7 @@ def puller_gilat_tasa_10min():
         return [keys]
 
     @task()
-    def processDataDeleteMongo(keys):
+    def processDataDeleteMongoGilat(keys):
         key = keys["key_delete"]
         try:
             data = getDataRedisByKey(key)
@@ -1786,7 +1786,7 @@ def puller_gilat_tasa_10min():
         return [keys]
 
     @task()
-    def processDataDeleteMysql(engine, keys):
+    def processDataDeleteMysqlGilat(engine, keys):
         key = keys["key_delete"]
         try:
             data = getDataRedisByKey(key)
@@ -1858,45 +1858,44 @@ def puller_gilat_tasa_10min():
     print("11")
 
     save_in_redis_result_equals = save_in_redis_data_equals_api(config,secondary_vs_mysql_equals,key_redis_mysql)
-    insert_data_mysql_equals = processDataInsertMysql(save_in_redis_result_equals,extract_servicesplan_data)
-    update_data_mysql_equals = processDataUpdateMysql(engine,save_in_redis_result_equals,extract_servicesplan_data)
-    delete_data_mysql_equals = processDataDeleteMysql(engine,save_in_redis_result_equals)
+    insert_data_mysql_equals = processDataInsertMysqlGilat(save_in_redis_result_equals,extract_servicesplan_data)
+    update_data_mysql_equals = processDataUpdateMysqlGilat(engine,save_in_redis_result_equals,extract_servicesplan_data)
+    delete_data_mysql_equals = processDataDeleteMysqlGilat(engine,save_in_redis_result_equals)
     # return 'ok'
 
 
     primary_vs_mysql_only_platform= comparate_primary_mysql_only_platform(mysql_data,comp)
     secondary_vs_mysql_only_platform = comparate_secondary_mysql_only_platform(mysql_data,primary_vs_mysql_only_platform,comp)
     save_in_redis_result_only_platform = save_in_redis_data_only_platform_api(config,secondary_vs_mysql_only_platform,key_redis_mysql)
-    insert_data_mysql_only_platform = processDataInsertMysql(save_in_redis_result_only_platform,extract_servicesplan_data)
-    update_data_mysql_only_platform = processDataUpdateMysql(engine,save_in_redis_result_only_platform,extract_servicesplan_data)
-    delete_data_mysql_only_platform = processDataDeleteMysql(engine,save_in_redis_result_only_platform)
+    insert_data_mysql_only_platform = processDataInsertMysqlGilat(save_in_redis_result_only_platform,extract_servicesplan_data)
+    update_data_mysql_only_platform = processDataUpdateMysqlGilat(engine,save_in_redis_result_only_platform,extract_servicesplan_data)
+    delete_data_mysql_only_platform = processDataDeleteMysqlGilat(engine,save_in_redis_result_only_platform)
 
     primary_vs_mysql_only_old= comparate_primary_mysql_only_data_old(mysql_data,comp)
     save_in_redis_result_only_old = save_in_redis_data_only_old_api(config,primary_vs_mysql_only_old,key_redis_mysql)
-    delete_data_mysql_only_old = processDataDeleteMysql(engine,save_in_redis_result_only_old)
+    delete_data_mysql_only_old = processDataDeleteMysqlGilat(engine,save_in_redis_result_only_old)
 
     # ##COMPARATE MONGODB
     print("12")
 
     primary_vs_mongo_equals = comparate_primary_mongo_equals(mongo_data,comp)
-    print("13")
     secondary_vs_mongo_equals = comparate_secondary_mongo_equals(mongo_data,primary_vs_mongo_equals,comp)
     save_in_redis_result_mongo_equals = save_in_redis_data_equals_mongo_api(config,secondary_vs_mongo_equals,key_redis_mongo+'-equals')
-    insert_data_mongo_equals = processDataInsertMongo(save_in_redis_result_mongo_equals)
-    update_data_mongo_equals = processDataUpdateMongo(save_in_redis_result_mongo_equals)
-    delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
-    # delete_data_mongo_equals = processDataDeleteMongo(save_in_redis_result_mongo_equals)
+    insert_data_mongo_equals = processDataInsertMongoGilat(save_in_redis_result_mongo_equals)
+    update_data_mongo_equals = processDataUpdateMongoGilat(save_in_redis_result_mongo_equals)
+    delete_data_mongo_equals = processDataDeleteMongoGilat(save_in_redis_result_mongo_equals)
+    # delete_data_mongo_equals = processDataDeleteMongoGilat(save_in_redis_result_mongo_equals)
 
     primary_vs_mongo_only_platform = comparate_primary_mongo_only_platform(mongo_data,comp)
     secondary_vs_mongo_only_platform = comparate_secondary_mongo_only_platform(mongo_data,primary_vs_mongo_only_platform,comp)
     save_in_redis_result_mongo_only_platform = save_in_redis_data_only_platform_mongo_api(config,secondary_vs_mongo_only_platform,key_redis_mongo)
-    insert_data_mongo_onlyplatform = processDataInsertMongo(save_in_redis_result_mongo_only_platform)
-    update_data_mongo_onlyplatform = processDataUpdateMongo(save_in_redis_result_mongo_only_platform)
-    delete_data_mongo_onlyplatform = processDataDeleteMongo(save_in_redis_result_mongo_only_platform)
+    insert_data_mongo_onlyplatform = processDataInsertMongoGilat(save_in_redis_result_mongo_only_platform)
+    update_data_mongo_onlyplatform = processDataUpdateMongoGilat(save_in_redis_result_mongo_only_platform)
+    delete_data_mongo_onlyplatform = processDataDeleteMongoGilat(save_in_redis_result_mongo_only_platform)
 
     primary_vs_mongo_only_data_old = comparate_primary_mongo_only_old(mongo_data,comp)
     save_in_redis_result_mongo_only_old = save_in_redis_data_only_old_mongo_api(config,primary_vs_mongo_only_data_old,key_redis_mongo)
-    delete_data_mongo_onlyold = processDataDeleteMongo(save_in_redis_result_mongo_only_old)
+    delete_data_mongo_onlyold = processDataDeleteMongoGilat(save_in_redis_result_mongo_only_old)
     save_in_redis_end = save_in_redis_data_old(config,platform_data,key_process)
     save_in_history_mongo_puller = save_in_history_mongo(config)
     save_in_history_mysql_puller = save_in_history_mysql(engine)
