@@ -1752,7 +1752,7 @@ def puller_gilat_tasa_10min():
             # )
 
         # bulk.execute()
-        dateSaveHistoryUpdateMongo(datax)
+        # dateSaveHistoryUpdateMongo(datax)
         return [keys]
 
     @task()
