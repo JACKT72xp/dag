@@ -61,7 +61,7 @@ db_2 = conection_2["bifrost"]
 db_ = conection["bifrost"]
 coltn_mdb = db_[collection_puller]
 
-r = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
+r = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
 
 # import confluent_kafka
 # from confluent_kafka import Producer
@@ -401,14 +401,14 @@ def puller_gilat_tasa_10min():
         del df["concat_key_generate"]
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
         redis_cn.set("1-"+platform_name, data)
         return {"status": True, "data": ""}
 
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host="192.168.29.20", port="6379", password="bCL3IIuAwv")
+        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
         try:
             data_send = json.dumps(data)
         except:
@@ -545,7 +545,7 @@ def puller_gilat_tasa_10min():
             return []
         try:
             redis_cn = redis.Redis(
-                host="192.168.29.20", port="6379", password="bCL3IIuAwv"
+                host="10.152.183.45", port="6379", password="l2TCrRgvtX"
             )
             response = redis_cn.get("1-"+platform_name)
             response = json.loads(response)
