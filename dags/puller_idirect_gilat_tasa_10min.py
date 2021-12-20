@@ -1741,8 +1741,9 @@ def puller_gilat_tasa_10min():
                 "active": 1,
                 "siteId": x["description"],
             }
-            elements.append(element)
-        coltn_mdb.insert_many(elements)
+            # elements.append(element)
+            coltn_mdb.insert(elements)
+        # coltn_mdb.insert_many(elements)
         # dateSaveHistoryInsertMongo(elements)
 
         return [keys]
