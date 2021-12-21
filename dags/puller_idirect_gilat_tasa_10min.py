@@ -79,8 +79,8 @@ r = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
-    # "retry_delay": timedelta(seconds=20),
-    # "start_date": datetime(2021, 12, 2, 20, 0),
+    "retry_delay": timedelta(seconds=20),
+    "start_date": days_ago(1),
     "max_active_runs": 1,
     "concurrency": 1,
     'trigger_rule': 'all_done',
@@ -92,7 +92,7 @@ default_args = {
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval=None, tags=[tag_airflow])
 # @dag(default_args=default_args, schedule_interval="*/15 * * * *", tags=[tag_airflow])
 def puller_gilat_tasa_10min():
 
