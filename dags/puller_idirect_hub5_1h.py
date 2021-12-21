@@ -97,7 +97,7 @@ default_args = {
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(1), tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(1), tags=[tag_airflow],catchup=False)
 # @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
 def puller_idirect_hub5_1h():
 
@@ -2061,8 +2061,10 @@ def puller_idirect_hub5_1h():
     rs >>Label("Extrae la data de mongodb") >> mongo_data
     rs >>Label("Extrae la data de la imagen anterior") >> old_data
     rs >>Label("Extrae la lista de servicesPlan para obtener su Id") >> extract_servicesplan_data
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
-    rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> 
+    comp,mysql_data >> [primary_vs_mysql_equals >> secondary_vs_mysql_equals >>  save_in_redis_result_equals >> insert_data_mysql_equals,update_data_mysql_equals,delete_data_mysql_equals,primary_vs_mysql_only_platform >> secondary_vs_mysql_only_platform >> save_in_redis_result_only_platform >> insert_data_mysql_only_platform,update_data_mysql_only_platform,delete_data_mysql_only_platform ,  primary_vs_mysql_only_old >> save_in_redis_result_only_old >> delete_data_mysql_only_old ] >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
+    # rs >> [platform_data >> save_in_redis_data_platform_data,old_data,extract_servicesplan_data] >> 
+    comp,mongo_data >> [primary_vs_mongo_equals >> secondary_vs_mongo_equals >> save_in_redis_result_mongo_equals >> insert_data_mongo_equals,update_data_mongo_equals,delete_data_mongo_equals , primary_vs_mongo_only_platform >> secondary_vs_mongo_only_platform >> save_in_redis_result_mongo_only_platform >> insert_data_mongo_onlyplatform,update_data_mongo_onlyplatform,delete_data_mongo_onlyplatform, primary_vs_mongo_only_data_old >> save_in_redis_result_mongo_only_old >> delete_data_mongo_onlyold]  >> save_in_redis_end >> [save_in_history_mongo_puller,save_in_history_mysql_puller] >> end
 
     # [END main_flow]
 
