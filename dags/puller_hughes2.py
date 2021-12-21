@@ -64,7 +64,7 @@ r = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX"
 default_args = {
     'owner': 'airflow',
     'retry_delay': timedelta(seconds=30),
-    "start_date": datetime(2021, 12, 14, 16, 30),
+    "start_date": datetime(2021, 12, 21, 19, 10),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
