@@ -1949,7 +1949,7 @@ def puller_gilat_tasa_10min():
     checkTask >> rs
     rs >> [platform_data,mysql_data,mongo_data,old_data,extract_servicesplan_data]
     # rs >>Label("Extrae la data de plataforma") >> platform_data
-    # rs >>Label("Extrae la data de mysql") >> mysql_data
+    # rs >>Label("Extrae la data de mysql ") >> mysql_data
     # rs >>Label("Extrae la data de mongodb") >> mongo_data
     # rs >>Label("Extrae la data de la imagen anterior") >> old_data
     # rs >>Label("Extrae la lista de servicesPlan para obtener su Id") >> extract_servicesplan_data
