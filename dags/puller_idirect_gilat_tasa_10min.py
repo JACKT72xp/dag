@@ -83,6 +83,7 @@ default_args = {
     # "start_date": datetime(2021, 12, 2, 20, 0),
     "max_active_runs": 1,
     "concurrency": 5,
+    "wait_for_downstream":True,
     'trigger_rule': 'all_done',
     "retries": 5,
 }
