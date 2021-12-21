@@ -64,7 +64,7 @@ r = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    p
 default_args = {
     'owner': 'airflow',
     'retry_delay': timedelta(seconds=30),
-    "start_date": datetime(2021, 12, 21, 19, 10),
+    "start_date": datetime(2021, 12, 21, 18, 10),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
@@ -80,7 +80,7 @@ time_send_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # [START instantiate_dag]
 # @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes_2'])
-@dag(default_args=default_args, schedule_interval='*/15 * * * *',  tags=['hughes_2'])
+@dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes_2'])
 def puller_hughes_2():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
