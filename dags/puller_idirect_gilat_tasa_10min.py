@@ -139,10 +139,10 @@ def puller_gilat_tasa_10min():
                 "old": "description",
             },
             "secondary_join_cols": {
-                "mysql": ["mysql_statusTerminal","mysql_suscriberId","mysql_crmId"],
-                "mongo": ["mongo_operationalState","mongo_cpeId-subscriberId","mongo_slaName"],
-                "platform": ["platform_operationalState","platform_cpeId-subscriberId","platform_slaName"],
-                "old": ["old_operationalState","old_cpeId-subscriberId","old_slaName"],
+                "mysql": ["mysql_statusTerminal","mysql_suscriberId","mysql_crmId","mysql_mac"],
+                "mongo": ["mongo_operationalState","mongo_cpeId-subscriberId","mongo_slaName","mongo_macAddress"],
+                "platform": ["platform_operationalState","platform_cpeId-subscriberId","platform_slaName","platform_macAddress"],
+                "old": ["old_operationalState","old_cpeId-subscriberId","old_slaName","old_macAddress"],
           
                 # "mysql": ["mysql_siteId", "mysql_esn", "mysql_did","mysql_modeltype","mysql_inroutegroupId","mysql_networkId","mysql_latitud","mysql_longitud","mysql_crmId","mysql_statusTerminal"],
                 # "mongo": ["mongo_Name", "mongo_SN", "mongo_DID","mongo_ModelType","mongo_InrouteGroupID","mongo_NetworkID","mongo_Lat","mongo_Lon","mongo_SERVICEPLANCRMID","mongo_Active"],
@@ -709,6 +709,7 @@ def puller_gilat_tasa_10min():
                 "puller.description": True,
                 "puller.cpeId": True,
                 "puller.slaName": True,
+                "puller.macAddress": True,
                 "status": True
             },
         )
@@ -921,7 +922,7 @@ def puller_gilat_tasa_10min():
         if valid_puller_runing is None:
             return []
         query = (
-            "SELECT  "+table_mysql_puller+".id,suscriberId ,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId'  FROM "
+            "SELECT  "+table_mysql_puller+".id,suscriberId ,CAST(latitud AS CHAR(100)) as 'latitud',CAST(longitud AS CHAR(100)) as 'longitud' ,siteId,esn,statusTerminal,did,CAST(id_nms AS CHAR(100)) as 'id_nms' ,modeltype,inroutegroupId,networkId,ms.name as 'crmId',mac  FROM "
             + str(config["mysql_table"])
             + " left join mnos_serviceplan ms on "+table_mysql_puller+".servicesPlanId=ms.id "
             + " where "+table_mysql_puller+".status != 0 and  "+table_mysql_puller+".platformId = "
@@ -1559,15 +1560,21 @@ def puller_gilat_tasa_10min():
                 "platform_operationalState",
                 "platform_cpeId-subscriberId",
                 "platform_slaName",
+                "platform_macAddress"
             ]
         ]
         data_insert_send["platformId"] = platform_id_puller
         data_insert_send["status"] = 1
         data_insert_send["fromPuller"] = 1
+        data_insert_send["vnoId"] = 158
+        data_insert_send["technologyId"] = 2
+        data_insert_send["forecastId"] = 77
+        data_insert_send["beamId"] = 88
         
         data_insert_send.rename(columns={"platform_description": "siteId"}, inplace=True)
         data_insert_send.rename(columns={"platform_operationalState": "statusTerminal"}, inplace=True)
         data_insert_send.rename(columns={"platform_cpeId-subscriberId": "suscriberId"}, inplace=True)
+        data_insert_send.rename(columns={"platform_macAddress": "mac"}, inplace=True)
         # data_insert_send.rename(columns={"platform_Lat": "latitud"}, inplace=True)
         # data_insert_send.rename(columns={"platform_Lon": "longitud"}, inplace=True)
         list_sp = pd.DataFrame(data_servicesplan)
@@ -1671,6 +1678,7 @@ def puller_gilat_tasa_10min():
                     "platform_slaName",
                     "platform_status",
                     "updated_at_send",
+                    "platform_macAddress"
                 ]
             ]
         
@@ -1691,7 +1699,7 @@ def puller_gilat_tasa_10min():
         # print(datax[['servicePlanIdTable','platform_Lon','concat_key_generate_secondary_x','concat_key_generate_secondary_y']], 'argsargsargsargsargsargs')
         # args_mysql = data[['mysql_statusTerminal','mysql_esn','mysql_latitud','mysql_longitud',]].iloc[0:].to_dict('record')
         elements = []
-        qry=f"             UPDATE {table_mysql_puller}    SET statusTerminal=:platform_operationalState,updated_at=:updated_at_send, fromPuller=1, servicesPlanId=:servicePlanIdTable , suscriberId=:platform_subscriberId,status=:platform_status WHERE siteId=:platform_description and platformId={platform_id_puller}"
+        qry=f"             UPDATE {table_mysql_puller}    SET statusTerminal=:platform_operationalState,updated_at=:updated_at_send, fromPuller=1, servicesPlanId=:servicePlanIdTable , suscriberId=:platform_subscriberId,status=:platform_status,mac=:platform_macAddress WHERE siteId=:platform_description and platformId={platform_id_puller}"
         query_update = text(qry)
         connection_engi.execute(query_update, args)
         # dateSaveHistoryUpdate(args_send)
