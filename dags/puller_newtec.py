@@ -60,7 +60,7 @@ db_2 = conection_2["bifrost"]
 db_ = conection["bifrost"]
 coltn_mdb = db_[collection_puller]
 
-r = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+r = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321")
 
 # import confluent_kafka
 # from confluent_kafka import Producer
@@ -436,14 +436,14 @@ def puller_newtec():
         del df["concat_key_generate"]
         del df["concat_key_generate_secondary"]
         data = df.to_json(orient="records")
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        redis_cn = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321")
         redis_cn.set("1-"+platform_name, data)
         return {"status": True, "data": ""}
 
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_platform(data):
-        redis_cn = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
+        redis_cn = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321")
         try:
             data_send = json.dumps(data)
         except:
@@ -455,7 +455,7 @@ def puller_newtec():
     # ------------------------------------------------------------------------
     def save_in_redis_data_equals_api(config, data, keyname):
 
-        # redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
+        # redis_cn = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321")
         key_insert = keyname + "-insert"
         key_update = keyname + "-update"
         key_delete = keyname + "-delete"
@@ -497,7 +497,7 @@ def puller_newtec():
     @task()
     # ------------------------------------------------------------------------
     def save_in_redis_data_only_platform_api(config, data, keyname):
-        # redis_cn = redis.Redis(host= '10.152.183.45',    port= '6379',    password="l2TCrRgvtX")
+        # redis_cn = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321")
         key_insert = keyname + "-onlyplat-insert"
         key_update = keyname + "-onlyplat-update"
         key_delete = keyname + "-onlyplat-delete"
@@ -580,7 +580,7 @@ def puller_newtec():
             return []
         # try:
         redis_cn = redis.Redis(
-            host="10.152.183.45", port="6379", password="l2TCrRgvtX"
+            host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    port= '6379',    password="Maniac321"
         )
         response = redis_cn.get("1-"+platform_name)
         response = json.loads(response)
