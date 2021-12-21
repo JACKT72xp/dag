@@ -81,7 +81,7 @@ default_args = {
     # "depends_on_past": True,
     "retry_delay": timedelta(seconds=20),
     # "start_date": datetime(2021, 12, 14, 16, 30),
-    "start_date": datetime(2021, 12, 21, 18, 10),
+    "start_date": datetime(2021, 12, 21, 18, 0),
     # "start_date": datetime(2021, 12, 14, 0, 0),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
