@@ -78,26 +78,27 @@ r = redis.Redis(host="10.152.183.45", port="6379", password="l2TCrRgvtX")
 # You can override them on a per-task basis during operator initialization
 default_args = {
     "owner": "airflow",
-    # "depends_on_past": True,
-    "retry_delay": timedelta(seconds=20),
-    "start_date": datetime(2021, 12, 20, 22, 10),
+    "wait_for_downstream":False,
+    "depends_on_past": False,
+    "retry_delay": timedelta(seconds=10),
+    # "start_date": datetime(2021, 12, 20, 22, 10),
     # "start_date": datetime(2021, 12, 14, 0, 0),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
     "max_active_runs": 1,
-    "concurrency": 5,
+    # "concurrency": 5,
     'trigger_rule': 'all_done',
     # "schedule_interval": timedelta(minutes=10),
-    "retries": 2,
+    "retries": 4,
 }
 # [END default_args]
 # start_date=days_ago(2)
 time_send_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 # [START instantiate_dag]
-# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=[tag_airflow])
-@dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(1), tags=[tag_airflow])
+# @dag(default_args=default_args, schedule_interval="*/10 * * * *", tags=[tag_airflow])
 def puller_idirect_hub5_1h():
 
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
