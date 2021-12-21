@@ -82,7 +82,7 @@ default_args = {
     "retry_delay": timedelta(seconds=20),
     "start_date": days_ago(1),
     "max_active_runs": 1,
-    "concurrency": 2,
+    # "concurrency": 2,
     'trigger_rule': 'all_done',
     # "wait_for_downstream":True,
     "retries": 5,
