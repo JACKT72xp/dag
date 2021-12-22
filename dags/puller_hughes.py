@@ -128,13 +128,21 @@ def puller_hughes():
             "mongo_esn",
             "mongo_terminalStatus",
             "mongo_latitude",
-            "mongo_longitude"
+            "mongo_longitude",
+            "mongo_availTokens"
           ],
           "platform": [
             "platform_esn",
             "platform_terminalStatus",
             "platform_latitude",
             "platform_longitude",
+          ],
+          "platform_mongo": [
+            "platform_esn",
+            "platform_terminalStatus",
+            "platform_latitude",
+            "platform_longitude",
+            "platform_availTokens"
           ],
           "old": [
             "old_esn",
@@ -261,6 +269,24 @@ def puller_hughes():
             return df
         except:
             print("ERROR IN COLUMNS")
+            
+    def generateConcatKeySecondaryMongo(df,cols):
+        try:
+            df_stnd_key = df[cols].astype(str) 
+            for col in cols:
+                if(col=='platform_esn'):
+                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
+                    df[col]=df_stnd_key[col]
+                if(col=='mongo_esn'):
+                    df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace(".0",""))
+                    df[col]=df_stnd_key[col]
+                df_stnd_key[col] =  df_stnd_key[col].map(lambda eve: eve.replace("0.0000000000000000"," "))
+            df_stnd_key['concat_key_generate_secondary_mongo'] = df_stnd_key[cols].agg('-'.join, axis=1)
+            df['concat_key_generate_secondary_mongo'] = df_stnd_key['concat_key_generate_secondary_mongo']
+            return df
+        except:
+            print("ERROR IN COLUMNS")
+            
             
     def generateConcatKey(df,cols):
         try:
@@ -579,7 +605,7 @@ def puller_hughes():
         # conection = MongoClient(uri,connect=False)
         # db_ = conection["bifrost"]
         # coltn_mdb = db_['hughes_test']
-        data_mdb = coltn_mdb.find({"active":1},{"_id":True,"siteId":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
+        data_mdb = coltn_mdb.find({"active":1},{"_id":True,"siteId":True,"puller.availTokens":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
         list_cur = list(data_mdb)
         if len(list_cur)==0:
             return []
@@ -600,11 +626,18 @@ def puller_hughes():
         try:
             del df_datamongo['concat_key_generate']
             del df_datamongo['concat_key_generate_secondary']
+            # del df_datamongo['concat_key_generate_secondary_mongo']
         except:
             print("error delete")
+            
+        try:
+            del df_datamongo['concat_key_generate_secondary_mongo']
+        except:
+            print("error delete")
+            
         df_datamongo = df_datamongo[df_datamongo.columns].add_prefix('mongo_')
         df_datamongo = generateConcatKey(df_datamongo,['mongo_'+config['primary_join_cols']['mongo']])
-        df_datamongo = generateConcatKeySecondary(df_datamongo,config['secondary_join_cols']['mongo'])
+        df_datamongo = generateConcatKeySecondaryMongo(df_datamongo,config['secondary_join_cols']['mongo'])
         return json.loads(df_datamongo.to_json(orient='records'))
         # return {'data': df_old.to_json(orient='records'), 'status':200}
 
@@ -660,6 +693,7 @@ def puller_hughes():
                 response = response[response.columns].add_prefix('platform_')
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
+                response = generateConcatKeySecondaryMongo(response,config['secondary_join_cols']['platform_mongo'])
 
                 response = response.to_json(orient='records')
                 response = json.loads(response)
@@ -680,6 +714,7 @@ def puller_hughes():
                 # response = response.fillna(0)
                 response = generateConcatKey(response,['platform_'+config['primary_join_cols']['platform']])
                 response = generateConcatKeySecondary(response,config['secondary_join_cols']['platform'])
+                response = generateConcatKeySecondaryMongo(response,config['secondary_join_cols']['platform_mongo'])
                 # xaa=response[response['platform_deviceID']=='1600032794']
                 # print(xaa[['platform_latitude','platform_longitude']],'aaa')
                 response = response.to_json(orient='records')
@@ -1055,12 +1090,12 @@ def puller_hughes():
         df_mongo = pd.DataFrame(df_mongo)
         
         if df_mongo.empty:
-            df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary'])
+            df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary_mongo'])
 
         try:
             comparate = pd.DataFrame(comparate['exist_mongo'])
         except:
-            comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
+            comparate = pd.DataFrame(columns=['concat_key_generate_secondary_mongo'])
         # print(comparate,'comparateeeeee')
         # print(comparate.columns,'comparateeeeee')
 
@@ -1081,7 +1116,7 @@ def puller_hughes():
    
 
         try:
-            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary_mongo'].isin(list(df_mongo['concat_key_generate_secondary_mongo'])) , 1, 0)
         except:
             return {'update_mongo':[],'insert_mongo':comparate_not_exist,'delete_mongo':old['only_old']}
         # print(both[both['deviceID']=='ORBITHB600263']['concat_key_generate_secondary'],'platform_deviceIDplatform_deviceIDplatform_deviceIDplatform_deviceIDconcat_key_generate_secondarytry')
@@ -1137,15 +1172,15 @@ def puller_hughes():
         df_mongo = pd.DataFrame(df_mongo)
         
         if df_mongo.empty:
-            df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary'])
+            df_mongo = pd.DataFrame(columns=['concat_key_generate_secondary_mongo'])
 
         try:
             comparate = pd.DataFrame(comparate['exist_mongo'])
         except:
-            comparate = pd.DataFrame(columns=['concat_key_generate_secondary'])
+            comparate = pd.DataFrame(columns=['concat_key_generate_secondary_mongo'])
         both = comparate
         try:
-            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary'].isin(list(df_mongo['concat_key_generate_secondary'])) , 1, 0)
+            both['exist_mongo_secondary'] = np.where(both['concat_key_generate_secondary_mongo'].isin(list(df_mongo['concat_key_generate_secondary_mongo'])) , 1, 0)
         except:
             return {'update_mongo':[],'insert_mongo':glob_comparate['not_exist_mongo'],'delete_mongo':old['only_old']}
 
