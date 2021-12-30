@@ -129,7 +129,8 @@ def puller_hughes():
             "mongo_terminalStatus",
             "mongo_latitude",
             "mongo_longitude",
-            "mongo_availTokens"
+            "mongo_availTokens",
+            "mongo_overallUsage"
           ],
           "platform": [
             "platform_esn",
@@ -142,7 +143,8 @@ def puller_hughes():
             "platform_terminalStatus",
             "platform_latitude",
             "platform_longitude",
-            "platform_availTokens"
+            "platform_availTokens",
+            "platform_overallUsage"
           ],
           "old": [
             "old_esn",
@@ -605,7 +607,7 @@ def puller_hughes():
         # conection = MongoClient(uri,connect=False)
         # db_ = conection["bifrost"]
         # coltn_mdb = db_['hughes_test']
-        data_mdb = coltn_mdb.find({"active":1},{"_id":True,"siteId":True,"puller.availTokens":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
+        data_mdb = coltn_mdb.find({"active":1},{"_id":True,"siteId":True,"puller.availTokens":True,"puller.overallUsage":True,"puller.deviceID":True,"puller.esn":True,"puller.latitude":True,"puller.terminalStatus":True,"puller.longitude":True,"_id":True})
         list_cur = list(data_mdb)
         if len(list_cur)==0:
             return []
