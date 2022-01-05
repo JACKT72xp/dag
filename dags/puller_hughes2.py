@@ -64,14 +64,14 @@ r = redis.Redis(host= 'redis-redis-ha-haproxy.redis-dev.svc.cluster.local',    p
 default_args = {
     'owner': 'airflow',
     'retry_delay': timedelta(seconds=30),
-    "start_date": datetime(2021, 12, 21, 18, 0),
+    # "start_date": datetime(2021, 12, 21, 18, 0),
     # 'email': ['tech.team@industrydive.com'],
     # 'email_on_failure': True,
     # 'email_on_retry': True,
     'max_active_runs':1,
     'concurrency':5,
     'trigger_rule': 'all_done',
-    'schedule_interval':timedelta(minutes=10),
+    # 'schedule_interval':timedelta(minutes=10),
     'retries': 5
 }
 # [END default_args]
@@ -79,8 +79,8 @@ default_args = {
 time_send_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 # [START instantiate_dag]
-# @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes_2'])
-@dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes_2'])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['hughes_2'])
+# @dag(default_args=default_args, schedule_interval='*/10 * * * *',  tags=['hughes_2'])
 def puller_hughes_2():
     
     # sys.path.insert(0,os.path.abspath(os.path.dirname(__file__)))
@@ -753,6 +753,8 @@ def puller_hughes_2():
     def comparate_old_vs_new(data_platform,data_old):
         df1 = pd.DataFrame(data_platform)
         data_plat = pd.DataFrame(data_platform)
+        if len(data_plat)==0:
+                return {'platform_data':[],'comparation':[],'both':[],'only_platform':[],'only_old':[]}
         if len(data_old)==0:
             data_platform=df1.to_json(orient="records")
             return {'platform_data':data_platform,'comparation':[],'both':data_platform,'only_platform':[],'only_old':[]}
