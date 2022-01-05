@@ -1467,5 +1467,5 @@ def puller_hughes_2x():
 
 
 # [START dag_invocation]
-puller_hughes_2x = puller_hughes_2x()
+puller_hughes_2xx = puller_hughes_2x()
 # [END dag_invocation]
